@@ -1,0 +1,7 @@
+{
+  "name": "HausMatch",
+  "description": "A comprehensive two-sided marketplace connecting Property Owners with Property Managers, powered by Gemini AI and real-time data.",
+  "requestFramePermissions": [
+    "geolocation"
+  ]
+}
