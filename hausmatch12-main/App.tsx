@@ -18,6 +18,7 @@ const Network = lazy(() => import('./components/Network'));
 const Profile = lazy(() => import('./components/Profile'));
 const Ratgeber = lazy(() => import('./components/Ratgeber'));
 const Kreditrechner = lazy(() => import('./components/Kreditrechner'));
+const MatchingBoard = lazy(() => import('./components/MatchingBoard'));
 import { AboutPage, BlogPage, ContactPage, LegalPage } from './components/StaticPages';
 import ChatBot from './components/ChatBot';
 
@@ -44,6 +45,7 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => 
         email: auth.currentUser?.email || '',
         name: 'Nutzer',
         role: 'seeker',
+        userType: 'owner',
         friends: []
       } as User);
     }
@@ -97,9 +99,10 @@ const Navbar = () => {
 
   const navLinks = [
     { to: '/', label: 'Start' },
+    { to: '/vermittlung', label: 'Verwalter finden' },
     { to: '/network', label: 'Netzwerk' },
     { to: '/ratgeber', label: 'Ratgeber' },
-    { to: '/kreditrechner', label: 'Kreditrechner' },
+    { to: '/kreditrechner', label: 'Rechner' },
     ...(user ? [
       { to: '/forum', label: 'Forum' },
       { to: '/messages', label: 'Postfach' },
@@ -253,6 +256,7 @@ const AppRoutes = () => {
         <Route path="/managers" element={<ForManagers />} />
         <Route path="/ratgeber" element={<Ratgeber />} />
         <Route path="/kreditrechner" element={<Kreditrechner />} />
+        <Route path="/vermittlung" element={<MatchingBoard />} />
         <Route path="/about" element={<AboutPage />} />
         <Route path="/blog" element={<BlogPage />} />
         <Route path="/contact" element={<ContactPage />} />
