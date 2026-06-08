@@ -260,7 +260,11 @@ const AppRoutes = () => {
         <Route path="/ratgeber" element={<Ratgeber />} />
         <Route path="/kreditrechner" element={<Kreditrechner />} />
         <Route path="/vermittlung" element={<MatchingBoard />} />
-        <Route path="/ki-berater" element={<KIBerater />} />
+        <Route path="/ki-berater" element={
+          <ProtectedRoute>
+            <KIBerater />
+          </ProtectedRoute>
+        } />
         <Route path="/about" element={<AboutPage />} />
         <Route path="/blog" element={<BlogPage />} />
         <Route path="/contact" element={<ContactPage />} />
