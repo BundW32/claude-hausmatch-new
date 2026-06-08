@@ -2,16 +2,30 @@ import React, { useState, useContext, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { AuthContext } from '../App';
 import { IS_PRO_TYPE } from '../types';
-import { getBadgeIcon, getBadgeTierColor } from '../services/pointsService';
 import {
   collection, query, orderBy, getDocs, addDoc, serverTimestamp,
-  doc, updateDoc, arrayUnion, getDoc
+  doc, updateDoc, arrayUnion
 } from 'firebase/firestore';
 import { db } from '../services/firebase';
 import type { MatchRequest, MatchApplication } from '../types';
 
 const PROPERTY_TYPES = ['WEG', 'Mietshaus', 'Gewerbe', 'Eigentumswohnung'];
 const SERVICES = ['WEG-Verwaltung', 'Mietverwaltung', 'Buchhaltung', 'Reparaturmanagement', 'Hausgeldabrechnung', 'Eigentümerversammlung'];
+
+// ── Types ────────────────────────────────────────────────────────────────────
+
+interface ManagerResult {
+  name: string;
+  address: string;
+  phone: string;
+  email: string;
+  website: string;
+  description: string;
+  specializations: string[];
+  units_managed: string;
+}
+
+// ── Status Badge ──────────────────────────────────────────────────────────────
 
 const StatusBadge = ({ status }: { status: MatchRequest['status'] }) => {
   const map = {
@@ -25,6 +39,247 @@ const StatusBadge = ({ status }: { status: MatchRequest['status'] }) => {
     <span className={`text-[10px] font-black uppercase tracking-widest px-2.5 py-1 rounded-full border ${map[status]}`}>
       {labels[status]}
     </span>
+  );
+};
+
+// ── Manager Search Section ────────────────────────────────────────────────────
+
+const ManagerSearch = () => {
+  const [city, setCity] = useState('');
+  const [units, setUnits] = useState('');
+  const [propertyType, setPropertyType] = useState('WEG');
+  const [services, setServices] = useState<string[]>([]);
+  const [results, setResults] = useState<ManagerResult[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [searched, setSearched] = useState(false);
+  const [error, setError] = useState('');
+
+  const toggleService = (s: string) =>
+    setServices(prev => prev.includes(s) ? prev.filter(x => x !== s) : [...prev, s]);
+
+  const handleSearch = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!city.trim()) return;
+    setLoading(true);
+    setError('');
+    setResults([]);
+    setSearched(false);
+
+    try {
+      const res = await fetch('/api/search', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ city: city.trim(), units, propertyType, services }),
+      });
+      if (!res.ok) throw new Error('Suche fehlgeschlagen');
+      const data = await res.json();
+      setResults(data.results || []);
+      setSearched(true);
+    } catch {
+      setError('Die Suche konnte nicht durchgeführt werden. Bitte versuchen Sie es erneut.');
+      setSearched(true);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const buildMailto = (manager: ManagerResult) => {
+    const subject = encodeURIComponent(`Anfrage Hausverwaltung — ${propertyType} in ${city}`);
+    const body = encodeURIComponent(
+      `Sehr geehrte Damen und Herren,\n\n` +
+      `ich suche eine Hausverwaltung für mein Objekt und bin auf Ihr Unternehmen aufmerksam geworden.\n\n` +
+      `Objektdetails:\n` +
+      `- Stadt: ${city}\n` +
+      `- Objekttyp: ${propertyType}\n` +
+      (units ? `- Anzahl Einheiten: ${units}\n` : '') +
+      (services.length > 0 ? `- Gewünschte Leistungen: ${services.join(', ')}\n` : '') +
+      `\nIch würde mich über ein unverbindliches Angebot freuen.\n\n` +
+      `Mit freundlichen Grüßen`
+    );
+    return `mailto:${manager.email}?subject=${subject}&body=${body}`;
+  };
+
+  const input = "w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-sm font-medium text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all";
+  const label = "block text-xs font-black text-slate-500 uppercase tracking-widest mb-1.5";
+
+  return (
+    <div>
+      {/* Search Form */}
+      <form onSubmit={handleSearch} className="bg-white border border-slate-100 rounded-2xl p-6 shadow-sm mb-6">
+        <h3 className="text-lg font-black text-slate-900 mb-5">Verwalter in Ihrer Region finden</h3>
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-4">
+          <div className="sm:col-span-1">
+            <label className={label}>Stadt *</label>
+            <input
+              className={input}
+              required
+              value={city}
+              onChange={e => setCity(e.target.value)}
+              placeholder="z.B. München"
+            />
+          </div>
+          <div>
+            <label className={label}>Objekttyp</label>
+            <select className={input} value={propertyType} onChange={e => setPropertyType(e.target.value)}>
+              {PROPERTY_TYPES.map(t => <option key={t}>{t}</option>)}
+            </select>
+          </div>
+          <div>
+            <label className={label}>Anzahl Einheiten</label>
+            <input
+              type="number"
+              min={1}
+              className={input}
+              value={units}
+              onChange={e => setUnits(e.target.value)}
+              placeholder="z.B. 12"
+            />
+          </div>
+        </div>
+
+        <div className="mb-5">
+          <label className={label}>Gewünschte Leistungen</label>
+          <div className="flex flex-wrap gap-2">
+            {SERVICES.map(s => (
+              <button
+                key={s}
+                type="button"
+                onClick={() => toggleService(s)}
+                className={`text-xs font-bold px-3 py-1.5 rounded-full border transition-all ${
+                  services.includes(s)
+                    ? 'bg-blue-600 text-white border-blue-600'
+                    : 'bg-white text-slate-600 border-slate-200 hover:border-blue-300'
+                }`}
+              >
+                {s}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <button
+          type="submit"
+          disabled={loading || !city.trim()}
+          className="w-full bg-blue-600 text-white py-3 rounded-xl font-black uppercase tracking-widest text-xs hover:bg-blue-700 transition-all disabled:opacity-50 shadow-lg shadow-blue-200 active:scale-95 flex items-center justify-center gap-2"
+        >
+          {loading ? (
+            <>
+              <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+              Suche Verwalter in {city}...
+            </>
+          ) : (
+            <>
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              </svg>
+              Jetzt Verwalter suchen
+            </>
+          )}
+        </button>
+      </form>
+
+      {/* Error */}
+      {error && (
+        <div className="bg-red-50 border border-red-200 rounded-xl p-4 mb-6 text-red-700 text-sm font-medium">
+          {error}
+        </div>
+      )}
+
+      {/* Results */}
+      {searched && !loading && results.length === 0 && !error && (
+        <div className="text-center py-12">
+          <div className="text-4xl mb-3">🔍</div>
+          <p className="font-black text-slate-900 text-lg mb-2">Keine Ergebnisse gefunden</p>
+          <p className="text-slate-500 text-sm font-medium">Versuchen Sie eine andere Stadt oder weniger Filter.</p>
+        </div>
+      )}
+
+      {results.length > 0 && (
+        <div>
+          <div className="flex items-center gap-2 mb-4">
+            <span className="text-xs font-black text-slate-400 uppercase tracking-widest">
+              {results.length} Verwalter gefunden in {city}
+            </span>
+            <div className="flex-1 h-px bg-slate-100" />
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
+            {results.map((manager, i) => (
+              <div key={i} className="bg-white border border-slate-100 rounded-2xl p-5 shadow-sm hover:shadow-md transition-shadow flex flex-col">
+                {/* Header */}
+                <div className="flex items-start gap-3 mb-3">
+                  <div className="w-10 h-10 rounded-xl bg-blue-600 flex items-center justify-center text-white font-black text-sm flex-shrink-0">
+                    {manager.name.charAt(0).toUpperCase()}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="font-black text-slate-900 text-sm leading-tight">{manager.name}</div>
+                    <div className="text-xs text-slate-400 font-medium mt-0.5 truncate">{manager.address}</div>
+                  </div>
+                </div>
+
+                {/* Specializations */}
+                {manager.specializations?.length > 0 && (
+                  <div className="flex flex-wrap gap-1.5 mb-3">
+                    {manager.specializations.slice(0, 3).map((s, j) => (
+                      <span key={j} className="text-[10px] font-black uppercase tracking-widest px-2 py-0.5 bg-blue-50 text-blue-600 border border-blue-100 rounded-full">
+                        {s}
+                      </span>
+                    ))}
+                  </div>
+                )}
+
+                {/* Description */}
+                <p className="text-slate-500 text-xs font-medium leading-relaxed mb-3 flex-1 line-clamp-3">
+                  {manager.description}
+                </p>
+
+                {/* Meta */}
+                <div className="flex items-center gap-3 text-xs text-slate-400 font-medium mb-4 pt-3 border-t border-slate-100">
+                  {manager.units_managed && (
+                    <span className="flex items-center gap-1">
+                      <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                      </svg>
+                      {manager.units_managed}
+                    </span>
+                  )}
+                  {manager.phone && (
+                    <a href={`tel:${manager.phone}`} className="flex items-center gap-1 hover:text-blue-600 transition-colors">
+                      <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                      </svg>
+                      {manager.phone}
+                    </a>
+                  )}
+                </div>
+
+                {/* Actions */}
+                <div className="flex gap-2">
+                  <a
+                    href={buildMailto(manager)}
+                    className="flex-1 text-center px-4 py-2.5 bg-blue-600 text-white rounded-xl text-xs font-black uppercase tracking-widest hover:bg-blue-700 transition-all active:scale-95 shadow-sm shadow-blue-200"
+                  >
+                    ✉ Anfrage senden
+                  </a>
+                  {manager.website && (
+                    <a
+                      href={`https://${manager.website.replace(/^https?:\/\//, '')}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="px-3 py-2.5 border border-slate-200 rounded-xl text-xs font-black text-slate-500 hover:border-blue-300 hover:text-blue-600 transition-all"
+                      title="Website besuchen"
+                    >
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                      </svg>
+                    </a>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
   );
 };
 
@@ -207,17 +462,18 @@ const ApplyModal = ({ request, onClose, onSuccess }: { request: MatchRequest; on
 const MatchingBoard = () => {
   const { user } = useContext(AuthContext);
   const [requests, setRequests] = useState<MatchRequest[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [loadingRequests, setLoadingRequests] = useState(true);
   const [showNewForm, setShowNewForm] = useState(false);
   const [applyTarget, setApplyTarget] = useState<MatchRequest | null>(null);
   const [filter, setFilter] = useState<'alle' | 'offen' | 'inBearbeitung'>('offen');
   const [cityFilter, setCityFilter] = useState('');
+  const [activeTab, setActiveTab] = useState<'suchen' | 'board'>('suchen');
 
   const isOwner = !user || !IS_PRO_TYPE(user.userType);
   const isPro = user && IS_PRO_TYPE(user.userType);
 
   const loadRequests = async () => {
-    setLoading(true);
+    setLoadingRequests(true);
     try {
       const q = query(collection(db, 'matchRequests'), orderBy('createdAt', 'desc'));
       const snap = await getDocs(q);
@@ -225,7 +481,7 @@ const MatchingBoard = () => {
     } catch (err) {
       console.error(err);
     } finally {
-      setLoading(false);
+      setLoadingRequests(false);
     }
   };
 
@@ -241,128 +497,151 @@ const MatchingBoard = () => {
     <div className="min-h-screen bg-slate-50">
       {/* Header */}
       <div className="bg-white border-b border-slate-100">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-10">
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
             <div>
               <div className="inline-flex items-center gap-2 mb-3 bg-blue-50 px-4 py-1.5 rounded-full border border-blue-100">
                 <span className="text-[10px] font-black text-blue-700 uppercase tracking-widest">Vermittlung</span>
               </div>
-              <h1 className="text-3xl md:text-5xl font-black text-slate-900 tracking-tighter mb-2">Anfragen-Board</h1>
+              <h1 className="text-3xl md:text-5xl font-black text-slate-900 tracking-tighter mb-2">Verwalter finden</h1>
               <p className="text-slate-500 font-medium text-sm md:text-base">
-                {isOwner
-                  ? 'Stellen Sie eine Anfrage ein — geprüfte Verwalter melden sich bei Ihnen.'
-                  : 'Finden Sie passende Objekte und bewerben Sie sich direkt.'}
+                KI-gestützte Suche nach geprüften Hausverwaltungen in Ihrer Region.
               </p>
             </div>
-            {user && isOwner && (
+            {user && isOwner && activeTab === 'board' && (
               <button onClick={() => setShowNewForm(s => !s)}
                 className="px-6 py-3 bg-blue-600 text-white rounded-xl font-black uppercase tracking-widest text-xs hover:bg-blue-700 transition-all shadow-lg shadow-blue-200 active:scale-95 whitespace-nowrap">
                 + Anfrage einstellen
               </button>
             )}
-            {!user && (
-              <Link to="/login" className="px-6 py-3 bg-blue-600 text-white rounded-xl font-black uppercase tracking-widest text-xs hover:bg-blue-700 transition-all shadow-lg shadow-blue-200 active:scale-95 whitespace-nowrap">
-                Anmelden & Anfrage stellen
-              </Link>
-            )}
+          </div>
+
+          {/* Tabs */}
+          <div className="flex gap-1 mt-6 bg-slate-100 rounded-xl p-1 w-fit">
+            <button
+              onClick={() => setActiveTab('suchen')}
+              className={`px-5 py-2 rounded-lg text-xs font-black uppercase tracking-widest transition-all ${
+                activeTab === 'suchen'
+                  ? 'bg-white text-blue-600 shadow-sm'
+                  : 'text-slate-500 hover:text-slate-900'
+              }`}
+            >
+              🔍 Verwalter suchen
+            </button>
+            <button
+              onClick={() => setActiveTab('board')}
+              className={`px-5 py-2 rounded-lg text-xs font-black uppercase tracking-widest transition-all ${
+                activeTab === 'board'
+                  ? 'bg-white text-blue-600 shadow-sm'
+                  : 'text-slate-500 hover:text-slate-900'
+              }`}
+            >
+              📋 Anfragen-Board
+            </button>
           </div>
         </div>
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 md:py-8">
-        {/* New Request Form */}
-        {showNewForm && user && (
-          <div className="mb-6">
-            <NewRequestForm onSuccess={() => { setShowNewForm(false); loadRequests(); }} />
-          </div>
-        )}
 
-        {/* Filters */}
-        <div className="flex flex-wrap gap-3 mb-6 items-center">
-          <div className="flex gap-2 bg-white rounded-xl p-1 border border-slate-100 shadow-sm">
-            {(['alle', 'offen', 'inBearbeitung'] as const).map(f => (
-              <button key={f} onClick={() => setFilter(f)}
-                className={`px-4 py-2 rounded-lg text-xs font-black uppercase tracking-widest transition-all ${
-                  filter === f ? 'bg-blue-600 text-white' : 'text-slate-500 hover:text-slate-900'
-                }`}>
-                {f === 'alle' ? 'Alle' : f === 'offen' ? 'Offen' : 'In Bearbeitung'}
-              </button>
-            ))}
-          </div>
-          <input
-            value={cityFilter}
-            onChange={e => setCityFilter(e.target.value)}
-            placeholder="Nach Stadt filtern..."
-            className="bg-white border border-slate-200 rounded-xl px-4 py-2.5 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
-          />
-        </div>
+        {/* TAB: Verwalter suchen */}
+        {activeTab === 'suchen' && <ManagerSearch />}
 
-        {/* Request List */}
-        {loading ? (
-          <div className="flex items-center justify-center h-40">
-            <div className="w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full animate-spin" />
-          </div>
-        ) : filtered.length === 0 ? (
-          <div className="text-center py-20">
-            <div className="text-4xl mb-4">📋</div>
-            <p className="font-black text-slate-900 text-lg mb-2">Keine Anfragen gefunden</p>
-            <p className="text-slate-500 text-sm font-medium">
-              {isOwner ? 'Stellen Sie die erste Anfrage ein!' : 'Versuchen Sie andere Filter.'}
-            </p>
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
-            {filtered.map(req => (
-              <div key={req.id} className="bg-white border border-slate-100 rounded-2xl p-5 shadow-sm hover:shadow-md transition-shadow">
-                <div className="flex items-start justify-between mb-3">
-                  <div>
-                    <div className="font-black text-slate-900 text-base">{req.city} {req.zip && `· ${req.zip}`}</div>
-                    <div className="text-xs text-slate-400 font-medium mt-0.5">{req.propertyType} · {req.units} Einheiten</div>
-                  </div>
-                  <StatusBadge status={req.status} />
-                </div>
-
-                {req.servicesNeeded?.length > 0 && (
-                  <div className="flex flex-wrap gap-1.5 mb-3">
-                    {req.servicesNeeded.slice(0, 3).map(s => (
-                      <span key={s} className="text-[10px] font-black uppercase tracking-widest px-2 py-0.5 bg-blue-50 text-blue-600 border border-blue-100 rounded-full">{s}</span>
-                    ))}
-                    {req.servicesNeeded.length > 3 && (
-                      <span className="text-[10px] font-medium text-slate-400">+{req.servicesNeeded.length - 3}</span>
-                    )}
-                  </div>
-                )}
-
-                {req.description && (
-                  <p className="text-slate-500 text-sm font-medium leading-relaxed mb-3 line-clamp-2">{req.description}</p>
-                )}
-
-                <div className="flex items-center justify-between pt-3 border-t border-slate-100">
-                  <div className="flex items-center gap-2">
-                    {req.budget && (
-                      <span className="text-xs font-bold text-green-600 bg-green-50 px-2 py-0.5 rounded-full border border-green-100">
-                        💰 {req.budget}
-                      </span>
-                    )}
-                    <span className="text-xs text-slate-400 font-medium">
-                      {req.applications?.length || 0} Bewerbung{req.applications?.length !== 1 ? 'en' : ''}
-                    </span>
-                  </div>
-                  {isPro && req.status === 'offen' && (
-                    <button onClick={() => setApplyTarget(req)}
-                      className="px-4 py-2 bg-blue-600 text-white rounded-xl text-xs font-black uppercase tracking-widest hover:bg-blue-700 transition-all active:scale-95">
-                      Bewerben
-                    </button>
-                  )}
-                  {isOwner && user && req.ownerId === user.id && (
-                    <Link to={`/profile`} className="text-xs font-black text-blue-600 uppercase tracking-widest hover:text-blue-700">
-                      Meine Anfrage →
-                    </Link>
-                  )}
-                </div>
+        {/* TAB: Anfragen-Board */}
+        {activeTab === 'board' && (
+          <>
+            {showNewForm && user && (
+              <div className="mb-6">
+                <NewRequestForm onSuccess={() => { setShowNewForm(false); loadRequests(); }} />
               </div>
-            ))}
-          </div>
+            )}
+
+            <div className="flex flex-wrap gap-3 mb-6 items-center">
+              <div className="flex gap-2 bg-white rounded-xl p-1 border border-slate-100 shadow-sm">
+                {(['alle', 'offen', 'inBearbeitung'] as const).map(f => (
+                  <button key={f} onClick={() => setFilter(f)}
+                    className={`px-4 py-2 rounded-lg text-xs font-black uppercase tracking-widest transition-all ${
+                      filter === f ? 'bg-blue-600 text-white' : 'text-slate-500 hover:text-slate-900'
+                    }`}>
+                    {f === 'alle' ? 'Alle' : f === 'offen' ? 'Offen' : 'In Bearbeitung'}
+                  </button>
+                ))}
+              </div>
+              <input
+                value={cityFilter}
+                onChange={e => setCityFilter(e.target.value)}
+                placeholder="Nach Stadt filtern..."
+                className="bg-white border border-slate-200 rounded-xl px-4 py-2.5 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
+              />
+            </div>
+
+            {loadingRequests ? (
+              <div className="flex items-center justify-center h-40">
+                <div className="w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full animate-spin" />
+              </div>
+            ) : filtered.length === 0 ? (
+              <div className="text-center py-20">
+                <div className="text-4xl mb-4">📋</div>
+                <p className="font-black text-slate-900 text-lg mb-2">Keine Anfragen gefunden</p>
+                <p className="text-slate-500 text-sm font-medium">
+                  {isOwner ? 'Stellen Sie die erste Anfrage ein!' : 'Versuchen Sie andere Filter.'}
+                </p>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
+                {filtered.map(req => (
+                  <div key={req.id} className="bg-white border border-slate-100 rounded-2xl p-5 shadow-sm hover:shadow-md transition-shadow">
+                    <div className="flex items-start justify-between mb-3">
+                      <div>
+                        <div className="font-black text-slate-900 text-base">{req.city} {req.zip && `· ${req.zip}`}</div>
+                        <div className="text-xs text-slate-400 font-medium mt-0.5">{req.propertyType} · {req.units} Einheiten</div>
+                      </div>
+                      <StatusBadge status={req.status} />
+                    </div>
+
+                    {req.servicesNeeded?.length > 0 && (
+                      <div className="flex flex-wrap gap-1.5 mb-3">
+                        {req.servicesNeeded.slice(0, 3).map(s => (
+                          <span key={s} className="text-[10px] font-black uppercase tracking-widest px-2 py-0.5 bg-blue-50 text-blue-600 border border-blue-100 rounded-full">{s}</span>
+                        ))}
+                        {req.servicesNeeded.length > 3 && (
+                          <span className="text-[10px] font-medium text-slate-400">+{req.servicesNeeded.length - 3}</span>
+                        )}
+                      </div>
+                    )}
+
+                    {req.description && (
+                      <p className="text-slate-500 text-sm font-medium leading-relaxed mb-3 line-clamp-2">{req.description}</p>
+                    )}
+
+                    <div className="flex items-center justify-between pt-3 border-t border-slate-100">
+                      <div className="flex items-center gap-2">
+                        {req.budget && (
+                          <span className="text-xs font-bold text-green-600 bg-green-50 px-2 py-0.5 rounded-full border border-green-100">
+                            💰 {req.budget}
+                          </span>
+                        )}
+                        <span className="text-xs text-slate-400 font-medium">
+                          {req.applications?.length || 0} Bewerbung{req.applications?.length !== 1 ? 'en' : ''}
+                        </span>
+                      </div>
+                      {isPro && req.status === 'offen' && (
+                        <button onClick={() => setApplyTarget(req)}
+                          className="px-4 py-2 bg-blue-600 text-white rounded-xl text-xs font-black uppercase tracking-widest hover:bg-blue-700 transition-all active:scale-95">
+                          Bewerben
+                        </button>
+                      )}
+                      {isOwner && user && req.ownerId === user.id && (
+                        <Link to="/profile" className="text-xs font-black text-blue-600 uppercase tracking-widest hover:text-blue-700">
+                          Meine Anfrage →
+                        </Link>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </>
         )}
       </div>
 
