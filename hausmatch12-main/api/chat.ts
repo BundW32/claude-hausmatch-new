@@ -51,7 +51,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
   try {
     const response = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`,
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`,
       {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -61,20 +61,3 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
           generationConfig: { temperature: 0.7, maxOutputTokens: 1024 }
         })
       }
-    );
-
-    if (!response.ok) {
-      const errText = await response.text();
-      console.error('Gemini error:', response.status, errText);
-      return res.status(502).json({ error: 'Gemini API error: ' + response.status });
-    }
-
-    const data = await response.json();
-    const reply = data?.candidates?.[0]?.content?.parts?.[0]?.text || 'Entschuldigung, ich konnte keine Antwort generieren.';
-
-    return res.status(200).json({ reply });
-  } catch (error: unknown) {
-    const message = error instanceof Error ? error.message : 'Unknown error';
-    return res.status(500).json({ error: 'Internal server error', details: message });
-  }
-}
