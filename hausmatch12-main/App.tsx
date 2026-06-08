@@ -19,6 +19,7 @@ const Profile = lazy(() => import('./components/Profile'));
 const Ratgeber = lazy(() => import('./components/Ratgeber'));
 const Kreditrechner = lazy(() => import('./components/Kreditrechner'));
 const MatchingBoard = lazy(() => import('./components/MatchingBoard'));
+const KIBerater = lazy(() => import('./components/KIBerater'));
 import { AboutPage, BlogPage, ContactPage, LegalPage } from './components/StaticPages';
 import ChatBot from './components/ChatBot';
 
@@ -103,6 +104,7 @@ const Navbar = () => {
     { to: '/network', label: 'Netzwerk' },
     { to: '/ratgeber', label: 'Ratgeber' },
     { to: '/kreditrechner', label: 'Rechner' },
+    { to: '/ki-berater', label: 'KI-Berater' },
     ...(user ? [
       { to: '/forum', label: 'Forum' },
       { to: '/messages', label: 'Postfach' },
@@ -212,6 +214,7 @@ const Footer = () => {
           <h4 className="font-black text-slate-900 uppercase text-xs tracking-widest mb-4">Tools</h4>
           <ul className="space-y-2 text-sm text-slate-500 font-medium">
             <li><Link to="/kreditrechner" className="hover:text-blue-600">Kreditrechner</Link></li>
+            <li><Link to="/ki-berater" className="hover:text-blue-600">KI-Berater Max</Link></li>
             <li><Link to="/network" className="hover:text-blue-600">Netzwerk</Link></li>
             <li><Link to="/forum" className="hover:text-blue-600">Forum</Link></li>
           </ul>
@@ -257,6 +260,7 @@ const AppRoutes = () => {
         <Route path="/ratgeber" element={<Ratgeber />} />
         <Route path="/kreditrechner" element={<Kreditrechner />} />
         <Route path="/vermittlung" element={<MatchingBoard />} />
+        <Route path="/ki-berater" element={<KIBerater />} />
         <Route path="/about" element={<AboutPage />} />
         <Route path="/blog" element={<BlogPage />} />
         <Route path="/contact" element={<ContactPage />} />
