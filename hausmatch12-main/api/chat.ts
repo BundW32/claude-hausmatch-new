@@ -1,68 +1,76 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { GoogleGenAI } from '@google/genai';
 
-const SYSTEM_PROMPT = `Du bist Max, ein erfahrener Immobilienexperte und digitaler Assistent der Plattform HausMatch.
+const SYSTEM_PROMPT = `Du bist Max, ein freundlicher und kompetenter Immobilien-Assistent von HausMatch. Du hilfst Eigentümern und Immobilienprofis in Deutschland bei Fragen rund um:
 
-DEINE EXPERTISE umfasst:
-- Hausverwaltung (WEG-Verwaltung, Mietverwaltung, Sondereigentumsverwaltung)
-- Deutsches Mietrecht und Wohnungseigentumsrecht (WEG)
-- Immobilienfinanzierung: Kredite, Zinsen, Tilgung, KfW-Förderungen, BAFA
-- Renditeberechnungen (Brutto-, Netto- und Eigenkapitalrendite)
-- Immobilienkauf und -verkauf in Deutschland
-- Energetische Sanierung und staatliche Förderprogramme (BEG, BAFA)
-- Grunderwerbsteuer, Notar- und Maklerkosten nach Bundesland
-- Nebenkosten, Betriebskostenabrechnung, Hausgeld
-- Mieterhöhungen, Modernisierungsumlage, Kündigung
-- WEG-Reform 2020, aktuelle Gesetzgebung
-- Markttrends in deutschen Immobilienmärkten
+- Hausverwaltung: Kosten, Aufgaben, Verträge, WEG-Verwaltung
+- Mietrecht: Mieterhöhung, Kündigung, Nebenkostenabrechnung, Mängel
+- Immobilienfinanzierung: Kredit, Zinsen, Tilgung, KfW-Förderung
+- Immobilieninvestment: Renditeberechnung, Kaufnebenkosten, Steuer
+- Instandhaltung: Sanierung, Energieeffizienz, Handwerker
+- WEG: Eigentümerversammlung, Hausordnung, Beschlüsse
 
-DEIN KOMMUNIKATIONSSTIL:
-- Professionell aber verständlich — keine Fachbegriffe ohne Erklärung
-- Konkret mit Zahlen und Beispielen wo möglich
-- Strukturiert: bei komplexen Themen mit Aufzählungen arbeiten
-- Empathisch — du verstehst, dass Immobilien oft große Investitionen bedeuten
-- Proaktiv: weise auf häufige Fehler und wichtige Aspekte hin
+Antworte immer auf Deutsch, freundlich und klar strukturiert. Verwende bei Bedarf kurze Aufzählungen. Halte Antworten prägnant (max. 200 Wörter).
 
-WICHTIGE REGELN:
-1. IMMER am Ende von rechtlichen oder finanziellen Antworten den Disclaimer hinzufügen: "⚠️ KI-Hinweis: Diese Antwort ist eine allgemeine Information und kein Ersatz für rechtliche oder steuerliche Beratung."
-2. Bei sehr spezifischen Rechtsfragen empfiehl ausdrücklich einen Fachanwalt für Mietrecht oder Immobilienrecht.
-3. Bei Finanzierungsfragen empfiehl ergänzend den HausMatch-Kreditrechner unter /kreditrechner.
-4. Antworte IMMER auf Deutsch.
-5. Halte Antworten kompakt (max. 4 Absätze oder 6 Aufzählungspunkte).
-6. Erfinde keine konkreten Gerichtsurteile oder Gesetzesstellen.`;
+WICHTIG: Du bist eine KI und kein Rechtsanwalt oder Steuerberater. Bei rechtlichen oder steuerlichen Fragen weise immer darauf hin, dass ein Fachanwalt oder Steuerberater konsultiert werden sollte.`;
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
-  if (req.method !== 'POST') {
-    return res.status(405).json({ error: 'Method not allowed' });
-  }
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
+  if (req.method === 'OPTIONS') return res.status(200).end();
+  if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
+
+  const { messages } = req.body;
   const apiKey = process.env.GEMINI_API_KEY;
+
   if (!apiKey) {
     return res.status(500).json({ error: 'API key not configured' });
   }
 
-  const { message, history } = req.body;
-  if (!message) {
-    return res.status(400).json({ error: 'Message is required' });
+  if (!messages || !Array.isArray(messages)) {
+    return res.status(400).json({ error: 'Messages array required' });
   }
 
   try {
-    const ai = new GoogleGenAI({ apiKey });
+    const contents = messages.map((m: { role: string; content: string }) => ({
+      role: m.role === 'assistant' ? 'model' : 'user',
+      parts: [{ text: m.content }]
+    }));
 
-    const chat = ai.chats.create({
-      model: 'gemini-2.0-flash',
-      history: history || [],
-      config: {
-        systemInstruction: SYSTEM_PROMPT,
+    const response = await fetch(
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`,
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          system_instruction: {
+            parts: [{ text: SYSTEM_PROMPT }]
+          },
+          contents,
+          generationConfig: {
+            temperature: 0.7,
+            maxOutputTokens: 500
+          }
+        })
       }
-    });
+    );
 
-    const response = await chat.sendMessage({ message });
-    const text = response.text || 'Entschuldigung, ich konnte keine Antwort generieren.';
+    if (!response.ok) {
+      const errText = await response.text();
+      console.error('Gemini API error:', response.status, errText);
+      return res.status(502).json({ error: 'Gemini API error', details: errText });
+    }
 
-    return res.status(200).json({ text });
-  } catch (error) {
-    console.error('Gemini API error:', error);
-    return res.status(500).json({ error: 'KI-Anfrage fehlgeschlagen' });
+    const data = await response.json();
+    const reply =
+      data?.candidates?.[0]?.content?.parts?.[0]?.text ||
+      'Entschuldigung, ich konnte keine Antwort generieren. Bitte versuchen Sie es erneut.';
+
+    return res.status(200).json({ reply });
+  } catch (error: unknown) {
+    console.error('Handler error:', error);
+    const message = error instanceof Error ? error.message : 'Unknown error';
+    return res.status(500).json({ error: 'Internal server error', details: message });
   }
 }
