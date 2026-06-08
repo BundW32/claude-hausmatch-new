@@ -42,7 +42,7 @@ Antworte AUSSCHLIESSLICH mit dem JSON-Array. Kein Text davor oder danach.`;
 
   try {
     const response = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`,
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`,
       {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -61,19 +61,3 @@ Antworte AUSSCHLIESSLICH mit dem JSON-Array. Kein Text davor oder danach.`;
       return res.status(502).json({ error: 'Gemini API error', details: errText });
     }
 
-    const data = await response.json();
-    const rawText = data?.candidates?.[0]?.content?.parts?.[0]?.text || '[]';
-
-    // Extract JSON array from response
-    const jsonMatch = rawText.match(/\[[\s\S]*\]/);
-    if (!jsonMatch) {
-      return res.status(200).json({ results: [] });
-    }
-
-    const results = JSON.parse(jsonMatch[0]);
-    return res.status(200).json({ results });
-  } catch (error: unknown) {
-    const message = error instanceof Error ? error.message : 'Unknown error';
-    return res.status(500).json({ error: 'Internal server error', details: message });
-  }
-}
