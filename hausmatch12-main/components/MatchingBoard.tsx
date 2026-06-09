@@ -1,656 +1,485 @@
-import React, { useState, useContext, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import { AuthContext } from '../App';
-import { IS_PRO_TYPE } from '../types';
-import {
-  collection, query, orderBy, getDocs, addDoc, serverTimestamp,
-  doc, updateDoc, arrayUnion
-} from 'firebase/firestore';
-import { db } from '../services/firebase';
-import type { MatchRequest, MatchApplication } from '../types';
+import React, { useState, useEffect, useCallback } from 'react';
+import { collection, getDocs, query, where } from 'firebase/firestore';
+import { db } from '../services/dataService';
 
-const PROPERTY_TYPES = ['WEG', 'Mietshaus', 'Gewerbe', 'Eigentumswohnung'];
-const SERVICES = ['WEG-Verwaltung', 'Mietverwaltung', 'Buchhaltung', 'Reparaturmanagement', 'Hausgeldabrechnung', 'Eigentümerversammlung'];
-
-// ── Types ────────────────────────────────────────────────────────────────────
-
-interface ManagerResult {
+interface Company {
+  id?: string;
   name: string;
   address: string;
+  city: string;
   phone: string;
-  email: string;
   website: string;
-  description: string;
-  specializations: string[];
-  units_managed: string;
+  email: string;
+  rating: number;
+  reviews: number;
+  specialization: string;
+  isPartner: boolean;
+  partnerProfile?: {
+    uid: string;
+    name: string;
+    profileImage?: string;
+    description?: string;
+  };
 }
 
-// ── Status Badge ──────────────────────────────────────────────────────────────
-
-const StatusBadge = ({ status }: { status: MatchRequest['status'] }) => {
-  const map = {
-    offen: 'bg-green-50 text-green-700 border-green-200',
-    inBearbeitung: 'bg-blue-50 text-blue-700 border-blue-200',
-    vergeben: 'bg-slate-100 text-slate-500 border-slate-200',
-    archiviert: 'bg-red-50 text-red-500 border-red-200',
-  };
-  const labels = { offen: 'Offen', inBearbeitung: 'In Bearbeitung', vergeben: 'Vergeben', archiviert: 'Archiviert' };
+const StarRating = ({ rating }: { rating: number }) => {
+  const full = Math.floor(rating);
+  const half = rating % 1 >= 0.5;
+  const empty = 5 - full - (half ? 1 : 0);
   return (
-    <span className={`text-[10px] font-black uppercase tracking-widest px-2.5 py-1 rounded-full border ${map[status]}`}>
-      {labels[status]}
+    <span className="flex items-center gap-0.5">
+      {[...Array(full)].map((_, i) => (
+        <svg key={'f' + i} className="w-3.5 h-3.5 text-amber-400" fill="currentColor" viewBox="0 0 20 20">
+          <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+        </svg>
+      ))}
+      {half && (
+        <svg className="w-3.5 h-3.5 text-amber-400" fill="currentColor" viewBox="0 0 20 20">
+          <defs><linearGradient id="half"><stop offset="50%" stopColor="currentColor"/><stop offset="50%" stopColor="#e5e7eb"/></linearGradient></defs>
+          <path fill="url(#half)" d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+        </svg>
+      )}
+      {[...Array(empty)].map((_, i) => (
+        <svg key={'e' + i} className="w-3.5 h-3.5 text-slate-200" fill="currentColor" viewBox="0 0 20 20">
+          <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+        </svg>
+      ))}
     </span>
   );
 };
 
-// ── Manager Search Section ────────────────────────────────────────────────────
+const ContactModal = ({ company, onClose }: { company: Company; onClose: () => void }) => {
+  const [copied, setCopied] = useState(false);
 
-const ManagerSearch = () => {
-  const [city, setCity] = useState('');
-  const [units, setUnits] = useState('');
-  const [propertyType, setPropertyType] = useState('WEG');
-  const [services, setServices] = useState<string[]>([]);
-  const [results, setResults] = useState<ManagerResult[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [searched, setSearched] = useState(false);
-  const [error, setError] = useState('');
+  const emailSubject = `Anfrage Hausverwaltung über HausMatch – ${company.name}`;
+  const emailBody = `Sehr geehrte Damen und Herren,
 
-  const toggleService = (s: string) =>
-    setServices(prev => prev.includes(s) ? prev.filter(x => x !== s) : [...prev, s]);
+øber die Plattform HausMatch bin ich auf Ihr Unternehmen aufmerksam geworden und interessiere mich für Ihre Verwaltungsdienstleistungen.
 
-  const handleSearch = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!city.trim()) return;
-    setLoading(true);
-    setError('');
-    setResults([]);
-    setSearched(false);
+Ich bin Eigentümer einer Immobilie und suche eine professionelle Hausverwaltung (${company.specialization || 'WEG- oder Mietverwaltung'}).
 
-    try {
-      const res = await fetch('/api/search', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ city: city.trim(), units, propertyType, services }),
-      });
-      if (!res.ok) throw new Error('Suche fehlgeschlagen');
-      const data = await res.json();
-      setResults(data.results || []);
-      setSearched(true);
-    } catch {
-      setError('Die Suche konnte nicht durchgeführt werden. Bitte versuchen Sie es erneut.');
-      setSearched(true);
-    } finally {
-      setLoading(false);
-    }
+Ich würde mich freuen, wenn Sie mit mir Kontakt aufnehmen, um die Details zu besprechen.
+
+Mit freundlichen Grüßen,
+[Ihr Name]
+[Ihre Telefonnummer]
+
+---
+Diese Anfrage wurde øber HausMatch.de vermittelt.`;
+
+  const mailtoLink = `mailto:${company.email}?subject=${encodeURIComponent(emailSubject)}&body=${encodeURIComponent(emailBody)}`;
+
+  const handleCopy = () => {
+    navigator.clipboard.writeText(emailBody).then(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    });
   };
-
-  const buildMailto = (manager: ManagerResult) => {
-    const subject = encodeURIComponent(`Anfrage Hausverwaltung — ${propertyType} in ${city}`);
-    const body = encodeURIComponent(
-      `Sehr geehrte Damen und Herren,\n\n` +
-      `ich suche eine Hausverwaltung für mein Objekt und bin auf Ihr Unternehmen aufmerksam geworden.\n\n` +
-      `Objektdetails:\n` +
-      `- Stadt: ${city}\n` +
-      `- Objekttyp: ${propertyType}\n` +
-      (units ? `- Anzahl Einheiten: ${units}\n` : '') +
-      (services.length > 0 ? `- Gewünschte Leistungen: ${services.join(', ')}\n` : '') +
-      `\nIch würde mich über ein unverbindliches Angebot freuen.\n\n` +
-      `Mit freundlichen Grüßen`
-    );
-    return `mailto:${manager.email}?subject=${subject}&body=${body}`;
-  };
-
-  const input = "w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-sm font-medium text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all";
-  const label = "block text-xs font-black text-slate-500 uppercase tracking-widest mb-1.5";
 
   return (
-    <div>
-      {/* Search Form */}
-      <form onSubmit={handleSearch} className="bg-white border border-slate-100 rounded-2xl p-6 shadow-sm mb-6">
-        <h3 className="text-lg font-black text-slate-900 mb-5">Verwalter in Ihrer Region finden</h3>
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-4">
-          <div className="sm:col-span-1">
-            <label className={label}>Stadt *</label>
-            <input
-              className={input}
-              required
-              value={city}
-              onChange={e => setCity(e.target.value)}
-              placeholder="z.B. München"
-            />
-          </div>
+    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4" onClick={onClose}>
+      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
+        {/* Header */}
+        <div className="bg-blue-600 px-6 py-5 rounded-t-2xl flex items-start justify-between">
           <div>
-            <label className={label}>Objekttyp</label>
-            <select className={input} value={propertyType} onChange={e => setPropertyType(e.target.value)}>
-              {PROPERTY_TYPES.map(t => <option key={t}>{t}</option>)}
-            </select>
+            <h3 className="text-white font-black text-lg">{company.name}</h3>
+            <p className="text-blue-200 text-sm mt-0.5">{company.city} · {company.specialization}</p>
           </div>
-          <div>
-            <label className={label}>Anzahl Einheiten</label>
-            <input
-              type="number"
-              min={1}
-              className={input}
-              value={units}
-              onChange={e => setUnits(e.target.value)}
-              placeholder="z.B. 12"
-            />
-          </div>
-        </div>
-
-        <div className="mb-5">
-          <label className={label}>Gewünschte Leistungen</label>
-          <div className="flex flex-wrap gap-2">
-            {SERVICES.map(s => (
-              <button
-                key={s}
-                type="button"
-                onClick={() => toggleService(s)}
-                className={`text-xs font-bold px-3 py-1.5 rounded-full border transition-all ${
-                  services.includes(s)
-                    ? 'bg-blue-600 text-white border-blue-600'
-                    : 'bg-white text-slate-600 border-slate-200 hover:border-blue-300'
-                }`}
-              >
-                {s}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        <button
-          type="submit"
-          disabled={loading || !city.trim()}
-          className="w-full bg-blue-600 text-white py-3 rounded-xl font-black uppercase tracking-widest text-xs hover:bg-blue-700 transition-all disabled:opacity-50 shadow-lg shadow-blue-200 active:scale-95 flex items-center justify-center gap-2"
-        >
-          {loading ? (
-            <>
-              <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-              Suche Verwalter in {city}...
-            </>
-          ) : (
-            <>
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-              </svg>
-              Jetzt Verwalter suchen
-            </>
-          )}
-        </button>
-      </form>
-
-      {/* Error */}
-      {error && (
-        <div className="bg-red-50 border border-red-200 rounded-xl p-4 mb-6 text-red-700 text-sm font-medium">
-          {error}
-        </div>
-      )}
-
-      {/* Results */}
-      {searched && !loading && results.length === 0 && !error && (
-        <div className="text-center py-12">
-          <div className="text-4xl mb-3">🔍</div>
-          <p className="font-black text-slate-900 text-lg mb-2">Keine Ergebnisse gefunden</p>
-          <p className="text-slate-500 text-sm font-medium">Versuchen Sie eine andere Stadt oder weniger Filter.</p>
-        </div>
-      )}
-
-      {results.length > 0 && (
-        <div>
-          <div className="flex items-center gap-2 mb-4">
-            <span className="text-xs font-black text-slate-400 uppercase tracking-widest">
-              {results.length} Verwalter gefunden in {city}
-            </span>
-            <div className="flex-1 h-px bg-slate-100" />
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
-            {results.map((manager, i) => (
-              <div key={i} className="bg-white border border-slate-100 rounded-2xl p-5 shadow-sm hover:shadow-md transition-shadow flex flex-col">
-                {/* Header */}
-                <div className="flex items-start gap-3 mb-3">
-                  <div className="w-10 h-10 rounded-xl bg-blue-600 flex items-center justify-center text-white font-black text-sm flex-shrink-0">
-                    {manager.name.charAt(0).toUpperCase()}
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <div className="font-black text-slate-900 text-sm leading-tight">{manager.name}</div>
-                    <div className="text-xs text-slate-400 font-medium mt-0.5 truncate">{manager.address}</div>
-                  </div>
-                </div>
-
-                {/* Specializations */}
-                {manager.specializations?.length > 0 && (
-                  <div className="flex flex-wrap gap-1.5 mb-3">
-                    {manager.specializations.slice(0, 3).map((s, j) => (
-                      <span key={j} className="text-[10px] font-black uppercase tracking-widest px-2 py-0.5 bg-blue-50 text-blue-600 border border-blue-100 rounded-full">
-                        {s}
-                      </span>
-                    ))}
-                  </div>
-                )}
-
-                {/* Description */}
-                <p className="text-slate-500 text-xs font-medium leading-relaxed mb-3 flex-1 line-clamp-3">
-                  {manager.description}
-                </p>
-
-                {/* Meta */}
-                <div className="flex items-center gap-3 text-xs text-slate-400 font-medium mb-4 pt-3 border-t border-slate-100">
-                  {manager.units_managed && (
-                    <span className="flex items-center gap-1">
-                      <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
-                      </svg>
-                      {manager.units_managed}
-                    </span>
-                  )}
-                  {manager.phone && (
-                    <a href={`tel:${manager.phone}`} className="flex items-center gap-1 hover:text-blue-600 transition-colors">
-                      <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
-                      </svg>
-                      {manager.phone}
-                    </a>
-                  )}
-                </div>
-
-                {/* Actions */}
-                <div className="flex gap-2">
-                  <a
-                    href={buildMailto(manager)}
-                    className="flex-1 text-center px-4 py-2.5 bg-blue-600 text-white rounded-xl text-xs font-black uppercase tracking-widest hover:bg-blue-700 transition-all active:scale-95 shadow-sm shadow-blue-200"
-                  >
-                    ✉ Anfrage senden
-                  </a>
-                  {manager.website && (
-                    <a
-                      href={`https://${manager.website.replace(/^https?:\/\//, '')}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="px-3 py-2.5 border border-slate-200 rounded-xl text-xs font-black text-slate-500 hover:border-blue-300 hover:text-blue-600 transition-all"
-                      title="Website besuchen"
-                    >
-                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                      </svg>
-                    </a>
-                  )}
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
-    </div>
-  );
-};
-
-// ── New Request Form ─────────────────────────────────────────────────────────
-
-const NewRequestForm = ({ onSuccess }: { onSuccess: () => void }) => {
-  const { user } = useContext(AuthContext);
-  const [form, setForm] = useState({
-    city: '', zip: '', units: 1, propertyType: 'WEG' as MatchRequest['propertyType'],
-    buildingAge: 'vor 1990', condition: 'Gut', servicesNeeded: [] as string[],
-    description: '', budget: ''
-  });
-  const [loading, setLoading] = useState(false);
-
-  const toggleService = (s: string) => {
-    setForm(f => ({
-      ...f,
-      servicesNeeded: f.servicesNeeded.includes(s)
-        ? f.servicesNeeded.filter(x => x !== s)
-        : [...f.servicesNeeded, s]
-    }));
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!user) return;
-    setLoading(true);
-    try {
-      await addDoc(collection(db, 'matchRequests'), {
-        ...form,
-        ownerId: user.id,
-        ownerName: user.name,
-        ownerEmail: user.email,
-        status: 'offen',
-        applications: [],
-        createdAt: serverTimestamp(),
-      });
-      onSuccess();
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const input = "w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-sm font-medium text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all";
-  const label = "block text-xs font-black text-slate-500 uppercase tracking-widest mb-1.5";
-
-  return (
-    <form onSubmit={handleSubmit} className="bg-white border border-slate-100 rounded-2xl p-6 shadow-sm">
-      <h3 className="text-lg font-black text-slate-900 mb-5">Neue Anfrage einstellen</h3>
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
-        <div>
-          <label className={label}>Stadt *</label>
-          <input className={input} required value={form.city} onChange={e => setForm(f => ({ ...f, city: e.target.value }))} placeholder="z.B. München" />
-        </div>
-        <div>
-          <label className={label}>PLZ</label>
-          <input className={input} value={form.zip} onChange={e => setForm(f => ({ ...f, zip: e.target.value }))} placeholder="z.B. 80331" />
-        </div>
-        <div>
-          <label className={label}>Anzahl Einheiten *</label>
-          <input type="number" min={1} className={input} required value={form.units} onChange={e => setForm(f => ({ ...f, units: +e.target.value }))} />
-        </div>
-        <div>
-          <label className={label}>Objekttyp *</label>
-          <select className={input} value={form.propertyType} onChange={e => setForm(f => ({ ...f, propertyType: e.target.value as any }))}>
-            {PROPERTY_TYPES.map(t => <option key={t}>{t}</option>)}
-          </select>
-        </div>
-        <div>
-          <label className={label}>Baujahr</label>
-          <select className={input} value={form.buildingAge} onChange={e => setForm(f => ({ ...f, buildingAge: e.target.value }))}>
-            {['vor 1950', '1950-1980', '1980-2000', 'nach 2000'].map(t => <option key={t}>{t}</option>)}
-          </select>
-        </div>
-        <div>
-          <label className={label}>Budget (optional)</label>
-          <input className={input} value={form.budget} onChange={e => setForm(f => ({ ...f, budget: e.target.value }))} placeholder="z.B. bis 30€ pro Einheit" />
-        </div>
-      </div>
-      <div className="mb-4">
-        <label className={label}>Gewünschte Leistungen</label>
-        <div className="flex flex-wrap gap-2">
-          {SERVICES.map(s => (
-            <button key={s} type="button"
-              onClick={() => toggleService(s)}
-              className={`text-xs font-bold px-3 py-1.5 rounded-full border transition-all ${
-                form.servicesNeeded.includes(s)
-                  ? 'bg-blue-600 text-white border-blue-600'
-                  : 'bg-white text-slate-600 border-slate-200 hover:border-blue-300'
-              }`}
-            >{s}</button>
-          ))}
-        </div>
-      </div>
-      <div className="mb-5">
-        <label className={label}>Beschreibung</label>
-        <textarea rows={3} className={input} value={form.description} onChange={e => setForm(f => ({ ...f, description: e.target.value }))} placeholder="Beschreiben Sie kurz Ihr Objekt und Ihre Wünsche..." />
-      </div>
-      <button type="submit" disabled={loading} className="w-full bg-blue-600 text-white py-3 rounded-xl font-black uppercase tracking-widest text-xs hover:bg-blue-700 transition-all disabled:opacity-50 shadow-lg shadow-blue-200 active:scale-95">
-        {loading ? 'Wird eingestellt...' : 'Anfrage veröffentlichen'}
-      </button>
-    </form>
-  );
-};
-
-// ── Application Modal ─────────────────────────────────────────────────────────
-
-const ApplyModal = ({ request, onClose, onSuccess }: { request: MatchRequest; onClose: () => void; onSuccess: () => void }) => {
-  const { user } = useContext(AuthContext);
-  const [coverText, setCoverText] = useState('');
-  const [proposedPrice, setProposedPrice] = useState('');
-  const [loading, setLoading] = useState(false);
-
-  const handleApply = async () => {
-    if (!user || !coverText.trim()) return;
-    setLoading(true);
-    try {
-      const requestRef = doc(db, 'matchRequests', request.id);
-      const application: Omit<MatchApplication, 'id'> = {
-        requestId: request.id,
-        managerId: user.id,
-        managerName: user.name,
-        managerAvatar: user.avatar,
-        badgeTier: user.badgeTier,
-        coverText,
-        proposedPrice,
-        createdAt: { seconds: Date.now() / 1000, nanoseconds: 0 },
-        status: 'ausstehend',
-      };
-      await updateDoc(requestRef, {
-        applications: arrayUnion({ ...application, id: crypto.randomUUID() }),
-        status: 'inBearbeitung',
-      });
-      onSuccess();
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  return (
-    <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
-      <div className="bg-white rounded-2xl p-6 max-w-lg w-full shadow-2xl">
-        <div className="flex items-center justify-between mb-5">
-          <h3 className="font-black text-slate-900 text-lg">Auf Anfrage bewerben</h3>
-          <button onClick={onClose} className="text-slate-400 hover:text-slate-600">
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M6 18L18 6M6 6l12 12" /></svg>
+          <button onClick={onClose} className="text-white/60 hover:text-white transition-colors ml-4 flex-shrink-0">
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M6 18L18 6M6 6l12 12" />
+            </svg>
           </button>
         </div>
-        <div className="bg-slate-50 rounded-xl p-4 mb-4 text-sm">
-          <div className="font-black text-slate-900">{request.city} · {request.units} Einheiten · {request.propertyType}</div>
-          <div className="text-slate-500 mt-1 line-clamp-2">{request.description}</div>
+
+        <div className="p-6 space-y-5">
+          {/* Contact info */}
+          <div className="bg-slate-50 rounded-xl p-4 space-y-2 text-sm">
+            {company.address && (
+              <div className="flex items-start gap-2 text-slate-600">
+                <svg className="w-4 h-4 text-slate-400 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                </svg>
+                <span>{company.address}</span>
+              </div>
+            )}
+            {company.phone && (
+              <div className="flex items-center gap-2 text-slate-600">
+                <svg className="w-4 h-4 text-slate-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                </svg>
+                <a href={`tel:${company.phone}`} className="hover:text-blue-600 transition-colors">{company.phone}</a>
+              </div>
+            )}
+            {company.email && (
+              <div className="flex items-center gap-2 text-slate-600">
+                <svg className="w-4 h-4 text-slate-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                </svg>
+                <span className="text-slate-600">{company.email}</span>
+              </div>
+            )}
+          </div>
+
+          {/* Email template */}
+          <div>
+            <label className="block text-xs font-black uppercase tracking-widest text-slate-500 mb-2">Vorgefertigte Nachricht</label>
+            <div className="bg-slate-50 border border-slate-200 rounded-xl p-4 text-sm text-slate-700 whitespace-pre-wrap font-mono leading-relaxed max-h-48 overflow-y-auto">
+              {emailBody}
+            </div>
+          </div>
+
+          {/* Action buttons */}
+          <div className="flex flex-col sm:flex-row gap-3">
+            {company.email ? (
+              <a
+                href={mailtoLink}
+                className="flex-1 flex items-center justify-center gap-2 px-5 py-3 bg-blue-600 text-white rounded-xl text-sm font-black uppercase tracking-widest hover:bg-blue-700 transition-all shadow-lg shadow-blue-200"
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+                </svg>
+                E-Mail senden
+              </a>
+            ) : (
+              <button
+                onClick={handleCopy}
+                className="flex-1 flex items-center justify-center gap-2 px-5 py-3 bg-blue-600 text-white rounded-xl text-sm font-black uppercase tracking-widest hover:bg-blue-700 transition-all shadow-lg shadow-blue-200"
+              >
+                {copied ? (
+                  <>
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M5 13l4 4L19 7" /></svg>
+                    Kopiert!
+                  </>
+                ) : (
+                  <>
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3" /></svg>
+                    Nachricht kopieren
+                  </>
+                )}
+              </button>
+            )}
+            {company.website && (
+              <a
+                href={company.website.startsWith('http') ? company.website : 'https://' + company.website}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex-1 flex items-center justify-center gap-2 px-5 py-3 border-2 border-slate-200 text-slate-700 rounded-xl text-sm font-black uppercase tracking-widest hover:border-blue-300 hover:text-blue-600 transition-all"
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                </svg>
+                Website
+              </a>
+            )}
+          </div>
+
+          {!company.email && !company.website && (
+            <p className="text-xs text-slate-400 text-center">
+              Kopieren Sie die Nachricht und kontaktieren Sie das Unternehmen direkt.
+            </p>
+          )}
         </div>
-        <div className="mb-4">
-          <label className="block text-xs font-black text-slate-500 uppercase tracking-widest mb-1.5">Ihr Anschreiben *</label>
-          <textarea rows={4} value={coverText} onChange={e => setCoverText(e.target.value)}
-            placeholder="Warum sind Sie der richtige Verwalter für dieses Objekt?"
-            className="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all" />
-        </div>
-        <div className="mb-5">
-          <label className="block text-xs font-black text-slate-500 uppercase tracking-widest mb-1.5">Preisvorschlag (optional)</label>
-          <input value={proposedPrice} onChange={e => setProposedPrice(e.target.value)}
-            placeholder="z.B. 28€ pro Einheit/Monat"
-            className="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all" />
-        </div>
-        <button onClick={handleApply} disabled={loading || !coverText.trim()}
-          className="w-full bg-blue-600 text-white py-3 rounded-xl font-black uppercase tracking-widest text-xs hover:bg-blue-700 transition-all disabled:opacity-50 shadow-lg active:scale-95">
-          {loading ? 'Wird gesendet...' : 'Bewerbung abschicken'}
-        </button>
       </div>
     </div>
   );
 };
 
-// ── Main Component ────────────────────────────────────────────────────────────
+const CompanyCard = ({ company, onContact }: { company: Company; onContact: (c: Company) => void }) => (
+  <div className={`bg-white rounded-2xl border-2 transition-all hover:shadow-lg hover:-translate-y-0.5 p-5 flex flex-col gap-3 ${company.isPartner ? 'border-blue-200 shadow-md shadow-blue-50' : 'border-slate-100'}`}>
+    {/* Header */}
+    <div className="flex items-start justify-between gap-2">
+      <div className="flex-1 min-w-0">
+        <div className="flex items-center gap-2 flex-wrap">
+          <h3 className="font-black text-slate-900 text-sm leading-snug">{company.name}</h3>
+          {company.isPartner && (
+            <span className="inline-flex items-center gap-1 bg-blue-600 text-white text-[9px] font-black uppercase tracking-widest px-2 py-0.5 rounded-full flex-shrink-0">
+              <svg className="w-2.5 h-2.5" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" /></svg>
+              HausMatch Partner
+            </span>
+          )}
+        </div>
+        <p className="text-xs text-slate-500 font-medium mt-0.5">{company.specialization}</p>
+      </div>
+      {company.rating > 0 && (
+        <div className="flex flex-col items-end flex-shrink-0">
+          <span className="text-sm font-black text-slate-900">{company.rating.toFixed(1)}</span>
+          <StarRating rating={company.rating} />
+          {company.reviews > 0 && <span className="text-[10px] text-slate-400 mt-0.5">{company.reviews} Bewertungen</span>}
+        </div>
+      )}
+    </div>
+
+    {/* Details */}
+    <div className="space-y-1.5 text-xs text-slate-500">
+      {company.address && (
+        <div className="flex items-start gap-1.5">
+          <svg className="w-3.5 h-3.5 text-slate-300 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+          </svg>
+          <span className="font-medium">{company.address}</span>
+        </div>
+      )}
+      {company.phone && (
+        <div className="flex items-center gap-1.5">
+          <svg className="w-3.5 h-3.5 text-slate-300 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+          </svg>
+          <a href={`tel:${company.phone}`} className="font-medium hover:text-blue-600 transition-colors">{company.phone}</a>
+        </div>
+      )}
+      {company.website && (
+        <div className="flex items-center gap-1.5">
+          <svg className="w-3.5 h-3.5 text-slate-300 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9" />
+          </svg>
+          <a href={company.website.startsWith('http') ? company.website : 'https://' + company.website}
+             target="_blank" rel="noopener noreferrer"
+             className="font-medium hover:text-blue-600 transition-colors truncate max-w-[200px]">
+            {company.website.replace(/^https?:\/\//, '')}
+          </a>
+        </div>
+      )}
+    </div>
+
+    {/* CTA */}
+    <button
+      onClick={() => onContact(company)}
+      className={`mt-1 w-full py-2.5 rounded-xl text-xs font-black uppercase tracking-widest transition-all ${
+        company.isPartner
+          ? 'bg-blue-600 text-white hover:bg-blue-700 shadow-md shadow-blue-200'
+          : 'bg-slate-900 text-white hover:bg-slate-700'
+      }`}
+    >
+      Kontakt aufnehmen
+    </button>
+  </div>
+);
 
 const MatchingBoard = () => {
-  const { user } = useContext(AuthContext);
-  const [requests, setRequests] = useState<MatchRequest[]>([]);
-  const [loadingRequests, setLoadingRequests] = useState(true);
-  const [showNewForm, setShowNewForm] = useState(false);
-  const [applyTarget, setApplyTarget] = useState<MatchRequest | null>(null);
-  const [filter, setFilter] = useState<'alle' | 'offen' | 'inBearbeitung'>('offen');
-  const [cityFilter, setCityFilter] = useState('');
-  const [activeTab, setActiveTab] = useState<'suchen' | 'board'>('suchen');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [inputValue, setInputValue] = useState('');
+  const [companies, setCompanies] = useState<Company[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+  const [selectedCompany, setSelectedCompany] = useState<Company | null>(null);
+  const [partnerCount, setPartnerCount] = useState(0);
 
-  const isOwner = !user || !IS_PRO_TYPE(user.userType);
-  const isPro = user && IS_PRO_TYPE(user.userType);
-
-  const loadRequests = async () => {
-    setLoadingRequests(true);
+  const fetchPartners = useCallback(async (q: string): Promise<Company[]> => {
     try {
-      const q = query(collection(db, 'matchRequests'), orderBy('createdAt', 'desc'));
-      const snap = await getDocs(q);
-      setRequests(snap.docs.map(d => ({ id: d.id, ...d.data() } as MatchRequest)));
+      const snapshot = await getDocs(
+        query(collection(db, 'users'), where('role', '==', 'manager'))
+      );
+      const managers: Company[] = [];
+      snapshot.forEach(doc => {
+        const data = doc.data();
+        const city: string = (data.city || data.location || data.name || '').toLowerCase();
+        const qLower = q.toLowerCase();
+        // Match if query appears in name, city, or specialization
+        if (
+          city.includes(qLower) ||
+          (data.name || '').toLowerCase().includes(qLower) ||
+          (data.specialization || '').toLowerCase().includes(qLower) ||
+          q.length < 3 // show all partners for very short queries
+        ) {
+          managers.push({
+            id: doc.id,
+            name: data.companyName || data.name || 'Unbekannt',
+            address: data.address || '',
+            city: data.city || data.location || '',
+            phone: data.phone || '',
+            website: data.website || '',
+            email: data.email || '',
+            rating: data.rating || 0,
+            reviews: data.reviews || 0,
+            specialization: data.specialization || 'Hausverwaltung',
+            isPartner: true,
+            partnerProfile: { uid: doc.id, name: data.name || '', profileImage: data.profileImage }
+          });
+        }
+      });
+      return managers;
     } catch (err) {
+      console.error('Firestore error:', err);
+      return [];
+    }
+  }, []);
+
+  const handleSearch = useCallback(async (q: string) => {
+    if (!q.trim()) return;
+    setSearchQuery(q);
+    setLoading(true);
+    setError('');
+    setCompanies([]);
+
+    try {
+      // Run both in parallel
+      const [searchRes, partners] = await Promise.all([
+        fetch('/api/search', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ query: q })
+        }).then(r => r.json()),
+        fetchPartners(q)
+      ]);
+
+      const external: Company[] = (searchRes.companies || []).map((c: Company) => ({ ...c, isPartner: false }));
+
+      // Merge: deduplicate by name, partners first
+      const partnerNames = new Set(partners.map((p: Company) => p.name.toLowerCase()));
+      const externalFiltered = external.filter((c: Company) => !partnerNames.has(c.name.toLowerCase()));
+
+      const merged = [...partners, ...externalFiltered];
+      setCompanies(merged);
+      setPartnerCount(partners.length);
+    } catch (err) {
+      setError('Suche fehlgeschlagen. Bitte erneut versuchen.');
       console.error(err);
     } finally {
-      setLoadingRequests(false);
+      setLoading(false);
     }
+  }, [fetchPartners]);
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') handleSearch(inputValue);
   };
 
-  useEffect(() => { loadRequests(); }, []);
-
-  const filtered = requests.filter(r => {
-    if (filter !== 'alle' && r.status !== filter) return false;
-    if (cityFilter && !r.city.toLowerCase().includes(cityFilter.toLowerCase())) return false;
-    return true;
-  });
+  const suggestions = ['Hausverwaltung München', 'WEG-Verwaltung Berlin', 'Mietverwaltung Hamburg', 'Hausverwaltung Frankfurt', 'Immobilienverwaltung Köln'];
 
   return (
-    <div className="min-h-screen bg-slate-50">
-      {/* Header */}
-      <div className="bg-white border-b border-slate-100">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-10">
-          <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
-            <div>
-              <div className="inline-flex items-center gap-2 mb-3 bg-blue-50 px-4 py-1.5 rounded-full border border-blue-100">
-                <span className="text-[10px] font-black text-blue-700 uppercase tracking-widest">Vermittlung</span>
-              </div>
-              <h1 className="text-3xl md:text-5xl font-black text-slate-900 tracking-tighter mb-2">Verwalter finden</h1>
-              <p className="text-slate-500 font-medium text-sm md:text-base">
-                KI-gestützte Suche nach geprüften Hausverwaltungen in Ihrer Region.
-              </p>
-            </div>
-            {user && isOwner && activeTab === 'board' && (
-              <button onClick={() => setShowNewForm(s => !s)}
-                className="px-6 py-3 bg-blue-600 text-white rounded-xl font-black uppercase tracking-widest text-xs hover:bg-blue-700 transition-all shadow-lg shadow-blue-200 active:scale-95 whitespace-nowrap">
-                + Anfrage einstellen
-              </button>
-            )}
-          </div>
+    <div className="min-h-screen bg-slate-50 pt-8 pb-16">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
 
-          {/* Tabs */}
-          <div className="flex gap-1 mt-6 bg-slate-100 rounded-xl p-1 w-fit">
-            <button
-              onClick={() => setActiveTab('suchen')}
-              className={`px-5 py-2 rounded-lg text-xs font-black uppercase tracking-widest transition-all ${
-                activeTab === 'suchen'
-                  ? 'bg-white text-blue-600 shadow-sm'
-                  : 'text-slate-500 hover:text-slate-900'
-              }`}
-            >
-              🔍 Verwalter suchen
-            </button>
-            <button
-              onClick={() => setActiveTab('board')}
-              className={`px-5 py-2 rounded-lg text-xs font-black uppercase tracking-widest transition-all ${
-                activeTab === 'board'
-                  ? 'bg-white text-blue-600 shadow-sm'
-                  : 'text-slate-500 hover:text-slate-900'
-              }`}
-            >
-              📋 Anfragen-Board
-            </button>
+        {/* Hero */}
+        <div className="text-center mb-10">
+          <div className="inline-flex items-center gap-2 bg-blue-50 border border-blue-100 text-blue-700 text-xs font-black uppercase tracking-widest px-4 py-2 rounded-full mb-4">
+            <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clipRule="evenodd" /></svg>
+            Verwalter finden
           </div>
+          <h1 className="text-3xl sm:text-4xl font-black text-slate-900 tracking-tighter mb-3">
+            Echte Hausverwaltungen<br />in Ihrer Region
+          </h1>
+          <p className="text-slate-500 font-medium max-w-xl mx-auto">
+            Realtime-Suche øber Google · Bewertungen direkt vergleichen · HausMatch-Partner bevorzugt angezeigt
+          </p>
         </div>
-      </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 md:py-8">
-
-        {/* TAB: Verwalter suchen */}
-        {activeTab === 'suchen' && <ManagerSearch />}
-
-        {/* TAB: Anfragen-Board */}
-        {activeTab === 'board' && (
-          <>
-            {showNewForm && user && (
-              <div className="mb-6">
-                <NewRequestForm onSuccess={() => { setShowNewForm(false); loadRequests(); }} />
-              </div>
-            )}
-
-            <div className="flex flex-wrap gap-3 mb-6 items-center">
-              <div className="flex gap-2 bg-white rounded-xl p-1 border border-slate-100 shadow-sm">
-                {(['alle', 'offen', 'inBearbeitung'] as const).map(f => (
-                  <button key={f} onClick={() => setFilter(f)}
-                    className={`px-4 py-2 rounded-lg text-xs font-black uppercase tracking-widest transition-all ${
-                      filter === f ? 'bg-blue-600 text-white' : 'text-slate-500 hover:text-slate-900'
-                    }`}>
-                    {f === 'alle' ? 'Alle' : f === 'offen' ? 'Offen' : 'In Bearbeitung'}
-                  </button>
-                ))}
-              </div>
+        {/* Search */}
+        <div className="max-w-2xl mx-auto mb-8">
+          <div className="flex gap-2">
+            <div className="flex-1 relative">
+              <svg className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              </svg>
               <input
-                value={cityFilter}
-                onChange={e => setCityFilter(e.target.value)}
-                placeholder="Nach Stadt filtern..."
-                className="bg-white border border-slate-200 rounded-xl px-4 py-2.5 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
+                type="text"
+                value={inputValue}
+                onChange={e => setInputValue(e.target.value)}
+                onKeyDown={handleKeyDown}
+                placeholder="z.B. Hausverwaltung Mønchen oder WEG Berlin"
+                className="w-full pl-11 pr-4 py-4 bg-white border-2 border-slate-200 rounded-2xl text-sm font-medium text-slate-900 placeholder-slate-400 focus:outline-none focus:border-blue-500 transition-all shadow-sm"
               />
             </div>
+            <button
+              onClick={() => handleSearch(inputValue)}
+              disabled={loading || !inputValue.trim()}
+              className="px-6 py-4 bg-blue-600 text-white rounded-2xl font-black text-sm uppercase tracking-widest hover:bg-blue-700 transition-all disabled:opacity-40 disabled:cursor-not-allowed shadow-lg shadow-blue-200 whitespace-nowrap"
+            >
+              {loading ? (
+                <svg className="w-5 h-5 animate-spin" fill="none" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                </svg>
+              ) : 'Suchen'}
+            </button>
+          </div>
 
-            {loadingRequests ? (
-              <div className="flex items-center justify-center h-40">
-                <div className="w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full animate-spin" />
+          {/* Suggestions */}
+          {!searchQuery && (
+            <div className="flex flex-wrap gap-2 mt-3">
+              {suggestions.map(s => (
+                <button key={s} onClick={() => { setInputValue(s); handleSearch(s); }}
+                  className="text-xs bg-white border border-slate-200 text-slate-600 font-medium px-3 py-1.5 rounded-full hover:border-blue-300 hover:text-blue-600 transition-all">
+                  {s}
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* Status bar */}
+        {loading && (
+          <div className="text-center py-16">
+            <div className="inline-flex items-center gap-3 bg-white px-6 py-4 rounded-2xl shadow-sm border border-slate-100">
+              <svg className="w-5 h-5 animate-spin text-blue-600" fill="none" viewBox="0 0 24 24">
+                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+              </svg>
+              <span className="font-black text-slate-700 text-sm uppercase tracking-widest">Suche läuft…</span>
+            </div>
+            <p className="text-slate-400 text-xs mt-3">Google-Suche + Netzwerk-Abfrage gleichzeitig</p>
+          </div>
+        )}
+
+        {error && (
+          <div className="max-w-lg mx-auto bg-red-50 border border-red-100 text-red-700 rounded-xl px-5 py-4 text-sm font-medium text-center">
+            {error}
+          </div>
+        )}
+
+        {/* Results */}
+        {!loading && companies.length > 0 && (
+          <>
+            <div className="flex items-center justify-between mb-5">
+              <div>
+                <h2 className="text-sm font-black text-slate-900 uppercase tracking-widest">
+                  {companies.length} Ergebnisse før „{searchQuery}"
+                </h2>
+                {partnerCount > 0 && (
+                  <p className="text-xs text-blue-600 font-medium mt-0.5">
+                    {partnerCount} HausMatch-Partner in Ihrer Region ✓
+                  </p>
+                )}
               </div>
-            ) : filtered.length === 0 ? (
-              <div className="text-center py-20">
-                <div className="text-4xl mb-4">📋</div>
-                <p className="font-black text-slate-900 text-lg mb-2">Keine Anfragen gefunden</p>
-                <p className="text-slate-500 text-sm font-medium">
-                  {isOwner ? 'Stellen Sie die erste Anfrage ein!' : 'Versuchen Sie andere Filter.'}
-                </p>
-              </div>
-            ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
-                {filtered.map(req => (
-                  <div key={req.id} className="bg-white border border-slate-100 rounded-2xl p-5 shadow-sm hover:shadow-md transition-shadow">
-                    <div className="flex items-start justify-between mb-3">
-                      <div>
-                        <div className="font-black text-slate-900 text-base">{req.city} {req.zip && `· ${req.zip}`}</div>
-                        <div className="text-xs text-slate-400 font-medium mt-0.5">{req.propertyType} · {req.units} Einheiten</div>
-                      </div>
-                      <StatusBadge status={req.status} />
-                    </div>
+              <span className="text-xs text-slate-400 font-medium">Sortiert nach Bewertung</span>
+            </div>
 
-                    {req.servicesNeeded?.length > 0 && (
-                      <div className="flex flex-wrap gap-1.5 mb-3">
-                        {req.servicesNeeded.slice(0, 3).map(s => (
-                          <span key={s} className="text-[10px] font-black uppercase tracking-widest px-2 py-0.5 bg-blue-50 text-blue-600 border border-blue-100 rounded-full">{s}</span>
-                        ))}
-                        {req.servicesNeeded.length > 3 && (
-                          <span className="text-[10px] font-medium text-slate-400">+{req.servicesNeeded.length - 3}</span>
-                        )}
-                      </div>
-                    )}
-
-                    {req.description && (
-                      <p className="text-slate-500 text-sm font-medium leading-relaxed mb-3 line-clamp-2">{req.description}</p>
-                    )}
-
-                    <div className="flex items-center justify-between pt-3 border-t border-slate-100">
-                      <div className="flex items-center gap-2">
-                        {req.budget && (
-                          <span className="text-xs font-bold text-green-600 bg-green-50 px-2 py-0.5 rounded-full border border-green-100">
-                            💰 {req.budget}
-                          </span>
-                        )}
-                        <span className="text-xs text-slate-400 font-medium">
-                          {req.applications?.length || 0} Bewerbung{req.applications?.length !== 1 ? 'en' : ''}
-                        </span>
-                      </div>
-                      {isPro && req.status === 'offen' && (
-                        <button onClick={() => setApplyTarget(req)}
-                          className="px-4 py-2 bg-blue-600 text-white rounded-xl text-xs font-black uppercase tracking-widest hover:bg-blue-700 transition-all active:scale-95">
-                          Bewerben
-                        </button>
-                      )}
-                      {isOwner && user && req.ownerId === user.id && (
-                        <Link to="/profile" className="text-xs font-black text-blue-600 uppercase tracking-widest hover:text-blue-700">
-                          Meine Anfrage →
-                        </Link>
-                      )}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              {companies.map((company, i) => (
+                <CompanyCard key={company.id || company.name + i} company={company} onContact={setSelectedCompany} />
+              ))}
+            </div>
           </>
+        )}
+
+        {/* Empty state */}
+        {!loading && !error && searchQuery && companies.length === 0 && (
+          <div className="text-center py-16">
+            <div className="w-14 h-14 bg-slate-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
+              <svg className="w-7 h-7 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              </svg>
+            </div>
+            <p className="font-black text-slate-900 uppercase tracking-widest text-sm">Keine Ergebnisse</p>
+            <p className="text-slate-500 text-sm mt-1">Versuchen Sie eine andere Stadt oder Region.</p>
+          </div>
+        )}
+
+        {/* Intro state */}
+        {!loading && !searchQuery && (
+          <div className="text-center py-16 text-slate-400">
+            <svg className="w-12 h-12 mx-auto mb-4 text-slate-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+            </svg>
+            <p className="font-black uppercase tracking-widest text-sm">Geben Sie eine Stadt oder Region ein</p>
+            <p className="text-xs mt-1">Wir suchen gleichzeitig bei Google und in unserem Netzwerk</p>
+          </div>
         )}
       </div>
 
-      {applyTarget && (
-        <ApplyModal
-          request={applyTarget}
-          onClose={() => setApplyTarget(null)}
-          onSuccess={() => { setApplyTarget(null); loadRequests(); }}
-        />
+      {/* Contact Modal */}
+      {selectedCompany && (
+        <ContactModal company={selectedCompany} onClose={() => setSelectedCompany(null)} />
       )}
     </div>
   );
