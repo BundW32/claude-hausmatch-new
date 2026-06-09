@@ -35,15 +35,15 @@ const ChatBot = () => {
     setLoading(true);
 
     try {
-      const history = messages.map(m => ({
-        role: m.role === 'user' ? 'user' : 'model',
-        parts: [{ text: m.text }]
+      const allMessages = [...messages, { role: 'user' as const, text }].map(m => ({
+        role: m.role === 'user' ? 'user' : 'assistant',
+        content: m.text
       }));
 
       const response = await fetch('/api/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message: text, history })
+        body: JSON.stringify({ messages: allMessages })
       });
 
       if (!response.ok) {
@@ -51,7 +51,7 @@ const ChatBot = () => {
       }
 
       const data = await response.json();
-      const replyText = data.text || 'Entschuldigung, ich konnte keine Antwort generieren.';
+      const replyText = data.reply || 'Entschuldigung, ich konnte keine Antwort generieren.';
       setMessages(prev => [...prev, { role: 'assistant', text: replyText }]);
     } catch (err) {
       console.error('Chat error:', err);
