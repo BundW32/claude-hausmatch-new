@@ -58,6 +58,12 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         body: JSON.stringify({
           system_instruction: { parts: [{ text: SYSTEM_PROMPT }] },
           contents,
-          generationConfig: { temperature: 0.7, maxOutputTokens: 1024 }
-        })
+            generationConfig: {
+                            temperature: 0.7,
+                            maxOutputTokens: 1024,
+                            thinkingConfig: {
+                                              thinkingBudget: 0
+                            }
+            }
+            })
       }
