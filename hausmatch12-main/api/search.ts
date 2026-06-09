@@ -8,49 +8,49 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (req.method === 'OPTIONS') return res.status(200).end();
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
-  const { city, units, propertyType, services } = req.body;
   const apiKey = process.env.GEMINI_API_KEY;
-
   if (!apiKey) return res.status(500).json({ error: 'API key not configured' });
-  if (!city) return res.status(400).json({ error: 'City required' });
 
-  const servicesList = Array.isArray(services) && services.length > 0
-    ? services.join(', ')
-    : 'allgemeine Hausverwaltung';
-
-  const prompt = `Du bist ein Experte für den deutschen Immobilienmarkt. Suche nach echten, existierenden Hausverwaltungsunternehmen in ${city}, Deutschland.
-
-Objekttyp des Suchenden: ${propertyType || 'WEG'}
-Anzahl Einheiten: ${units || 'ca. 10-50'}
-Gewünschte Leistungen: ${servicesList}
-
-Gib mir eine JSON-Liste von genau 5 echten Hausverwaltungsunternehmen in ${city} oder der näheren Region zurück.
-
-Jedes Objekt MUSS folgende Felder haben:
-{
-  "name": "Vollständiger Firmenname",
-  "address": "Straße Hausnummer, PLZ ${city}",
-  "phone": "Telefonnummer oder leerer String",
-  "email": "E-Mail-Adresse (falls unbekannt: info@[firmenname-kleinbuchstaben].de)",
-  "website": "Website-URL ohne https:// oder leerer String",
-  "description": "1-2 Sätze über das Unternehmen und seine Stärken",
-  "specializations": ["Array", "mit", "Spezialgebieten"],
-  "units_managed": "Anzahl verwalteter Einheiten als Text"
-}
-
-Antworte AUSSCHLIESSLICH mit dem JSON-Array. Kein Text davor oder danach.`;
+  const { query } = req.body || {};
+  if (!query || typeof query !== 'string') {
+    return res.status(400).json({ error: 'query is required' });
+  }
 
   try {
+    const prompt = `Suche nach echten, aktiven deutschen Hausverwaltungsunternehmen für die Suchanfrage: "${query}".
+
+Nutze Google-Suchergebnisse um ECHTE Unternehmen mit echten Kontaktdaten zu finden.
+Gib exakt 8 Unternehmen zurück, sortiert nach Google-Bewertung (höchste zuerst).
+
+Antworte NUR mit einem JSON-Array (kein Markdown, kein erklärender Text), in diesem Format:
+[
+  {
+    "name": "Firmenname GmbH",
+    "address": "Musterstraße 1, 80331 München",
+    "city": "München",
+    "phone": "+49 89 123456",
+    "website": "https://example.de",
+    "email": "info@example.de",
+    "rating": 4.7,
+    "reviews": 83,
+    "specialization": "WEG-Verwaltung, Mietverwaltung"
+  }
+]
+
+Felder die unbekannt sind als leeren String "" angeben, rating als 0 wenn unbekannt.`;
+
     const response = await fetch(
       `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`,
       {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
+          tools: [{ googleSearch: {} }],
           contents: [{ role: 'user', parts: [{ text: prompt }] }],
           generationConfig: {
-            temperature: 0.2,
-            maxOutputTokens: 2000
+            temperature: 0.1,
+            maxOutputTokens: 4096,
+            thinkingConfig: { thinkingBudget: 0 }
           }
         })
       }
@@ -58,6 +58,46 @@ Antworte AUSSCHLIESSLICH mit dem JSON-Array. Kein Text davor oder danach.`;
 
     if (!response.ok) {
       const errText = await response.text();
-      return res.status(502).json({ error: 'Gemini API error', details: errText });
+      console.error('Gemini error:', response.status, errText);
+      return res.status(502).json({ error: 'Gemini API error: ' + response.status });
     }
 
+    const data = await response.json();
+    const text = data?.candidates?.[0]?.content?.parts?.[0]?.text || '[]';
+
+    const jsonMatch = text.match(/\[[\s\S]*\]/);
+    if (!jsonMatch) {
+      console.error('No JSON array in response:', text.substring(0, 200));
+      return res.status(200).json({ companies: [] });
+    }
+
+    let companies = [];
+    try {
+      companies = JSON.parse(jsonMatch[0]);
+    } catch (parseErr) {
+      console.error('JSON parse error:', parseErr);
+      return res.status(200).json({ companies: [] });
+    }
+
+    if (!Array.isArray(companies)) companies = [];
+    companies = companies
+      .map((c: Record<string, unknown>) => ({
+        name: String(c.name || ''),
+        address: String(c.address || ''),
+        city: String(c.city || ''),
+        phone: String(c.phone || ''),
+        website: String(c.website || ''),
+        email: String(c.email || ''),
+        rating: Math.min(5, Math.max(0, Number(c.rating) || 0)),
+        reviews: Math.max(0, Number(c.reviews) || 0),
+        specialization: String(c.specialization || 'Hausverwaltung'),
+        isPartner: false
+      }))
+      .sort((a: { rating: number }, b: { rating: number }) => b.rating - a.rating);
+
+    return res.status(200).json({ companies });
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : 'Unknown error';
+    return res.status(500).json({ error: 'Internal server error', details: message });
+  }
+}
