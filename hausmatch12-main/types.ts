@@ -1,5 +1,4 @@
-
-// ─── USER TYPES ────────────────────────────────────────────────────────────────
+// ─── USER TYPES ───────────────────────────────────────────────────────────────
 
 export type UserRole = 'seeker' | 'manager';
 
@@ -279,9 +278,22 @@ export interface FirebaseTimestamp {
   toDate?: () => Date;
 }
 
+export interface SearchCompany {
+  name: string;
+  address: string;
+  city: string;
+  phone: string;
+  website: string;
+  email: string;
+  rating: number;
+  reviews: number;
+  specialization: string;
+}
+
 export interface ManagerSearchResult {
   introText: string;
   sources: { title: string; url: string }[];
+  companies: SearchCompany[];
 }
 
 export interface BlogArticle {
