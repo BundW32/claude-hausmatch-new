@@ -1,4 +1,4 @@
-import { InquiryAnalysis, ManagerSearchResult, BlogArticle } from "../types";
+import { InquiryAnalysis, ManagerSearchResult, BlogArticle, SearchCompany } from "../types";
 import { GoogleGenAI, Type } from "@google/genai";
 
 // Wir lesen den Key sicher aus
@@ -32,12 +32,12 @@ export const analyzePropertyRequirement = async (formData: {
   try {
     // 2. Initialisierung
     const ai = new GoogleGenAI({ apiKey: API_KEY });
-    
+
     const prompt = `
       Analysiere diese Immobilien-Anfrage.
-      Stadt: ${formData.city}, Einheiten: ${formData.units}, Typ: ${formData.propertyType}, 
+      Stadt: ${formData.city}, Einheiten: ${formData.units}, Typ: ${formData.propertyType},
       Baujahr: ${formData.buildingAge}, Zustand: ${formData.condition}, Text: ${formData.description}
-      
+
       Antworte im JSON-Format auf Deutsch.
     `;
 
@@ -62,7 +62,7 @@ export const analyzePropertyRequirement = async (formData: {
 
     const text = response.text;
     if (!text) throw new Error("Keine Antwort von der KI erhalten");
-    
+
     return JSON.parse(text) as InquiryAnalysis;
 
   } catch (error) {
@@ -136,7 +136,7 @@ export const fetchLatestIndustryBlog = async (): Promise<BlogArticle[]> => {
 
     const text = response.text;
     if (!text) throw new Error("Keine Blog-Daten erhalten");
-    
+
     const articles = JSON.parse(text) as BlogArticle[];
     return articles.map((a, i) => ({ ...a, isLatest: i === 0 }));
 
@@ -158,10 +158,35 @@ export const fetchLatestIndustryBlog = async (): Promise<BlogArticle[]> => {
 };
 
 export const searchPropertyManagers = async (city: string): Promise<ManagerSearchResult> => {
-  return {
-    introText: `Hier sind Top-Verwalter in ${city} (Demo-Suche)`,
-    sources: []
-  };
+  try {
+    const res = await fetch('/api/search', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ query: `Hausverwaltung ${city}` })
+    });
+
+    if (!res.ok) {
+      throw new Error(`Suche fehlgeschlagen (Status ${res.status})`);
+    }
+
+    const data = await res.json();
+    const companies: SearchCompany[] = Array.isArray(data?.companies) ? data.companies : [];
+
+    return {
+      introText: companies.length > 0
+        ? `${companies.length} Hausverwaltungen in ${city} gefunden – live durchsucht über Google Search.`
+        : `Es konnten keine Hausverwaltungen in ${city} gefunden werden. Versuchen Sie es mit einer anderen Stadt oder Region.`,
+      sources: [],
+      companies
+    };
+  } catch (error) {
+    console.error("Live-Suche Fehler:", error);
+    return {
+      introText: "Die Live-Suche ist momentan nicht erreichbar. Bitte versuchen Sie es in Kürze erneut.",
+      sources: [],
+      companies: []
+    };
+  }
 };
 
 export const getAIAdvisorResponse = async (history: { role: string; parts: { text: string }[] }[], message: string) => {
