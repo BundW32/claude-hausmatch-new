@@ -54,7 +54,7 @@ const ContactModal = ({ company, onClose }: { company: Company; onClose: () => v
   const emailSubject = `Anfrage Hausverwaltung über HausMatch – ${company.name}`;
   const emailBody = `Sehr geehrte Damen und Herren,
 
-øber die Plattform HausMatch bin ich auf Ihr Unternehmen aufmerksam geworden und interessiere mich für Ihre Verwaltungsdienstleistungen.
+Über die Plattform HausMatch bin ich auf Ihr Unternehmen aufmerksam geworden und interessiere mich für Ihre Verwaltungsdienstleistungen.
 
 Ich bin Eigentümer einer Immobilie und suche eine professionelle Hausverwaltung (${company.specialization || 'WEG- oder Mietverwaltung'}).
 
@@ -65,7 +65,7 @@ Mit freundlichen Grüßen,
 [Ihre Telefonnummer]
 
 ---
-Diese Anfrage wurde øber HausMatch.de vermittelt.`;
+Diese Anfrage wurde über HausMatch.de vermittelt.`;
 
   const mailtoLink = `mailto:${company.email}?subject=${encodeURIComponent(emailSubject)}&body=${encodeURIComponent(emailBody)}`;
 
@@ -360,7 +360,7 @@ const MatchingBoard = () => {
             Echte Hausverwaltungen<br />in Ihrer Region
           </h1>
           <p className="text-slate-500 font-medium max-w-xl mx-auto">
-            Realtime-Suche øber Google · Bewertungen direkt vergleichen · HausMatch-Partner bevorzugt angezeigt
+            Realtime-Suche über Google · Bewertungen direkt vergleichen · HausMatch-Partner bevorzugt angezeigt
           </p>
         </div>
 
@@ -376,7 +376,7 @@ const MatchingBoard = () => {
                 value={inputValue}
                 onChange={e => setInputValue(e.target.value)}
                 onKeyDown={handleKeyDown}
-                placeholder="z.B. Hausverwaltung Mønchen oder WEG Berlin"
+                placeholder="z.B. Hausverwaltung München oder WEG Berlin"
                 className="w-full pl-11 pr-4 py-4 bg-white border-2 border-slate-200 rounded-2xl text-sm font-medium text-slate-900 placeholder-slate-400 focus:outline-none focus:border-blue-500 transition-all shadow-sm"
               />
             </div>
@@ -433,7 +433,7 @@ const MatchingBoard = () => {
             <div className="flex items-center justify-between mb-5">
               <div>
                 <h2 className="text-sm font-black text-slate-900 uppercase tracking-widest">
-                  {companies.length} Ergebnisse før „{searchQuery}"
+                  {companies.length} Ergebnisse für „{searchQuery}"
                 </h2>
                 {partnerCount > 0 && (
                   <p className="text-xs text-blue-600 font-medium mt-0.5">
