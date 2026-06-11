@@ -22,6 +22,13 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 Nutze Google-Suchergebnisse um ECHTE Unternehmen mit echten Kontaktdaten zu finden.
 Gib exakt 8 Unternehmen zurück, sortiert nach Google-Bewertung (höchste zuerst).
 
+WICHTIG – E-Mail-Adresse recherchieren: Das Feld "email" ist für den Nutzer besonders wichtig, da darüber direkt Kontaktanfragen verschickt werden. Recherchiere daher für JEDES Unternehmen aktiv und gründlich nach einer E-Mail-Adresse, bevor du das Feld leer lässt:
+1. Prüfe die offizielle Unternehmenswebsite, insbesondere die Seiten "Kontakt", "Impressum" oder "Über uns".
+2. Das Impressum ist in Deutschland gesetzlich vorgeschrieben und enthält fast immer eine E-Mail-Adresse – suche gezielt danach (z.B. "<Firmenname> Impressum").
+3. Prüfe zusätzlich Brancheneinträge wie Google-Unternehmensprofil, Gelbe Seiten, Das Örtliche, branchenbuch.de oder Immobilienscout24/Immowelt-Profile, die oft Kontaktdaten inklusive E-Mail listen.
+4. Wenn du nur die Website-Domain kennst, aber keine explizite Adresse findest, leite KEINE geratene Adresse (z.B. "info@domain.de") ab – verwende nur E-Mail-Adressen, die du tatsächlich auf einer Quelle gefunden hast.
+Setze "email" nur dann auf einen leeren String "", wenn du nach gründlicher Recherche über alle oben genannten Quellen wirklich keine E-Mail-Adresse findest.
+
 Antworte NUR mit einem JSON-Array (kein Markdown, kein erklärender Text), in diesem Format:
 [
   {
@@ -49,7 +56,7 @@ Felder die unbekannt sind als leeren String "" angeben, rating als 0 wenn unbeka
           contents: [{ role: 'user', parts: [{ text: prompt }] }],
           generationConfig: {
             temperature: 0.1,
-            maxOutputTokens: 4096,
+            maxOutputTokens: 8192,
             thinkingConfig: { thinkingBudget: 0 }
           }
         })
