@@ -137,6 +137,12 @@ const SearchResults = () => {
   const [result, setResult] = useState<ManagerSearchResult | null>(null);
   const [loading, setLoading] = useState(true);
   const [selected, setSelected] = useState<Set<number>>(new Set());
+  const [showInquiryModal, setShowInquiryModal] = useState(false);
+  const [senderName, setSenderName] = useState('');
+  const [senderEmail, setSenderEmail] = useState('');
+  const [inquiryMessage, setInquiryMessage] = useState('');
+  const [sending, setSending] = useState(false);
+  const [sendStatus, setSendStatus] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
 
   const fetchData = useCallback(async () => {
     setLoading(true);
@@ -169,6 +175,46 @@ const SearchResults = () => {
   const selectedCompanies = companies.filter((_, idx) => selected.has(idx));
   const selectedWithEmail = selectedCompanies.filter(c => !!c.email);
   const mailtoHref = selectedWithEmail.length > 0 ? buildMailto(selectedWithEmail, city) : undefined;
+
+  const openInquiryModal = () => {
+    if (selectedWithEmail.length === 0) return;
+    setInquiryMessage(
+      'Sehr geehrte Damen und Herren,\n\n' +
+      'über die Plattform HausMatch suche ich für eine Immobilie in ' + city + ' eine professionelle Hausverwaltung und möchte Sie gerne kontaktieren.\n\n' +
+      'Ich würde mich freuen, wenn Sie mit mir Kontakt aufnehmen, um die Details und Ihr Leistungsangebot zu besprechen.'
+    );
+    setSendStatus(null);
+    setShowInquiryModal(true);
+  };
+
+  const sendInquiry = async () => {
+    if (!senderName.trim() || !senderEmail.trim()) {
+      setSendStatus({ type: 'error', text: 'Bitte Name und E-Mail-Adresse angeben.' });
+      return;
+    }
+    setSending(true);
+    setSendStatus(null);
+    try {
+      const res = await fetch('/api/send-inquiry', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          senderName,
+          senderEmail,
+          message: inquiryMessage,
+          city,
+          recipients: selectedWithEmail.map((c) => ({ name: c.name, email: c.email }))
+        })
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data?.error || 'Versand fehlgeschlagen');
+      setSendStatus({ type: 'success', text: 'Anfrage erfolgreich an ' + selectedWithEmail.length + ' Unternehmen gesendet.' });
+    } catch (err) {
+      setSendStatus({ type: 'error', text: err instanceof Error ? err.message : 'Unbekannter Fehler beim Versand.' });
+    } finally {
+      setSending(false);
+    }
+  };
 
   return (
     <div className="bg-slate-50 min-h-screen pt-12 pb-24 font-sans">
@@ -274,10 +320,10 @@ const SearchResults = () => {
                 </button>
               </div>
 
-              <a
-                href={mailtoHref}
-                onClick={(e) => { if (!mailtoHref) e.preventDefault(); }}
-                aria-disabled={!mailtoHref}
+              <button
+                type="button"
+                onClick={openInquiryModal}
+                disabled={!mailtoHref}
                 className={`w-full flex items-center justify-center gap-2 py-5 rounded-2xl font-black text-lg transition-all shadow-xl ${
                   mailtoHref
                     ? 'bg-white text-indigo-700 hover:bg-indigo-50 active:scale-95'
@@ -285,8 +331,8 @@ const SearchResults = () => {
                 }`}
               >
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
-                Anfrage per E-Mail senden
-              </a>
+                Anfrage senden
+              </button>
 
               {selectedCompanies.length === 0 ? (
                 <p className="text-xs text-indigo-200 mt-4 text-center leading-relaxed">
@@ -298,13 +344,45 @@ const SearchResults = () => {
                 </p>
               ) : (
                 <p className="text-xs text-indigo-200 mt-4 text-center leading-relaxed">
-                  Öffnet Ihr E-Mail-Programm mit einer vorausgefüllten Anfrage an {selectedWithEmail.length} Empfänger.
+                  Ihre Nachricht wird direkt an {selectedWithEmail.length} Empfänger gesendet.
                 </p>
               )}
             </div>
           </div>
         </div>
       </div>
+
+      {showInquiryModal && (
+        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-[2.5rem] p-8 md:p-10 max-w-lg w-full shadow-2xl max-h-[90vh] overflow-y-auto">
+            <h3 className="text-2xl font-black text-slate-900 mb-2 tracking-tight">Anfrage senden</h3>
+            <p className="text-sm text-slate-500 mb-6 leading-relaxed">
+              Ihre Anfrage wird direkt per E-Mail an {selectedWithEmail.length} {selectedWithEmail.length === 1 ? 'Hausverwaltung' : 'Hausverwaltungen'} verschickt: {selectedWithEmail.map((c) => c.name).join(', ')}
+            </p>
+            <div className="space-y-4">
+              <div>
+                <label className="block text-xs font-black text-slate-700 uppercase tracking-widest mb-2">Ihr Name</label>
+                <input type="text" value={senderName} onChange={(e) => setSenderName(e.target.value)} className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-indigo-400 focus:outline-none" placeholder="Max Mustermann" />
+              </div>
+              <div>
+                <label className="block text-xs font-black text-slate-700 uppercase tracking-widest mb-2">Ihre E-Mail-Adresse</label>
+                <input type="email" value={senderEmail} onChange={(e) => setSenderEmail(e.target.value)} className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-indigo-400 focus:outline-none" placeholder="max@beispiel.de" />
+              </div>
+              <div>
+                <label className="block text-xs font-black text-slate-700 uppercase tracking-widest mb-2">Nachricht</label>
+                <textarea value={inquiryMessage} onChange={(e) => setInquiryMessage(e.target.value)} rows={6} className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-indigo-400 focus:outline-none resize-none" />
+              </div>
+            </div>
+            {sendStatus && (
+              <p className="mt-4 text-sm font-bold" style={{ color: sendStatus.type === 'success' ? '#16a34a' : '#dc2626' }}>{sendStatus.text}</p>
+            )}
+            <div className="flex gap-3 mt-6">
+              <button type="button" onClick={() => setShowInquiryModal(false)} disabled={sending} className="flex-1 px-4 py-3 bg-slate-100 hover:bg-slate-200 rounded-xl text-sm font-black uppercase tracking-widest transition-all disabled:opacity-40">Abbrechen</button>
+              <button type="button" onClick={sendInquiry} disabled={sending} className="flex-1 px-4 py-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-sm font-black uppercase tracking-widest transition-all disabled:opacity-40">{sending ? 'Wird gesendet…' : 'Jetzt senden'}</button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
