@@ -3,15 +3,6 @@ import { useSearchParams } from 'react-router-dom';
 import { searchPropertyManagers } from '../services/geminiService';
 import { ManagerSearchResult, SearchCompany } from '../types';
 
-const MATCHING_STEPS = [
-  { id: 1, label: "Initialisiere HausMatch Engine v3.1", status: "pending" },
-  { id: 2, label: "Abfrage Google Search Grounding API", status: "pending" },
-  { id: 3, label: "Filtere lokale Verwaltungen in Region", status: "pending" },
-  { id: 4, label: "Extrahiere Web-Referenzen (Grounding Chunks)", status: "pending" },
-  { id: 5, label: "Semantische Analyse der Service-Expertise", status: "pending" },
-  { id: 6, label: "Generiere kuratierte Empfehlungsliste", status: "pending" }
-];
-
 const StarRating = ({ rating }: { rating: number }) => {
   const full = Math.floor(rating);
   const half = rating % 1 >= 0.5;
@@ -145,24 +136,15 @@ const SearchResults = () => {
   const city = searchParams.get('city') || 'Deutschland';
   const [result, setResult] = useState<ManagerSearchResult | null>(null);
   const [loading, setLoading] = useState(true);
-  const [showLogs, setShowLogs] = useState(true);
-  const [currentStep, setCurrentStep] = useState(0);
   const [selected, setSelected] = useState<Set<number>>(new Set());
 
   const fetchData = useCallback(async () => {
     setLoading(true);
-    setCurrentStep(0);
     setSelected(new Set());
-
-    const stepInterval = setInterval(() => {
-      setCurrentStep(prev => (prev < MATCHING_STEPS.length ? prev + 1 : prev));
-    }, 700);
 
     const data = await searchPropertyManagers(city);
     setResult(data);
 
-    clearInterval(stepInterval);
-    setCurrentStep(MATCHING_STEPS.length);
     setTimeout(() => setLoading(false), 500);
   }, [city]);
 
@@ -191,61 +173,17 @@ const SearchResults = () => {
   return (
     <div className="bg-slate-50 min-h-screen pt-12 pb-24 font-sans">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex flex-col md:flex-row md:items-center justify-between mb-12 gap-6">
-          <div>
-            <div className="flex items-center gap-3 mb-3">
-              <span className="bg-indigo-600 text-white text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-widest shadow-lg shadow-indigo-100">Live Matching</span>
-              <h1 className="text-4xl font-black text-slate-900 tracking-tight">
-                Empfohlene Partner in {city}
-              </h1>
-            </div>
+        <div className="mb-12">
+          <div className="flex items-center gap-3 mb-3">
+            <span className="bg-indigo-600 text-white text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-widest shadow-lg shadow-indigo-100">Live Matching</span>
+            <h1 className="text-4xl font-black text-slate-900 tracking-tight">
+              Empfohlene Partner in {city}
+            </h1>
           </div>
-
-          <button
-            onClick={() => setShowLogs(!showLogs)}
-            className="text-xs font-black text-indigo-600 uppercase tracking-widest flex items-center gap-2 hover:bg-indigo-50 px-4 py-2 rounded-xl transition-all"
-          >
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" /></svg>
-            {showLogs ? "Logs ausblenden" : "Vorgang zeigen"}
-          </button>
         </div>
 
         <div className="grid lg:grid-cols-3 gap-10">
           <div className="lg:col-span-2 space-y-8">
-
-            {showLogs && (
-              <div className="bg-slate-900 rounded-[2.5rem] p-8 border border-slate-800 shadow-2xl overflow-hidden animate-in slide-in-from-top-4">
-                <div className="flex items-center justify-between mb-8 border-b border-slate-800 pb-4">
-                  <div className="flex items-center gap-3">
-                    <div className="flex gap-1.5">
-                      <div className="w-2.5 h-2.5 rounded-full bg-red-500"></div>
-                      <div className="w-2.5 h-2.5 rounded-full bg-yellow-500"></div>
-                      <div className="w-2.5 h-2.5 rounded-full bg-green-500"></div>
-                    </div>
-                    <span className="text-[10px] font-mono text-slate-500 uppercase tracking-[0.3em]">Matching Engine Log</span>
-                  </div>
-                  <span className="text-[10px] font-mono text-indigo-500 font-bold">STATUS: {loading ? 'PROCESSING' : 'COMPLETED'}</span>
-                </div>
-
-                <div className="space-y-4 font-mono">
-                  {MATCHING_STEPS.map((step, idx) => (
-                    <div key={step.id} className={`flex items-center gap-4 text-xs transition-opacity duration-300 ${idx < currentStep ? 'opacity-100' : 'opacity-20'}`}>
-                      {idx < currentStep - 1 ? (
-                        <svg className="w-4 h-4 text-green-500 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" /></svg>
-                      ) : idx === currentStep - 1 && loading ? (
-                        <div className="w-4 h-4 border-2 border-indigo-500 border-t-transparent rounded-full animate-spin flex-shrink-0"></div>
-                      ) : (
-                        <div className="w-4 h-4 border-2 border-slate-700 rounded-full flex-shrink-0"></div>
-                      )}
-                      <span className={idx < currentStep - 1 ? 'text-slate-300' : 'text-indigo-400 font-bold'}>
-                        {step.label}
-                      </span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
             {loading ? (
               <div className="space-y-8">
                 <div className="bg-white p-16 rounded-[3rem] border border-slate-100 flex flex-col items-center text-center shadow-sm">
@@ -294,7 +232,7 @@ const SearchResults = () => {
                         onToggle={() => toggleSelect(idx)}
                       />
                     ))}
-                  </div>
+                </div>
                 )}
               </div>
             ) : null}
