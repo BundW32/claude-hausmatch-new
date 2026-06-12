@@ -22,13 +22,12 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 Nutze Google-Suchergebnisse um ECHTE Unternehmen mit echten Kontaktdaten zu finden.
 Gib exakt 8 Unternehmen zurück, sortiert nach Google-Bewertung (höchste zuerst).
 
-WICHTIG – E-Mail-Adresse recherchieren: Das Feld "email" ist für den Nutzer besonders wichtig, da darüber direkt Kontaktanfragen verschickt werden. Recherchiere daher für JEDES Unternehmen aktiv und gründlich nach einer E-Mail-Adresse, bevor du das Feld leer lässt:
-1. Prüfe die offizielle Unternehmenswebsite, insbesondere die Seiten "Kontakt", "Impressum" oder "Über uns".
-2. Das Impressum ist in Deutschland gesetzlich vorgeschrieben und enthält fast immer eine E-Mail-Adresse – suche gezielt danach (z.B. "<Firmenname> Impressum").
-3. Prüfe zusätzlich Brancheneinträge wie Google-Unternehmensprofil, Gelbe Seiten, Das Örtliche, branchenbuch.de oder Immobilienscout24/Immowelt-Profile, die oft Kontaktdaten inklusive E-Mail listen.
-4. Wenn du nur die Website-Domain kennst, aber keine explizite Adresse findest, leite KEINE geratene Adresse (z.B. "info@domain.de") ab – verwende nur E-Mail-Adressen, die du tatsächlich auf einer Quelle gefunden hast.
-Setze "email" nur dann auf einen leeren String "", wenn du nach gründlicher Recherche über alle oben genannten Quellen wirklich keine E-Mail-Adresse findest.
-
+WICHTIG – Vollständige Kontaktdaten recherchieren: Die Felder "address", "phone", "website" und "email" sind für den Nutzer besonders wichtig, damit er die Hausverwaltung direkt erreichen kann. Recherchiere daher für JEDES Unternehmen aktiv und gründlich nach ALLEN diesen Angaben, bevor du ein Feld leer lässt:
+1. Prüfe die offizielle Unternehmenswebsite, insbesondere die Seiten "Kontakt", "Impressum" oder "Über uns" – dort stehen meist die vollständige Postadresse, Telefonnummer und E-Mail-Adresse.
+2. Das Impressum ist in Deutschland gesetzlich vorgeschrieben und enthält fast immer Postanschrift, Telefonnummer und E-Mail – suche gezielt danach (z.B. "<Firmenname> Impressum").
+3. Prüfe zusätzlich Brancheneinträge wie Google-Unternehmensprofil, Gelbe Seiten, Das Örtliche, branchenbuch.de oder Immobilienscout24/Immowelt-Profile, die oft vollständige Adress-, Telefon- und E-Mail-Angaben enthalten.
+4. Erfinde oder rate NIEMALS Angaben (z.B. keine geratene Adresse, keine geratene E-Mail wie "info@domain.de") – verwende nur Daten, die du tatsächlich auf einer Quelle gefunden hast.
+Setze ein Feld nur dann auf einen leeren String "", wenn du nach gründlicher Recherche über alle oben genannten Quellen wirklich keine Angabe findest.
 Antworte NUR mit einem JSON-Array (kein Markdown, kein erklärender Text), in diesem Format:
 [
   {
