@@ -41,6 +41,7 @@ const Profile = () => {
           setProfileUser(currentUser);
           setFormData({
             name: currentUser.name,
+            email: currentUser.email || '',
             bio: currentUser.bio || '',
             location: currentUser.location || '',
             phone: currentUser.phone || '',
@@ -245,6 +246,20 @@ const Profile = () => {
                          <input className="w-full bg-slate-50 border-0 rounded-[2rem] px-8 py-5 text-black font-bold ring-1 ring-slate-100 focus:ring-2 focus:ring-indigo-600 outline-none transition-all text-xl" value={formData.location} onChange={e => setFormData({...formData, location: e.target.value})} />
                       </div>
                    </div>
+                   <div className="grid md:grid-cols-3 gap-10">
+                     <div className="space-y-3">
+                       <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-6">E-Mail</label>
+                       <input type="email" className="w-full bg-slate-50 border-0 rounded-[2rem] px-8 py-5 text-black font-bold ring-1 ring-slate-100 focus:ring-2 focus:ring-indigo-600 outline-none transition-all text-xl" value={formData.email || ''} onChange={e => setFormData({...formData, email: e.target.value})} placeholder="email@firma.de" />
+                     </div>
+                     <div className="space-y-3">
+                       <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-6">Telefon</label>
+                       <input type="tel" className="w-full bg-slate-50 border-0 rounded-[2rem] px-8 py-5 text-black font-bold ring-1 ring-slate-100 focus:ring-2 focus:ring-indigo-600 outline-none transition-all text-xl" value={formData.phone || ''} onChange={e => setFormData({...formData, phone: e.target.value})} placeholder="+49 ..." />
+                     </div>
+                     <div className="space-y-3">
+                       <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-6">Website</label>
+                       <input className="w-full bg-slate-50 border-0 rounded-[2rem] px-8 py-5 text-black font-bold ring-1 ring-slate-100 focus:ring-2 focus:ring-indigo-600 outline-none transition-all text-xl" value={formData.website || ''} onChange={e => setFormData({...formData, website: e.target.value})} placeholder="www.firma.de" />
+                     </div>
+                   </div>
 
                    {isManager && (
                      <div className="bg-slate-50 p-10 md:p-14 rounded-[3.5rem] border border-slate-100">
@@ -370,6 +385,18 @@ const Profile = () => {
                                     <span className="text-[10px] font-black text-slate-300 uppercase tracking-widest">Direktwahl</span>
                                     <span className="text-slate-900 font-black text-xl tracking-tight">{profileUser.phone}</span>
                                  </div>
+                              </li>
+                            ) : null}
+
+                            {profileUser.email ? (
+                              <li className="flex items-center gap-6 group/item">
+                                <div className="w-14 h-14 rounded-[1.5rem] bg-green-50 flex items-center justify-center text-green-600 shrink-0 transition-colors group-hover/item:bg-green-600 group-hover/item:text-white">
+                                  <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
+                                </div>
+                                <div className="flex flex-col min-w-0">
+                                  <span className="text-[10px] font-black text-slate-300 uppercase tracking-widest">E-Mail</span>
+                                  <a href={`mailto:${profileUser.email}`} className="text-slate-900 font-black text-xl break-all hover:text-indigo-600 transition-colors tracking-tight">{profileUser.email}</a>
+                                </div>
                               </li>
                             ) : null}
 
