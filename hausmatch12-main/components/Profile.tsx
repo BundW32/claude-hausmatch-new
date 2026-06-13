@@ -356,56 +356,56 @@ const Profile = () => {
 
                    {/* Right Column: Contact Details & Stats */}
                    <div className="lg:col-span-4 space-y-10 order-first lg:order-none">
-                      <div className="p-12 md:p-14 bg-white border border-slate-100 rounded-[4rem] shadow-2xl relative overflow-hidden group">
+                      <div className="p-8 md:p-12 bg-white border border-slate-100 rounded-[4rem] shadow-2xl relative overflow-hidden group">
                          <div className="absolute top-0 right-0 w-32 h-32 bg-indigo-50 rounded-bl-[4rem] -mr-12 -mt-12 group-hover:bg-indigo-600 transition-all duration-500"></div>
                          
                          <h4 className="text-[11px] font-black text-slate-900 uppercase tracking-[0.3em] mb-12 border-b border-slate-50 pb-6 relative z-10">Kontakt-Zentrale</h4>
                          
-                         <ul className="space-y-8 relative z-10">
+                         <ul className="space-y-6 relative z-10">
                             {profileUser.location ? (
-                              <li className="flex items-center gap-6 group/item">
-                                 <div className="w-14 h-14 rounded-[1.5rem] bg-indigo-50 flex items-center justify-center text-indigo-600 shrink-0 transition-colors group-hover/item:bg-indigo-600 group-hover/item:text-white">
-                                    <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /></svg>
+                              <li className="flex items-center gap-4 group/item">
+                                 <div className="w-11 h-11 rounded-2xl bg-indigo-50 flex items-center justify-center text-indigo-600 shrink-0 transition-colors group-hover/item:bg-indigo-600 group-hover/item:text-white">
+                                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /></svg>
                                  </div>
                                  <div className="flex flex-col min-w-0">
                                     <span className="text-[10px] font-black text-slate-300 uppercase tracking-widest">Region</span>
-                                    <span className="text-slate-900 font-black text-xl break-words tracking-tight">{profileUser.location}</span>
+                                    <span className="text-slate-900 font-black text-base break-words tracking-tight">{profileUser.location}</span>
                                  </div>
                               </li>
                             ) : null}
 
                             {profileUser.phone ? (
-                              <li className="flex items-center gap-6 group/item">
-                                 <div className="w-14 h-14 rounded-[1.5rem] bg-blue-50 flex items-center justify-center text-blue-600 shrink-0 transition-colors group-hover/item:bg-blue-600 group-hover/item:text-white">
-                                    <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" /></svg>
+                              <li className="flex items-center gap-4 group/item">
+                                 <div className="w-11 h-11 rounded-2xl bg-blue-50 flex items-center justify-center text-blue-600 shrink-0 transition-colors group-hover/item:bg-blue-600 group-hover/item:text-white">
+                                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" /></svg>
                                  </div>
                                  <div className="flex flex-col min-w-0">
                                     <span className="text-[10px] font-black text-slate-300 uppercase tracking-widest">Direktwahl</span>
-                                    <span className="text-slate-900 font-black text-xl break-words tracking-tight">{profileUser.phone}</span>
+                                    <span className="text-slate-900 font-black text-base break-words tracking-tight">{profileUser.phone}</span>
                                  </div>
                               </li>
                             ) : null}
 
                             {profileUser.email ? (
-                              <li className="flex items-center gap-6 group/item">
-                                <div className="w-14 h-14 rounded-[1.5rem] bg-green-50 flex items-center justify-center text-green-600 shrink-0 transition-colors group-hover/item:bg-green-600 group-hover/item:text-white">
-                                  <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
+                              <li className="flex items-center gap-4 group/item">
+                                <div className="w-11 h-11 rounded-2xl bg-green-50 flex items-center justify-center text-green-600 shrink-0 transition-colors group-hover/item:bg-green-600 group-hover/item:text-white">
+                                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
                                 </div>
                                 <div className="flex flex-col min-w-0">
                                   <span className="text-[10px] font-black text-slate-300 uppercase tracking-widest">E-Mail</span>
-                                  <a href={`mailto:${profileUser.email}`} className="text-slate-900 font-black text-xl break-all hover:text-indigo-600 transition-colors tracking-tight">{profileUser.email}</a>
+                                  <a href={`mailto:${profileUser.email}`} className="text-slate-900 font-black text-base break-all hover:text-indigo-600 transition-colors tracking-tight">{profileUser.email}</a>
                                 </div>
                               </li>
                             ) : null}
 
                             {profileUser.website ? (
-                              <li className="flex items-center gap-6 group/item">
-                                 <div className="w-14 h-14 rounded-[1.5rem] bg-purple-50 flex items-center justify-center text-purple-600 shrink-0 transition-colors group-hover/item:bg-purple-600 group-hover/item:text-white">
-                                    <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" /></svg>
+                              <li className="flex items-center gap-4 group/item">
+                                 <div className="w-11 h-11 rounded-2xl bg-purple-50 flex items-center justify-center text-purple-600 shrink-0 transition-colors group-hover/item:bg-purple-600 group-hover/item:text-white">
+                                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" /></svg>
                                  </div>
                                  <div className="flex flex-col min-w-0">
                                     <span className="text-[10px] font-black text-slate-300 uppercase tracking-widest">Webseite</span>
-                                    <a href={profileUser.website.startsWith('http') ? profileUser.website : `https://${profileUser.website}`} target="_blank" rel="noreferrer" className="text-slate-900 font-black text-xl break-all hover:text-indigo-600 transition-colors tracking-tight">
+                                    <a href={profileUser.website.startsWith('http') ? profileUser.website : `https://${profileUser.website}`} target="_blank" rel="noreferrer" className="text-slate-900 font-black text-base break-all hover:text-indigo-600 transition-colors tracking-tight">
                                       {profileUser.website.replace(/(^\w+:|^)\/\//, '')}
                                     </a>
                                  </div>
