@@ -381,7 +381,7 @@ const Profile = () => {
                                  </div>
                                  <div className="flex flex-col min-w-0">
                                     <span className="text-[10px] font-black text-slate-300 uppercase tracking-widest">Direktwahl</span>
-                                    <span className="text-slate-900 font-black text-xl tracking-tight">{profileUser.phone}</span>
+                                    <span className="text-slate-900 font-black text-xl break-words tracking-tight">{profileUser.phone}</span>
                                  </div>
                               </li>
                             ) : null}
