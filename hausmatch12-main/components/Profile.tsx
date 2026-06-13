@@ -355,7 +355,7 @@ const Profile = () => {
                    </div>
 
                    {/* Right Column: Contact Details & Stats */}
-                   <div className="lg:col-span-4 space-y-10">
+                   <div className="lg:col-span-4 space-y-10 order-first lg:order-none">
                       <div className="p-12 md:p-14 bg-white border border-slate-100 rounded-[4rem] shadow-2xl relative overflow-hidden group">
                          <div className="absolute top-0 right-0 w-32 h-32 bg-indigo-50 rounded-bl-[4rem] -mr-12 -mt-12 group-hover:bg-indigo-600 transition-all duration-500"></div>
                          
