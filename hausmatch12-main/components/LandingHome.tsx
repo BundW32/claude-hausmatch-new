@@ -87,7 +87,7 @@ const LandingHome = () => {
             <div className="mt-8 md:mt-10 flex flex-wrap justify-center items-center gap-x-6 gap-y-3 opacity-70">
               {['Community-Forum', 'Experten-Netzwerk', 'KI-Ratgeber', 'Kreditrechner'].map(feature => (
                 <div key={feature} className="flex items-center gap-2">
-                  <svg className="w-4 h-4 text-blue-600" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 001.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" /></svg>
+                  <svg className="w-4 h-4 text-blue-600" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" /></svg>
                   <span className="text-[10px] md:text-xs font-black text-slate-900 uppercase tracking-widest">{feature}</span>
                 </div>
               ))}
@@ -143,9 +143,9 @@ const LandingHome = () => {
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {[
-              { icon: <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" /></svg>, title: 'Community', desc: 'Vernetzen Sie sich mit Eigentümern sowohl als auch Verwaltern in ganz Deutschland.', link: '/network', linkText: 'Zum Netzwerk' },
+              { icon: <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" /></svg>, title: 'Community', desc: 'Vernetzen Sie sich mit Eigentümern und Verwaltern in ganz Deutschland.', link: '/network', linkText: 'Zum Netzwerk' },
               { icon: <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" /></svg>, title: 'Forum & Austausch', desc: 'Stellen Sie Fragen, teilen Sie Erfahrungen und lernen Sie von der Community.', link: '/forum', linkText: 'Zum Forum' },
-              { icon: <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" /></svg>, title: 'Kreditrechner', desc: 'Berechnung von Rendite, monatliche Rate und Nebenkosten für Ihr Projekt.', link: '/kreditrechner', linkText: 'Zum Rechner' },
+              { icon: <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" /></svg>, title: 'Kreditrechner', desc: 'Berechnen Sie Rendite, monatliche Rate und Nebenkosten für Ihr Projekt.', link: '/kreditrechner', linkText: 'Zum Rechner' },
               { icon: <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" /></svg>, title: 'Ratgeber', desc: 'Expertenwissen zu Recht, Verwaltung und Investitionen — klar und praxisnah.', link: '/ratgeber', linkText: 'Zum Ratgeber' }
             ].map((item, i) => (
               <div key={i} className="bg-white rounded-2xl p-6 border border-slate-100 shadow-sm hover:shadow-md transition-shadow group">
@@ -194,8 +194,8 @@ const LandingHome = () => {
           <h2 className="text-3xl md:text-4xl font-black text-white tracking-tighter mb-4">Werden Sie Teil der Community</h2>
           <p className="text-slate-400 font-medium mb-8 text-sm md:text-base">Kostenlos registrieren und sofort mit Experten und Eigentümern vernetzen.</p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link to="/register" className="px-8 py-4 bg-blue-600 text-white rounded-2xl font-black uppercase tracking-widest text-sm hover:bg-blue-500 transition-all shadow-xl shadow-blue-900/40 active:scale-95">Ko�tenlos starten</Link>
-            <Link to="/ratgeber" className="px-8 py-4 bg-white/10 text-white rounded-2xl font-black uppercase tracking-widest text-sm hover:bg-white/20 transition-all border border-white/10 active:scale-95">Ratweber lesen</Link>
+            <Link to="/register" className="px-8 py-4 bg-blue-600 text-white rounded-2xl font-black uppercase tracking-widest text-sm hover:bg-blue-500 transition-all shadow-xl shadow-blue-900/40 active:scale-95">Kostenlos starten</Link>
+            <Link to="/ratgeber" className="px-8 py-4 bg-white/10 text-white rounded-2xl font-black uppercase tracking-widest text-sm hover:bg-white/20 transition-all border border-white/10 active:scale-95">Ratgeber lesen</Link>
           </div>
         </div>
       </section>
