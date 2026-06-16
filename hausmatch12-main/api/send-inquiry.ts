@@ -1,4 +1,10 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
+import { Resend } from 'resend';
+
+const resend = new Resend(process.env.RESEND_API_KEY);
+
+const ADMIN_EMAIL = process.env.ADMIN_EMAIL || 'barth@bundwimmobilien.de';
+const FROM_EMAIL = process.env.RESEND_FROM_EMAIL || 'HausMatch <onboarding@resend.dev>';
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -8,75 +14,70 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (req.method === 'OPTIONS') return res.status(200).end();
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
-  const apiKey = process.env.RESEND_API_KEY;
-  if (!apiKey) {
-    return res.status(500).json({ error: 'E-Mail-Versand ist nicht konfiguriert (RESEND_API_KEY fehlt).' });
+  if (!process.env.RESEND_API_KEY) {
+    console.error('RESEND_API_KEY fehlt');
+    return res.status(500).json({ error: 'E-Mail-Dienst nicht konfiguriert.' });
   }
 
-  const { senderName, senderEmail, message, city, recipients } = req.body || {};
+  const { senderName, senderEmail, senderPhone, message, city, companies } = req.body || {};
 
-  if (!senderName || typeof senderName !== 'string') {
-    return res.status(400).json({ error: 'senderName ist erforderlich' });
-  }
-  if (!senderEmail || typeof senderEmail !== 'string') {
-    return res.status(400).json({ error: 'senderEmail ist erforderlich' });
-  }
-  if (!message || typeof message !== 'string') {
-    return res.status(400).json({ error: 'message ist erforderlich' });
-  }
-  if (!Array.isArray(recipients) || recipients.length === 0) {
-    return res.status(400).json({ error: 'recipients ist erforderlich' });
+  if (!senderName || !senderEmail) {
+    return res.status(400).json({ error: 'Name und E-Mail sind erforderlich.' });
   }
 
-  const toAddresses = recipients
-    .map((r: { email?: string }) => (r && typeof r.email === 'string' ? r.email.trim() : ''))
-    .filter((email: string) => email.length > 0);
+  const companyList = Array.isArray(companies) && companies.length > 0
+    ? companies.map((c: { name: string; address?: string; phone?: string; email?: string }) =>
+        `• ${c.name}${c.address ? ` – ${c.address}` : ''}${c.phone ? ` | Tel: ${c.phone}` : ''}${c.email ? ` | ${c.email}` : ''}`
+      ).join('\n')
+    : 'Keine Unternehmen angegeben';
 
-  if (toAddresses.length === 0) {
-    return res.status(400).json({ error: 'Keine gültigen Empfänger-E-Mail-Adressen gefunden' });
-  }
+  const userNote = message?.trim() ? `\n\nNachricht:\n"${message.trim()}"` : '';
 
-  const recipientList = recipients
-    .map((r: { name?: string; email?: string }) => '- ' + (r?.name || '') + (r?.email ? ' (' + r.email + ')' : ''))
-    .join('\n');
-
-  const subject = 'Anfrage Hausverwaltung über HausMatch' + (city ? ' - ' + city : '');
-
-  const textBody =
-    message +
-    '\n\n---\n' +
-    'Gesendet über HausMatch von: ' + senderName + ' (' + senderEmail + ')\n\n' +
-    'Angefragte Unternehmen:\n' +
-    recipientList;
-
-  const fromAddress = process.env.RESEND_FROM_EMAIL || 'HausMatch <onboarding@resend.dev>';
-
+  // E-Mail 1: Admin-Benachrichtigung (immer gesendet)
   try {
-    const response = await fetch('https://api.resend.com/emails', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: 'Bearer ' + apiKey
-      },
-      body: JSON.stringify({
-        from: fromAddress,
-        to: toAddresses,
-        reply_to: senderEmail,
-        subject,
-        text: textBody
-      })
+    await resend.emails.send({
+      from: FROM_EMAIL,
+      to: [ADMIN_EMAIL],
+      replyTo: senderEmail,
+      subject: `Neue Anfrage HausMatch – ${city || 'unbekannte Stadt'}`,
+      text: `Neue Verwaltungsanfrage\n\nName:    ${senderName}\nE-Mail:  ${senderEmail}\nTelefon: ${senderPhone || 'nicht angegeben'}\nStadt:   ${city || 'nicht angegeben'}${userNote}\n\nAusgewählte Hausverwaltungen:\n${companyList}\n\n---\nHausMatch.de`,
     });
-
-    if (!response.ok) {
-      const errText = await response.text();
-      console.error('Resend error:', response.status, errText);
-      return res.status(502).json({ error: 'E-Mail-Versand fehlgeschlagen (Resend ' + response.status + ')', details: errText });
-    }
-
-    const data = await response.json();
-    return res.status(200).json({ success: true, id: data?.id });
-  } catch (error: unknown) {
-    const errMessage = error instanceof Error ? error.message : 'Unknown error';
-    return res.status(500).json({ error: 'Internal server error', details: errMessage });
+  } catch (err) {
+    console.error('Admin-E-Mail Fehler:', err);
+    return res.status(500).json({ error: 'Anfrage konnte nicht gesendet werden.' });
   }
+
+  // E-Mail 2: Bestätigung an Nutzer
+  try {
+    await resend.emails.send({
+      from: FROM_EMAIL,
+      to: [senderEmail],
+      subject: 'Ihre Anfrage bei HausMatch ist eingegangen',
+      text: `Hallo ${senderName},\n\nvielen Dank für Ihre Anfrage über HausMatch!\n\nWir haben Ihre Kontaktanfrage für folgende Hausverwaltungen in ${city || 'Ihrer Region'} erhalten:\n\n${companyList}\n\nWir kümmern uns schnellstmöglich um Ihre Anfrage.\n\nMit freundlichen Grüßen\nIhr HausMatch-Team\n\n---\nhaus-match.de`,
+    });
+  } catch (err) {
+    console.warn('Bestätigungs-E-Mail Fehler:', err);
+  }
+
+  // E-Mail 3: Direkt an Unternehmen mit bekannter E-Mail (optional)
+  if (Array.isArray(companies)) {
+    for (const company of companies.filter((c: { email?: string }) => !!c.email)) {
+      try {
+        await resend.emails.send({
+          from: FROM_EMAIL,
+          to: [company.email],
+          replyTo: senderEmail,
+          subject: `Anfrage über HausMatch von ${senderName}`,
+          text: `Sehr geehrte Damen und Herren,\n\nüber HausMatch (haus-match.de) hat sich ein Eigentümer an Sie gewandt.\n\nName:    ${senderName}\nE-Mail:  ${senderEmail}\nTelefon: ${senderPhone || 'nicht angegeben'}\nRegion:  ${city || 'nicht angegeben'}${userNote}\n\nBitte nehmen Sie direkt Kontakt auf.\n\nMit freundlichen Grüßen\nHausMatch-Team`,
+        });
+      } catch (err) {
+        console.warn(`E-Mail an ${company.email} fehlgeschlagen:`, err);
+      }
+    }
+  }
+
+  return res.status(200).json({
+    success: true,
+    message: `Anfrage gesendet. Bestätigung kommt an ${senderEmail}.`,
+  });
 }
