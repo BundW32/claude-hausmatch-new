@@ -5,36 +5,34 @@ interface Message {
   text: string;
 }
 
-// ─── Eddy die Eule — SVG Maskottchen ─────────────────────────────────────────
+// Eddy die Eule — lila Farben, große Augen, Brille
 const EddyOwl = ({ size = 40 }: { size?: number }) => (
   <svg width={size} height={size} viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-    <ellipse cx="50" cy="72" rx="28" ry="24" fill="#2563eb" />
-    <ellipse cx="50" cy="76" rx="16" ry="16" fill="#f8fafc" />
-    <circle cx="50" cy="42" r="30" fill="#2563eb" />
-    <polygon points="26,18 18,2 34,14" fill="#1d4ed8" />
-    <polygon points="22,20 14,4 30,16" fill="#2563eb" />
-    <polygon points="74,18 82,2 66,14" fill="#1d4ed8" />
-    <polygon points="78,20 86,4 70,16" fill="#2563eb" />
-    <ellipse cx="50" cy="44" rx="26" ry="23" fill="#f8fafc" />
-    <circle cx="36" cy="40" r="12" fill="white" />
-    <circle cx="36" cy="40" r="8" fill="#0f172a" />
-    <circle cx="38.5" cy="37.5" r="2.5" fill="white" />
-    <circle cx="64" cy="40" r="12" fill="white" />
-    <circle cx="64" cy="40" r="8" fill="#0f172a" />
-    <circle cx="66.5" cy="37.5" r="2.5" fill="white" />
-    <circle cx="36" cy="40" r="12" fill="none" stroke="#334155" strokeWidth="2.5" />
-    <circle cx="64" cy="40" r="12" fill="none" stroke="#334155" strokeWidth="2.5" />
-    <line x1="48" y1="40" x2="52" y2="40" stroke="#334155" strokeWidth="2.5" />
-    <polygon points="50,52 44,60 56,60" fill="#f59e0b" />
-    <ellipse cx="24" cy="72" rx="10" ry="18" fill="#1d4ed8" transform="rotate(-15 24 72)" />
-    <ellipse cx="76" cy="72" rx="10" ry="18" fill="#1d4ed8" transform="rotate(15 76 72)" />
-    <ellipse cx="40" cy="94" rx="10" ry="5" fill="#f59e0b" />
-    <ellipse cx="60" cy="94" rx="10" ry="5" fill="#f59e0b" />
+    <ellipse cx="50" cy="80" rx="28" ry="22" fill="#5856D6" />
+    <ellipse cx="50" cy="84" rx="17" ry="15" fill="#f0eef8" />
+    <circle cx="50" cy="44" r="34" fill="#5856D6" />
+    <polygon points="25,20 17,4 34,16" fill="#4c46cc" />
+    <polygon points="75,20 83,4 66,16" fill="#4c46cc" />
+    <ellipse cx="50" cy="47" rx="29" ry="26" fill="#f0eef8" />
+    <circle cx="36" cy="43" r="13.5" fill="white" />
+    <circle cx="36" cy="43" r="9" fill="#080820" />
+    <circle cx="31" cy="38" r="3" fill="white" />
+    <circle cx="36" cy="43" r="13.5" fill="none" stroke="#1a1a3e" strokeWidth="2.5" />
+    <circle cx="64" cy="43" r="13.5" fill="white" />
+    <circle cx="64" cy="43" r="9" fill="#080820" />
+    <circle cx="59" cy="38" r="3" fill="white" />
+    <circle cx="64" cy="43" r="13.5" fill="none" stroke="#1a1a3e" strokeWidth="2.5" />
+    <line x1="49.5" y1="43" x2="50.5" y2="43" stroke="#1a1a3e" strokeWidth="2.5" strokeLinecap="round" />
+    <path d="M44,60 Q50,68 56,60 Q50,65 44,60 Z" fill="#f59e0b" />
+    <ellipse cx="24" cy="78" rx="9" ry="16" fill="#4c46cc" transform="rotate(-12 24 78)" />
+    <ellipse cx="76" cy="78" rx="9" ry="16" fill="#4c46cc" transform="rotate(12 76 78)" />
+    <ellipse cx="41" cy="98" rx="9" ry="4" fill="#f59e0b" />
+    <ellipse cx="59" cy="98" rx="9" ry="4" fill="#f59e0b" />
   </svg>
 );
 
 const EddyAvatar = () => (
-  <div className="w-10 h-10 rounded-xl overflow-hidden bg-blue-700 flex items-center justify-center flex-shrink-0">
+  <div className="w-10 h-10 rounded-xl overflow-hidden bg-indigo-700 flex items-center justify-center flex-shrink-0">
     <EddyOwl size={38} />
   </div>
 );
@@ -97,10 +95,7 @@ const ChatBot = () => {
   };
 
   const handleKey = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
-      e.preventDefault();
-      sendMessage();
-    }
+    if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }
   };
 
   const suggestions = [
@@ -125,10 +120,9 @@ const ChatBot = () => {
 
   return (
     <>
-      {/* Floating Button — Eddy die Eule */}
       <button
         onClick={() => setOpen(o => !o)}
-        className="fixed bottom-6 right-6 z-50 w-16 h-16 bg-blue-600 text-white rounded-full shadow-2xl shadow-blue-300/60 hover:bg-blue-700 transition-all hover:scale-110 active:scale-95 flex items-center justify-center overflow-hidden"
+        className="fixed bottom-6 right-6 z-50 w-16 h-16 bg-indigo-600 text-white rounded-full shadow-2xl shadow-indigo-300/60 hover:bg-indigo-700 transition-all hover:scale-110 active:scale-95 flex items-center justify-center overflow-hidden"
         aria-label="Eddy — KI-Immobilienberater öffnen"
       >
         {open ? (
@@ -140,22 +134,19 @@ const ChatBot = () => {
         )}
       </button>
 
-      {/* Eddy-Label */}
       {!open && (
-        <div className="fixed bottom-[5.5rem] right-6 z-50 bg-white text-blue-700 text-xs font-black px-2 py-0.5 rounded-full shadow-md border border-blue-100 pointer-events-none select-none">
+        <div className="fixed bottom-[5.5rem] right-6 z-50 bg-white text-indigo-700 text-xs font-black px-2 py-0.5 rounded-full shadow-md border border-indigo-100 pointer-events-none select-none">
           Eddy 🦉
         </div>
       )}
 
-      {/* Chat-Fenster */}
       {open && (
         <div className="fixed bottom-28 right-4 sm:right-6 z-50 w-[calc(100vw-2rem)] sm:w-96 max-h-[80vh] flex flex-col bg-white rounded-2xl shadow-2xl border border-slate-100 overflow-hidden">
-          {/* Header */}
-          <div className="bg-blue-600 px-4 py-3 flex items-center gap-3">
+          <div className="bg-indigo-600 px-4 py-3 flex items-center gap-3">
             <EddyAvatar />
             <div>
               <div className="text-white font-black text-sm">Eddy — Immobilien-KI 🦉</div>
-              <div className="text-blue-200 text-xs font-medium flex items-center gap-1">
+              <div className="text-indigo-200 text-xs font-medium flex items-center gap-1">
                 <span className="w-1.5 h-1.5 bg-green-400 rounded-full"></span>
                 Powered by Gemini · Nur allgemeine Info
               </div>
@@ -167,7 +158,6 @@ const ChatBot = () => {
             </button>
           </div>
 
-          {/* Disclaimer */}
           <div className="bg-amber-50 border-b border-amber-100 px-4 py-2 flex items-start gap-2">
             <svg className="w-3.5 h-3.5 text-amber-600 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
               <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
@@ -177,19 +167,16 @@ const ChatBot = () => {
             </p>
           </div>
 
-          {/* Nachrichten */}
           <div className="flex-1 overflow-y-auto p-4 space-y-3 min-h-0 max-h-80">
             {messages.map((msg, i) => (
               <div key={i} className={`flex gap-2 ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
                 {msg.role === 'assistant' && (
-                  <div className="w-7 h-7 rounded-full bg-blue-600 flex items-center justify-center flex-shrink-0 mt-0.5 overflow-hidden">
+                  <div className="w-7 h-7 rounded-full bg-indigo-600 flex items-center justify-center flex-shrink-0 mt-0.5 overflow-hidden">
                     <EddyOwl size={26} />
                   </div>
                 )}
                 <div className={`max-w-[85%] px-4 py-3 rounded-2xl text-sm font-medium leading-relaxed ${
-                  msg.role === 'user'
-                    ? 'bg-blue-600 text-white rounded-br-sm'
-                    : 'bg-slate-100 text-slate-800 rounded-bl-sm'
+                  msg.role === 'user' ? 'bg-indigo-600 text-white rounded-br-sm' : 'bg-slate-100 text-slate-800 rounded-bl-sm'
                 }`}>
                   {msg.role === 'assistant' ? formatText(msg.text) : msg.text}
                 </div>
@@ -198,7 +185,7 @@ const ChatBot = () => {
 
             {loading && (
               <div className="flex gap-2 justify-start">
-                <div className="w-7 h-7 rounded-full bg-blue-600 flex items-center justify-center flex-shrink-0 overflow-hidden">
+                <div className="w-7 h-7 rounded-full bg-indigo-600 flex items-center justify-center flex-shrink-0 overflow-hidden">
                   <EddyOwl size={26} />
                 </div>
                 <div className="bg-slate-100 px-4 py-3 rounded-2xl rounded-bl-sm flex gap-1.5 items-center">
@@ -211,38 +198,27 @@ const ChatBot = () => {
             <div ref={bottomRef} />
           </div>
 
-          {/* Vorschläge */}
           {messages.length === 1 && (
             <div className="px-4 pb-2 flex flex-wrap gap-2">
               {suggestions.map(s => (
-                <button
-                  key={s}
-                  onClick={() => { setInput(s); inputRef.current?.focus(); }}
-                  className="text-xs bg-slate-50 border border-slate-200 text-slate-600 font-medium px-3 py-1.5 rounded-full hover:border-blue-300 hover:text-blue-600 transition-all"
-                >
+                <button key={s} onClick={() => { setInput(s); inputRef.current?.focus(); }}
+                  className="text-xs bg-slate-50 border border-slate-200 text-slate-600 font-medium px-3 py-1.5 rounded-full hover:border-indigo-300 hover:text-indigo-600 transition-all">
                   {s}
                 </button>
               ))}
             </div>
           )}
 
-          {/* Eingabe */}
           <div className="border-t border-slate-100 p-3 flex gap-2 items-center">
             <input
-              ref={inputRef}
-              type="text"
-              value={input}
-              onChange={e => setInput(e.target.value)}
-              onKeyDown={handleKey}
+              ref={inputRef} type="text" value={input}
+              onChange={e => setInput(e.target.value)} onKeyDown={handleKey}
               placeholder="Eddy fragen..."
-              className="flex-1 bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-medium text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+              className="flex-1 bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-medium text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
               disabled={loading}
             />
-            <button
-              onClick={sendMessage}
-              disabled={!input.trim() || loading}
-              className="w-10 h-10 bg-blue-600 text-white rounded-xl flex items-center justify-center hover:bg-blue-700 transition-all disabled:opacity-40 disabled:cursor-not-allowed active:scale-95 flex-shrink-0"
-            >
+            <button onClick={sendMessage} disabled={!input.trim() || loading}
+              className="w-10 h-10 bg-indigo-600 text-white rounded-xl flex items-center justify-center hover:bg-indigo-700 transition-all disabled:opacity-40 disabled:cursor-not-allowed active:scale-95 flex-shrink-0">
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
               </svg>
