@@ -49,8 +49,8 @@ const SearchResults = () => {
                     <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
                   </div>
                 </div>
-                <h3 className="text-2xl font-black text-slate-900 mb-3 tracking-tight">Eddy sucht fÃ¼r Sie...</h3>
-                <p className="text-slate-400 font-medium">Passende Hausverwaltungen in <span className="text-indigo-600 font-black">{city}</span> werden geprÃ¼ft</p>
+                <h3 className="text-2xl font-black text-slate-900 mb-3 tracking-tight">Eddy sucht für Sie...</h3>
+                <p className="text-slate-400 font-medium">Passende Hausverwaltungen in <span className="text-indigo-600 font-black">{city}</span> werden geprüft</p>
                 <p className="text-slate-300 text-sm mt-2 font-medium">Kontaktdaten werden direkt von den Websites geladen</p>
               </div>
             ) : result ? (
@@ -63,7 +63,7 @@ const SearchResults = () => {
                     </div>
                     <div>
                       <h2 className="text-3xl font-black text-slate-900 tracking-tight">Kuratierte Empfehlungen</h2>
-                      <p className="text-[10px] text-slate-400 font-black uppercase tracking-[0.2em] mt-1">GeprÃ¼fte QualitÃ¤t von HausMatch KI</p>
+                      <p className="text-[10px] text-slate-400 font-black uppercase tracking-[0.2em] mt-1">Geprüfte Qualität von HausMatch KI</p>
                     </div>
                   </div>
                   <div className="text-slate-700 leading-relaxed whitespace-pre-wrap font-medium text-lg">
@@ -85,7 +85,7 @@ const SearchResults = () => {
                         rel="noopener noreferrer"
                         className="flex flex-col p-6 bg-white/5 border border-white/10 rounded-3xl hover:bg-white/10 hover:border-indigo-500/50 transition-all group"
                       >
-                        <span className="text-indigo-400 text-[10px] font-black uppercase mb-2 tracking-widest">GeprÃ¼fte Webseite</span>
+                        <span className="text-indigo-400 text-[10px] font-black uppercase mb-2 tracking-widest">Geprüfte Webseite</span>
                         <span className="text-lg font-black text-white truncate mb-4">{source.title}</span>
                       </a>
                     ))}
@@ -103,11 +103,11 @@ const SearchResults = () => {
                 </div>
                 <div>
                   <h4 className="text-xl font-black tracking-tight">Eddy hilft Ihnen</h4>
-                  <p className="text-indigo-200 text-sm font-medium">Ihr KI-Assistent ð¦</p>
+                  <p className="text-indigo-200 text-sm font-medium">Ihr KI-Assistent 🦉</p>
                 </div>
               </div>
               <p className="text-indigo-100 text-base mb-8 leading-relaxed font-semibold">
-                Lassen Sie Eddy die Vorauswahl treffen. Wir kontaktieren passende Firmen diskret fÃ¼r Sie.
+                Lassen Sie Eddy die Vorauswahl treffen. Wir kontaktieren passende Firmen diskret für Sie.
               </p>
               <button onClick={() => navigate('/wizard')} className="w-full bg-white text-indigo-700 py-5 rounded-2xl font-black text-lg hover:bg-indigo-50 transition-all shadow-xl active:scale-95">
                 Express-Matching
@@ -121,4 +121,3 @@ const SearchResults = () => {
 };
 
 export default SearchResults;
-
