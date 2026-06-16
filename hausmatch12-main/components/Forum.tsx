@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useContext, useMemo } from 'react';
 import DOMPurify from 'dompurify';
 import { AuthContext } from '../App';
@@ -15,10 +14,10 @@ const Forum = () => {
   const [replies, setReplies] = useState<ForumReply[]>([]);
   const [repliesLoading, setRepliesLoading] = useState(false);
   const [newReplyText, setNewReplyText] = useState('');
-  
+
   const [selectedCategory, setSelectedCategory] = useState('Alle');
   const [search, setSearch] = useState('');
-  
+
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [newTopic, setNewTopic] = useState({ title: '', category: CATEGORIES[0], content: '' });
 
@@ -36,27 +35,14 @@ const Forum = () => {
         });
         setThreads(data);
     }, (error) => {
-        console.warn("Firestore Forum Threads error (using fallback):", error.message);
-        // Fallback Mock Threads
-        setThreads([
-          {
-            id: 'mock-t1',
-            title: 'Wie geht ihr mit der neuen WEG-Reform um?',
-            content: 'Ich habe Fragen zur Beschlussfassung bei energetischen Sanierungen...',
-            author: 'Max Verwalter',
-            authorId: 'm1',
-            category: 'Recht & Urteile',
-            replies: 2,
-            views: 45,
-            createdAt: { seconds: Math.floor(Date.now() / 1000), nanoseconds: 0 },
-            date: new Date().toLocaleDateString('de-DE')
-          }
-        ]);
+        console.warn("Firestore Forum Threads error:", error.message);
+        // Leeres Forum anzeigen wenn Firebase nicht erreichbar
+        setThreads([]);
     });
     return () => unsubscribe();
   }, []);
 
-  // Antworten für gewählten Thread laden
+  // Antworten fÃ¼r gewÃ¤hlten Thread laden
   useEffect(() => {
     if (!selectedThread) {
       setReplies([]);
@@ -66,7 +52,7 @@ const Forum = () => {
     setRepliesLoading(true);
     // WICHTIG: Kein orderBy hier, um Composite Index Fehler zu vermeiden
     const q = query(
-      collection(db, COLLECTIONS.REPLIES), 
+      collection(db, COLLECTIONS.REPLIES),
       where("threadId", "==", selectedThread.id)
     );
 
@@ -75,7 +61,7 @@ const Forum = () => {
         id: doc.id,
         ...doc.data()
       } as ForumReply));
-      
+
       // Sortierung clientseitig nach Zeitstempel
       const sortedReplies = data.sort((a, b) => {
         const timeA = a.createdAt?.seconds || 0;
@@ -90,7 +76,7 @@ const Forum = () => {
       setRepliesLoading(false);
     });
 
-    // View Counter erhöhen
+    // View Counter erhÃ¶hen
     updateDoc(doc(db, COLLECTIONS.THREADS, selectedThread.id), {
       views: increment(1)
     });
@@ -145,7 +131,7 @@ const Forum = () => {
   return (
     <div className="bg-slate-50 min-h-screen py-12">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        
+
         {/* Thread Detail Modal */}
         {selectedThread && (
           <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/90 backdrop-blur-xl animate-fade-in">
@@ -168,7 +154,7 @@ const Forum = () => {
                       <svg className="w-8 h-8 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M6 18L18 6M6 6l12 12" /></svg>
                    </button>
                 </div>
-                
+
                 <div className="flex-1 overflow-y-auto p-12 space-y-12 custom-scrollbar">
                    <div className="bg-slate-50 p-10 rounded-[3rem] border border-slate-100/50 shadow-inner">
                       <div className="flex justify-between items-center mb-6">
@@ -217,13 +203,13 @@ const Forum = () => {
 
                 <div className="p-10 border-t border-slate-50 bg-white">
                    <div className="max-w-4xl mx-auto flex items-end gap-6">
-                      <textarea 
+                      <textarea
                         value={newReplyText}
                         onChange={(e) => setNewReplyText(e.target.value)}
                         placeholder="Antwort verfassen..."
                         className="flex-1 bg-slate-50 border-0 rounded-[2rem] px-8 py-6 text-slate-900 ring-1 ring-slate-100 focus:ring-2 focus:ring-indigo-600 transition-all resize-none font-medium h-20 min-h-[80px] focus:h-40"
                       />
-                      <button 
+                      <button
                         onClick={handlePostReply}
                         disabled={!newReplyText.trim() || repliesLoading}
                         className="bg-slate-900 text-white px-10 h-20 rounded-[2rem] font-black uppercase text-xs tracking-[0.2em] shadow-2xl hover:bg-indigo-600 disabled:opacity-20 transition-all active:scale-95"
@@ -240,9 +226,9 @@ const Forum = () => {
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-12 gap-6">
           <div>
             <h1 className="text-5xl font-black text-slate-900 mb-3 tracking-tighter">Community Hub</h1>
-            <p className="text-slate-400 font-bold uppercase tracking-widest text-xs">Exklusiver Austausch für Immobilienprofis</p>
+            <p className="text-slate-400 font-bold uppercase tracking-widest text-xs">Exklusiver Austausch fÃ¼r Immobilienprofis</p>
           </div>
-          <button 
+          <button
             onClick={() => setIsCreateModalOpen(true)}
             className="bg-indigo-600 text-white px-10 py-5 rounded-3xl font-black shadow-2xl hover:bg-indigo-700 transition-all active:scale-95 flex items-center gap-3 uppercase text-xs tracking-[0.2em]"
           >
@@ -268,12 +254,16 @@ const Forum = () => {
             <div className="bg-white p-3 rounded-[2.5rem] border border-slate-100 shadow-sm flex items-center gap-4">
                 <div className="flex-1 flex items-center px-6 gap-4">
                     <svg className="w-6 h-6 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
-                    <input type="text" placeholder="Beiträge durchsuchen..." className="w-full bg-transparent border-none focus:ring-0 text-lg font-bold placeholder-slate-300" value={search} onChange={(e) => setSearch(e.target.value)} />
+                    <input type="text" placeholder="BeitrÃ¤ge durchsuchen..." className="w-full bg-transparent border-none focus:ring-0 text-lg font-bold placeholder-slate-300" value={search} onChange={(e) => setSearch(e.target.value)} />
                 </div>
             </div>
 
             <div className="grid gap-6">
-              {filteredThreads.map(thread => (
+              {filteredThreads.length === 0 ? (
+                <div className="text-center py-20 opacity-30 font-black uppercase tracking-[0.2em] text-slate-400">
+                  {search || selectedCategory !== 'Alle' ? 'Keine passenden BeitrÃ¤ge gefunden.' : 'Noch keine BeitrÃ¤ge vorhanden. Starten Sie die erste Diskussion!'}
+                </div>
+              ) : filteredThreads.map(thread => (
                 <div key={thread.id} onClick={() => setSelectedThread(thread)} className="group bg-white p-10 rounded-[3rem] border border-slate-100 hover:border-indigo-200 transition-all cursor-pointer shadow-sm hover:shadow-2xl hover:-translate-y-1 relative overflow-hidden">
                   <div className="absolute top-0 right-0 w-2 h-full bg-slate-50 group-hover:bg-indigo-600 transition-colors"></div>
                   <div className="flex justify-between items-start gap-8">
@@ -315,13 +305,13 @@ const Forum = () => {
                   <svg className="w-6 h-6 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M6 18L18 6M6 6l12 12" /></svg>
                 </button>
               </div>
-              
+
               <form onSubmit={handleCreateThread} className="space-y-8">
                 <div>
-                  <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-4 block ml-4">Kategorie wählen</label>
+                  <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-4 block ml-4">Kategorie wÃ¤hlen</label>
                   <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
                     {CATEGORIES.map(cat => (
-                      <button 
+                      <button
                         key={cat}
                         type="button"
                         onClick={() => setNewTopic({...newTopic, category: cat})}
@@ -335,25 +325,25 @@ const Forum = () => {
 
                 <div className="space-y-4">
                   <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-4 block ml-4">Thema & Inhalt</label>
-                  <input 
-                    required 
-                    placeholder="Was ist Ihr Thema?" 
-                    className="w-full p-6 bg-slate-50 border-0 rounded-[2rem] font-bold text-xl ring-1 ring-slate-100 focus:ring-2 focus:ring-indigo-600 outline-none transition-all placeholder-slate-300" 
-                    value={newTopic.title} 
-                    onChange={e => setNewTopic({...newTopic, title: e.target.value})} 
+                  <input
+                    required
+                    placeholder="Was ist Ihr Thema?"
+                    className="w-full p-6 bg-slate-50 border-0 rounded-[2rem] font-bold text-xl ring-1 ring-slate-100 focus:ring-2 focus:ring-indigo-600 outline-none transition-all placeholder-slate-300"
+                    value={newTopic.title}
+                    onChange={e => setNewTopic({...newTopic, title: e.target.value})}
                   />
-                  <textarea 
-                    required 
-                    placeholder="Beschreiben Sie Ihr Anliegen im Detail..." 
-                    className="w-full h-56 p-8 bg-slate-50 border-0 rounded-[2.5rem] font-medium text-lg ring-1 ring-slate-100 focus:ring-2 focus:ring-indigo-600 outline-none transition-all resize-none placeholder-slate-300" 
-                    value={newTopic.content} 
-                    onChange={e => setNewTopic({...newTopic, content: e.target.value})} 
+                  <textarea
+                    required
+                    placeholder="Beschreiben Sie Ihr Anliegen im Detail..."
+                    className="w-full h-56 p-8 bg-slate-50 border-0 rounded-[2.5rem] font-medium text-lg ring-1 ring-slate-100 focus:ring-2 focus:ring-indigo-600 outline-none transition-all resize-none placeholder-slate-300"
+                    value={newTopic.content}
+                    onChange={e => setNewTopic({...newTopic, content: e.target.value})}
                   />
                 </div>
 
                 <div className="flex gap-4 pt-4">
                    <button type="button" onClick={() => setIsCreateModalOpen(false)} className="flex-1 py-6 bg-slate-100 text-slate-500 rounded-[2rem] font-black uppercase tracking-widest text-xs hover:bg-slate-200 transition-all">Abbrechen</button>
-                   <button type="submit" className="flex-1 py-6 bg-slate-900 text-white rounded-[2rem] font-black uppercase tracking-widest text-xs shadow-2xl hover:bg-indigo-600 transition-all active:scale-95">Beitrag Veröffentlichen</button>
+                   <button type="submit" className="flex-1 py-6 bg-slate-900 text-white rounded-[2rem] font-black uppercase tracking-widest text-xs shadow-2xl hover:bg-indigo-600 transition-all active:scale-95">Beitrag VerÃ¶ffentlichen</button>
                 </div>
               </form>
            </div>
