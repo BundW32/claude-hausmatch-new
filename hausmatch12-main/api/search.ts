@@ -1,6 +1,6 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 
-// Scrape contact data from a company website
+// Kontaktdaten von Unternehmens-Website scrapen
 async function scrapeWebsite(url: string): Promise<{ email?: string; phone?: string }> {
   try {
     const controller = new AbortController();
@@ -16,14 +16,14 @@ async function scrapeWebsite(url: string): Promise<{ email?: string; phone?: str
     if (!resp.ok) return {};
     const html = await resp.text();
 
-    // Extract email â prefer mailto: links, then bare addresses
+    // E-Mail extrahieren — bevorzugt mailto:-Links
     const mailtoMatch = html.match(/mailto:([a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,})/i);
     const emailMatch = mailtoMatch
       ? mailtoMatch[1]
       : (html.match(/[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}/)?.[0]);
 
-    // Extract German phone number (various formats)
-    const phoneMatch = html.match(/(?:Tel\.?|Telefon|Fon|Phone|â)[\s:]*(\+?[\d\s\/\-\(\)]{7,20})/i);
+    // Deutsche Telefonnummer extrahieren
+    const phoneMatch = html.match(/(?:Tel\.?|Telefon|Fon|Phone)[\s:]*(\+?[\d\s\/\-\(\)]{7,20})/i);
     const phone = phoneMatch ? phoneMatch[1].replace(/\s+/g, ' ').trim() : undefined;
 
     return {
@@ -52,17 +52,17 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   }
 
   try {
-    const prompt = `Suche nach echten, aktiven deutschen Hausverwaltungsunternehmen fÃ¼r die Suchanfrage: "${query}".
+    const prompt = `Suche nach echten, aktiven deutschen Hausverwaltungsunternehmen fuer die Suchanfrage: "${query}".
 
 Nutze Google-Suchergebnisse um ECHTE Unternehmen mit echten Kontaktdaten zu finden.
-Gib exakt 8 Unternehmen zurÃ¼ck, sortiert nach Google-Bewertung (hÃ¶chste zuerst).
+Gib exakt 8 Unternehmen zurueck, sortiert nach Google-Bewertung (hoechste zuerst).
 
-Antworte NUR mit einem JSON-Array (kein Markdown, kein erklÃ¤render Text), in diesem Format:
+Antworte NUR mit einem JSON-Array (kein Markdown, kein erklaerende Text), in diesem Format:
 [
   {
     "name": "Firmenname GmbH",
-    "address": "MusterstraÃe 1, 80331 MÃ¼nchen",
-    "city": "MÃ¼nchen",
+    "address": "Musterstrasse 1, 80331 Muenchen",
+    "city": "Muenchen",
     "phone": "+49 89 123456",
     "website": "https://example.de",
     "email": "info@example.de",
@@ -116,7 +116,7 @@ Felder die unbekannt sind als leeren String "" angeben, rating als 0 wenn unbeka
 
     if (!Array.isArray(companies)) companies = [];
 
-    // Normalize companies first
+    // Unternehmen normalisieren
     companies = companies.map((c) => ({
       name: String(c.name || ''),
       address: String(c.address || ''),
@@ -130,7 +130,7 @@ Felder die unbekannt sind als leeren String "" angeben, rating als 0 wenn unbeka
       isPartner: false
     }));
 
-    // Scrape websites in parallel for missing contact data
+    // Websites parallel scrapen fuer fehlende Kontaktdaten
     const scrapeResults = await Promise.allSettled(
       companies.map((c) => {
         const needsEmail = !c.email;
@@ -143,7 +143,7 @@ Felder die unbekannt sind als leeren String "" angeben, rating als 0 wenn unbeka
       })
     );
 
-    // Merge scraped data
+    // Gescrapte Daten zusammenfuehren
     companies = companies.map((c, i) => {
       const scraped = scrapeResults[i].status === 'fulfilled' ? scrapeResults[i].value : {};
       return {
