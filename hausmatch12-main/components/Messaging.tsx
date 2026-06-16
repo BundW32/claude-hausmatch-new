@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState, useContext, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import DOMPurify from 'dompurify';
@@ -18,7 +17,6 @@ interface Conversation {
 
 const Messaging = () => {
   const { user } = useContext(AuthContext);
-  // Initialized navigate hook to fix line 174 error
   const navigate = useNavigate();
   const [conversations, setConversations] = useState<Conversation[]>([]);
   const [selectedPartnerId, setSelectedPartnerId] = useState<string | null>(null);
@@ -30,7 +28,7 @@ const Messaging = () => {
     if (!user) return;
 
     const q = query(
-      collection(db, "messages"), 
+      collection(db, "messages"),
       or(where("senderId", "==", user.id), where("receiverId", "==", user.id)),
       orderBy("timestamp", "desc"),
       limit(200)
@@ -38,7 +36,7 @@ const Messaging = () => {
 
     const unsubscribe = onSnapshot(q, (snapshot) => {
       const allMsgs = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Message));
-      
+
       // Gruppierung nach Partner
       const groups: Record<string, Message[]> = {};
       allMsgs.forEach(msg => {
@@ -113,15 +111,15 @@ const Messaging = () => {
   return (
     <div className="max-w-7xl mx-auto px-4 py-8 h-[calc(100vh-6rem)]">
       <div className="flex h-full bg-white rounded-[3rem] overflow-hidden shadow-2xl border border-slate-100">
-        
+
         {/* Sidebar: Conversations */}
         <div className="w-full md:w-[350px] lg:w-[400px] border-r border-slate-50 flex flex-col bg-slate-50/30">
           <div className="p-8 pb-6 bg-white/50 backdrop-blur-md">
             <h2 className="text-3xl font-black text-slate-900 tracking-tighter mb-6">Chats</h2>
             <div className="relative">
-               <input 
-                 type="text" 
-                 placeholder="Gespräche suchen..." 
+               <input
+                 type="text"
+                 placeholder="GesprÃ¤che suchen..."
                  className="w-full bg-white border border-slate-200 rounded-2xl px-5 py-3 text-black font-bold focus:ring-2 focus:ring-indigo-600 transition-all outline-none placeholder-slate-400"
                />
             </div>
@@ -131,12 +129,12 @@ const Messaging = () => {
             {conversations.length === 0 ? (
               <div className="text-center py-20 opacity-20 font-black uppercase tracking-widest text-slate-400">Keine Chats</div>
             ) : conversations.map(convo => (
-              <div 
+              <div
                 key={convo.partnerId}
                 onClick={() => setSelectedPartnerId(convo.partnerId)}
                 className={`p-5 rounded-[2rem] cursor-pointer transition-all relative group border-2 ${
-                  selectedPartnerId === convo.partnerId 
-                  ? 'bg-white border-indigo-100 shadow-lg translate-x-1' 
+                  selectedPartnerId === convo.partnerId
+                  ? 'bg-white border-indigo-100 shadow-lg translate-x-1'
                   : 'bg-transparent border-transparent hover:bg-white/50'
                 }`}
               >
@@ -178,13 +176,12 @@ const Messaging = () => {
                    </div>
                    <div>
                      <h3 className="text-xl font-black text-slate-900 tracking-tight">{activeConvo.partnerName}</h3>
-                     <span className="text-[10px] text-green-500 font-black uppercase tracking-widest flex items-center gap-1.5">
-                       <span className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></span>
-                       Aktiv im Chat
+                     <span className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">
+                       HausMatch Mitglied
                      </span>
                    </div>
                 </div>
-                <button 
+                <button
                   onClick={() => navigate(`/network?search=${activeConvo.partnerName}`)}
                   className="text-slate-400 hover:text-indigo-600 font-black uppercase text-[10px] tracking-widest"
                 >
@@ -209,8 +206,8 @@ const Messaging = () => {
                       )}
                       <div className={`flex ${isMe ? 'justify-end' : 'justify-start'} animate-fade-in`}>
                          <div className={`max-w-[75%] p-5 rounded-[2rem] shadow-sm border ${
-                           isMe 
-                           ? 'bg-slate-900 text-white rounded-tr-none border-slate-800' 
+                           isMe
+                           ? 'bg-slate-900 text-white rounded-tr-none border-slate-800'
                            : 'bg-white text-slate-800 rounded-tl-none border-slate-100'
                          }`}>
                             <p className="text-base leading-relaxed whitespace-pre-wrap font-medium" dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(msg.content) }}></p>
@@ -233,7 +230,7 @@ const Messaging = () => {
               {/* Input Area */}
               <div className="p-8 bg-white border-t border-slate-50">
                  <form onSubmit={handleSend} className="max-w-4xl mx-auto flex items-end gap-3 bg-slate-100 p-2 rounded-[2.5rem] border border-slate-200 focus-within:border-indigo-600 transition-all">
-                    <textarea 
+                    <textarea
                       rows={1}
                       value={replyText}
                       onChange={e => setReplyText(e.target.value)}
@@ -246,7 +243,7 @@ const Messaging = () => {
                       placeholder="Nachricht schreiben..."
                       className="flex-1 bg-transparent border-0 px-6 py-4 text-black font-bold focus:ring-0 outline-none resize-none h-14 min-h-[56px] max-h-40 placeholder-slate-400"
                     />
-                    <button 
+                    <button
                       type="submit"
                       disabled={!replyText.trim()}
                       className="bg-indigo-600 text-white w-12 h-12 rounded-[1.5rem] flex items-center justify-center shadow-lg hover:bg-indigo-700 disabled:opacity-20 transition-all active:scale-90 shrink-0"
@@ -262,7 +259,7 @@ const Messaging = () => {
                   <svg className="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" /></svg>
                </div>
                <h3 className="text-2xl font-black text-slate-900 mb-2 uppercase tracking-tighter">Nachrichten-Hub</h3>
-               <p className="text-slate-400 font-bold uppercase tracking-widest text-[10px] max-w-xs">Wählen Sie einen Chat aus der Liste links aus, um fortzufahren.</p>
+               <p className="text-slate-400 font-bold uppercase tracking-widest text-[10px] max-w-xs">WÃ¤hlen Sie einen Chat aus der Liste links aus, um fortzufahren.</p>
             </div>
           )}
         </div>
