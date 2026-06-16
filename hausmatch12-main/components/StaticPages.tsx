@@ -11,29 +11,12 @@ const SectionHeader = ({ title, subtitle }: { title: string; subtitle: string })
 );
 
 // Eddy die Eule â fÃ¼r About-Seite
+const EDDY_URL = "https://cdn.jsdelivr.net/gh/BundW32/claude-hausmatch-new@main/hf_20260616_092652_b3b38af5-a913-44c1-80ef-1ac5d9adedb4.png";
+
 const EddyOwl = ({ size = 120 }: { size?: number }) => (
-  <svg width={size} height={size} viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-    <ellipse cx="50" cy="80" rx="28" ry="22" fill="#5856D6" />
-    <ellipse cx="50" cy="84" rx="17" ry="15" fill="#f0eef8" />
-    <circle cx="50" cy="44" r="34" fill="#5856D6" />
-    <polygon points="25,20 17,4 34,16" fill="#4c46cc" />
-    <polygon points="75,20 83,4 66,16" fill="#4c46cc" />
-    <ellipse cx="50" cy="47" rx="29" ry="26" fill="#f0eef8" />
-    <circle cx="36" cy="43" r="13.5" fill="white" />
-    <circle cx="36" cy="43" r="9" fill="#080820" />
-    <circle cx="31" cy="38" r="3" fill="white" />
-    <circle cx="36" cy="43" r="13.5" fill="none" stroke="#1a1a3e" strokeWidth="2.5" />
-    <circle cx="64" cy="43" r="13.5" fill="white" />
-    <circle cx="64" cy="43" r="9" fill="#080820" />
-    <circle cx="59" cy="38" r="3" fill="white" />
-    <circle cx="64" cy="43" r="13.5" fill="none" stroke="#1a1a3e" strokeWidth="2.5" />
-    <line x1="49.5" y1="43" x2="50.5" y2="43" stroke="#1a1a3e" strokeWidth="2.5" strokeLinecap="round" />
-    <path d="M44,60 Q50,68 56,60 Q50,65 44,60 Z" fill="#f59e0b" />
-    <ellipse cx="24" cy="78" rx="9" ry="16" fill="#4c46cc" transform="rotate(-12 24 78)" />
-    <ellipse cx="76" cy="78" rx="9" ry="16" fill="#4c46cc" transform="rotate(12 76 78)" />
-    <ellipse cx="41" cy="98" rx="9" ry="4" fill="#f59e0b" />
-    <ellipse cx="59" cy="98" rx="9" ry="4" fill="#f59e0b" />
-  </svg>
+  <div style={{ width: size, height: size, borderRadius: '1.5rem', overflow: 'hidden', background: '#2563FF', display: 'inline-block', flexShrink: 0 }}>
+    <img src={EDDY_URL} width={size} height={size} alt="Eddy die HausMatch-Eule" style={{ display: 'block', objectFit: 'cover' }} />
+  </div>
 );
 
 export const AboutPage: React.FC = () => (
@@ -360,7 +343,7 @@ export const LegalPage: React.FC<{ type: 'impressum' | 'privacy' | 'agb' }> = ({
             <h3 className="text-xl font-bold text-slate-900 mb-4">Vertreten durch:</h3>
             <p>
               Franz-Josef Barth (GescN[¤ftsfÃ¼hrer)<br />
-              Alexander Wachtel (stellvertretender GeschÃ¤ftsfÃ¼hrer)
+              Alexander Wachtel (stellvertretender GeschÃ¤ftsfÃ¸hrer)
             </p>
           </section>
           <section>
@@ -429,13 +412,13 @@ export const LegalPage: React.FC<{ type: 'impressum' | 'privacy' | 'agb' }> = ({
             <h3 className="text-xl font-bold text-slate-900 mb-4">3. Eingesetzte Dienste und Drittanbieter</h3>
 
             <h4 className="font-bold text-slate-800 mb-2">3.1 Google Firebase (Authentifizierung &amp; Datenbank)</h4>
-            <p>Wir nutzen Google Firebase (Google LLC, 1600 Amphitheatre Parkway, Mountain View, CA 94043, USA) fÃ¼r Nutzeranmeldung und Datenspeicherung. Daten kÃ¶nnen auf Servern in den USA verarbeitet werden. Grundlage ist ein Standardvertragsklauseln-Abkommen gemÃ¤Ã Art. 46 DSGVO. DatenschutzerklÃ¤rung Google: <a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer" className="text-indigo-600 underline">policies.google.com/privacy</a></p>
+            <p>Wir nutzen Google Firebase (Google LLC, 1600 Amphitheatre Parkway, Mountain View, CA 94043, USA) fÃ¸r Nutzeranmeldung und Datenspeicherung. Daten kÃ¶nnen auf Servern in den USA verarbeitet werden. Grundlage ist ein Standardvertragsklauseln-Abkommen gemÃ¤Ã Art. 46 DSGVO. DatenschutzerklÃ¤rung Google: <a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer" className="text-indigo-600 underline">policies.google.com/privacy</a></p>
 
             <h4 className="font-bold text-slate-800 mb-2 mt-4">3.2 Google Gemini KI</h4>
             <p>Unser KI-Assistent âEddy" und die Suchfunktion nutzen Google Gemini (Google LLC). Anfragen, die Sie an Eddy stellen, werden zur Verarbeitung an die Google Gemini API Ã¸bertragen. Wir empfehlen, keine sensiblen personenbezogenen Daten in Chat-Anfragen einzugeben. Rechtsgrundlage: Art. 6 Abs. 1 lit. b DSGVO (VertragserfÃ¸llung / Bereitstellung des Dienstes).</p>
 
             <h4 className="font-bold text-slate-800 mb-2 mt-4">3.3 Resend (E-Mail-Versand)</h4>
-            <p>FÃ¼r den Versand von E-Mails (Anfragen, Kontaktformular) nutzen wir Resend (Resend Inc., USA). Dabei werden Name und E-Mail-Adresse der Absender an Resend Ã¼bermittelt. DatenschutzerklÃ¤rung: <a href="https://resend.com/legal/privacy-policy" target="_blank" rel="noopener noreferrer" className="text-indigo-600 underline">resend.com/legal/privacy-policy</a></p>
+            <p>FÃ¼r den Versand von E-Mails (Anfragen, Kontaktformular) nutzen wir Resend (Resend Inc., USA). Dabei werden Name und E-Mail-Adresse der Absender an Resend Ã¸bermittelt. DatenschutzerklÃ¤rung: <a href="https://resend.com/legal/privacy-policy" target="_blank" rel="noopener noreferrer" className="text-indigo-600 underline">resend.com/legal/privacy-policy</a></p>
 
             <h4 className="font-bold text-slate-800 mb-2 mt-4">3.4 Vercel (Hosting)</h4>
             <p>Die Plattform wird auf Vercel (Vercel Inc., USA) gehostet. Beim Seitenaufruf werden technische Daten (IP-Adresse, Browsertyp, Zugriffszeit) im Rahmen des regulÃ¤ren Serverbetriebs verarbeitet. DatenschutzerklÃ¤rung: <a href="https://vercel.com/legal/privacy-policy" target="_blank" rel="noopener noreferrer" className="text-indigo-600 underline">vercel.com/legal/privacy-policy</a></p>
@@ -453,7 +436,7 @@ export const LegalPage: React.FC<{ type: 'impressum' | 'privacy' | 'agb' }> = ({
 
           <section>
             <h3 className="text-xl font-bold text-slate-900 mb-4">6. Ihre Rechte</h3>
-            <p>Sie haben das Recht auf Auskunft (Art. 15 DSGVO), Berichtigung (Art. 16), LÃ¶schung (Art. 17), EinschrÃ¤nkung der Verarbeitung (Art. 18), DatenÃ¼bertragbarkeit (Art. 20) sowie Widerspruch (Art. 21 DSGVO). Beschwerden kÃ¶nnen an die zustÃ¤ndige DatenschutzaufsichtsbehÃ¶rde gerichtet werden (Landesbeauftragte fÃ¼r Datenschutz NRW).</p>
+            <p>Sie haben das Recht auf Auskunft (Art. 15 DSGVO), Berichtigung (Art. 16), LÃ¶schung (Art. 17), EinschrÃ¤nkung der Verarbeitung (Art. 18), DatenÃ¸bertragbarkeit (Art. 20) sowie Widerspruch (Art. 21 DSGVO). Beschwerden kÃ¶nnen an die zustÃ¤ndige DatenschutzaufsichtsbehÃ¶rde gerichtet werden (Landesbeauftragte fÃ¼r Datenschutz NRW).</p>
             <p className="mt-2">Anfragen richten Sie bitte an: <a href="mailto:info@bundwimmobilien.de" className="text-indigo-600 underline">info@bundwimmobilien.de</a></p>
           </section>
         </>
@@ -468,7 +451,7 @@ export const LegalPage: React.FC<{ type: 'impressum' | 'privacy' | 'agb' }> = ({
 
           <section>
             <h3 className="text-xl font-bold text-slate-900 mb-4">Â§ 2 Leistungsbeschreibung</h3>
-            <p>HausMatch ist eine digitale Vermittlungsplattform, die EigentÃ¼mer von Immobilien mit professionellen Hausverwaltungsunternehmen zusammenfÃ¼hrt. Der Betreiber vermittelt lediglich den Kontakt zwischen den Parteien und ist nicht Vertragspartner der zwischen EigentÃ¼mern und Verwaltern geschlossenen VerwaltungsvertrÃ¤ge.</p>
+            <p>HausMatch ist eine digitale Vermittlungsplattform, die EigentÃ¼mer von Immobilien mit professionellen Hausverwaltungsunternehmen zusammenfÃ¼hrt. Der Betreiber vermittelt lediglich den Kontakt zwischen den Parteien und ist nicht Vertragspartner der zwischen EigentÃ¼mern Und Verwaltern geschlossenen VerwaltungsvertrÃ¤ge.</p>
             <p className="mt-2">Die Plattform bietet zusÃ¤tzlich einen KI-gestÃ¼tzten Assistenten (âEddy"), der allgemeine Informationen zu Immobilienthemen bereitstellt. Eddy ersetzt keine Rechts-, Steuer- oder Finanzberatung.</p>
           </section>
 
@@ -485,17 +468,17 @@ export const LegalPage: React.FC<{ type: 'impressum' | 'privacy' | 'agb' }> = ({
           <section>
             <h3 className="text-xl font-bold text-slate-900 mb-4">Â§ 5 HaftungsbeschrÃ¤nkung</h3>
             <p>Der Betreiber Ã¼bernimmt keine Haftung fÃ¼r die QualitÃ¤t, ZuverlÃ¤ssigkeit oder BonitÃ¤t der auf der Plattform gelisteten Hausverwaltungsunternehmen. Angaben zu Bewertungen und Spezialisierungen basieren auf Ã¶ffentlich verfÃ¼gbaren Informationen und KI-Auswertungen â eine Garantie fÃ¼r deren Richtigkeit wird nicht gegeben.</p>
-            <p className="mt-2">Die Haftung des Betreibers fÃ¼r SchÃ¤den aus einfacher FahrlÃ¤ssigkeit ist â auÃer bei Verletzung wesentlicher Vertragspflichten sowie bei ScN[¤den aus der Verletzung von Leben, KÃ¶rper oder Gesundheit â ausgeschlossen.</p>
+            <p className="mt-2">Die Haftung des Betreibers fÃ¼r SchÃ¤den aus einfacher FahrlÃ¤ssigkeit ist â auÃer bei Verletzung wesentlicher Vertragspflichten sowie bei SchÃ¤den aus der Verletzung von Leben, KÃ¶rper oder Gesundheit â ausgeschlossen.</p>
           </section>
 
           <section>
             <h3 className="text-xl font-bold text-slate-900 mb-4">Â§ 6 KI-Assistent (Eddy)</h3>
-            <p>Der KI-Assistent Eddy stellt automatisch generierte Informationen bereit. Diese Informationen sind allgemeiner Natur und stellen keine Rechts-, Steuer- oder Finanzberatung dar. FÃ¸r Entscheidungen, die auf Eddy-Antworten basieren, Ã¼bernimmt der Betreiber keine Haftung. Nutzer werden ausdrÃ¼cklich aufgefordert, bei rechtlichen oder finanziellen Fragen einen zugelassenen Fachberater hinzuzuziehen.</p>
+            <p>Der KI-Assistent Eddy stellt automatisch generierte Informationen bereit. Diese Informationen sind allgemeiner Natur und stellen keine Rechts-, Steuer- oder Finanzberatung dar. FÃ¸r Entscheidungen, die auf Eddy-Antworten basieren, Ã¸bernimmt der Betreiber keine Haftung. Nutzer werden ausdrÃ¼cklich aufgefordert, bei rechtlichen oder finanziellen Fragen einen zugelassenen Fachberater hinzuzuziehen.</p>
           </section>
 
           <section>
             <h3 className="text-xl font-bold text-slate-900 mb-4">Â§ 7 Ãnderungen der AGB</h3>
-            <p>Der Betreiber behÃ¤lt sich vor, diese AGB jederzeit zu Ã¤ndern. Registrierte Nutzer werden Ã¼ber wesentliche Ãnderungen per E-Mail informiert. Die fortgesetzte Nutzung der Plattform nach Bekanntgabe der Ãnderungen gilt als Zustimmung.</p>
+            <p>Der Betreiber behÃ¤lt sich vor, diese AGB jederzeit zu Ã¤ndern. Registrierte Nutzer werden Ã¸ber wesentliche Ãnderungen per E-Mail informiert. Die fortgesetzte Nutzung der Plattform nach Bekanntgabe der Ãnderungen gilt als Zustimmung.</p>
           </section>
 
           <section>
@@ -505,17 +488,18 @@ export const LegalPage: React.FC<{ type: 'impressum' | 'privacy' | 'agb' }> = ({
 
           <section>
             <h3 className="text-xl font-bold text-slate-900 mb-4">Â§ 9 Anwendbares Recht und Gerichtsstand</h3>
-            <p>Es gilt das Recht der Bundesrepublik Deutschland. Gerichtsstand fÃ¼r alle Streitigkeiten aus oder im Zusammenhang mit diesen AGB ist, soweit gesetzlich zulÃ¤ssig, Gelsenkirchen.</p>
+            <p>Es gilt das Recht der Bundesrepublik Deutschland. Gerichtsstand fÃ¸r alle Streitigkeiten aus oder im Zusammenhang mit diesen AGB ist, soweit gesetzlich zulÃ¤ssig, Gelsenkirchen.</p>
           </section>
 
           <section>
             <h3 className="text-xl font-bold text-slate-900 mb-4">Â§ 10 Salvatorische Klausel</h3>
-            <p>Sollten einzelne Bestimmungen dieser AGB unwirksam sein oder werden, bleibt die Wirksamkeit der Ã¼brigen Bestimmungen unberÃ¸hrt.</p>
+            <p>Sollten einzelne Bestimmungen dieser AGB unwirksam sein oder werden, bleibt die Wirksamkeit der Ã¸brigen Bestimmungen unberÃ¸hrt.</p>
           </section>
 
-          <p className="text-sm text-slate-400 italic mt-8">Stand: Juni 2026 | B &amp; W Immobilien Management UG (haftungsbeschrÃ¤nkt)</p>
+          <p className="text-sm text-slate-400 italic mt-8">Stand: Juni 2026 | B &amp; W Immobilien Management UG (haftungsbeschrÆ³nkt)</p>
         </>
       )}
     </div>
   </div>
 );
+
