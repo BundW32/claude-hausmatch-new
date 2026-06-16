@@ -1,78 +1,18 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 
-// Eddy die Eule - flach
+const EDDY_URL = "https://cdn.jsdelivr.net/gh/BundW32/claude-hausmatch-new@main/hf_20260616_092652_b3b38af5-a913-44c1-80ef-1ac5d9adedb4.png";
+
 const EddyOwl = ({ size = 40 }: { size?: number }) => (
-  <svg width={size} height={size} viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-    <ellipse cx="50" cy="80" rx="28" ry="22" fill="#5856D6" />
-    <ellipse cx="50" cy="84" rx="17" ry="15" fill="#f0eef8" />
-    <circle cx="50" cy="44" r="34" fill="#5856D6" />
-    <polygon points="25,20 17,4 34,16" fill="#4c46cc" />
-    <polygon points="75,20 83,4 66,16" fill="#4c46cc" />
-    <ellipse cx="50" cy="47" rx="29" ry="26" fill="#f0eef8" />
-    <circle cx="36" cy="43" r="13.5" fill="white" />
-    <circle cx="36" cy="43" r="9" fill="#080820" />
-    <circle cx="31" cy="38" r="3" fill="white" />
-    <circle cx="36" cy="43" r="13.5" fill="none" stroke="#1a1a3e" strokeWidth="2.5" />
-    <circle cx="64" cy="43" r="13.5" fill="white" />
-    <circle cx="64" cy="43" r="9" fill="#080820" />
-    <circle cx="59" cy="38" r="3" fill="white" />
-    <circle cx="64" cy="43" r="13.5" fill="none" stroke="#1a1a3e" strokeWidth="2.5" />
-    <line x1="49.5" y1="43" x2="50.5" y2="43" stroke="#1a1a3e" strokeWidth="2.5" strokeLinecap="round" />
-    <path d="M44,60 Q50,68 56,60 Q50,65 44,60 Z" fill="#f59e0b" />
-    <ellipse cx="24" cy="78" rx="9" ry="16" fill="#4c46cc" transform="rotate(-12 24 78)" />
-    <ellipse cx="76" cy="78" rx="9" ry="16" fill="#4c46cc" transform="rotate(12 76 78)" />
-    <ellipse cx="41" cy="98" rx="9" ry="4" fill="#f59e0b" />
-    <ellipse cx="59" cy="98" rx="9" ry="4" fill="#f59e0b" />
-  </svg>
+  <div style={{ width: size, height: size, borderRadius: Math.round(size * 0.25) + 'px', overflow: 'hidden', background: '#2563FF', display: 'inline-block', flexShrink: 0 }}>
+    <img src={EDDY_URL} width={size} height={size} alt="Eddy" style={{ display: 'block', objectFit: 'cover' }} />
+  </div>
 );
 
-// Eddy 3D-Stil mit Farbverlauf
 const EddyOwl3D = ({ size = 180 }: { size?: number }) => (
-  <svg width={size} height={size} viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
-    <defs>
-      <radialGradient id="bodyGrad3d" cx="35%" cy="28%" r="72%">
-        <stop offset="0%" stopColor="#8B7FE8" />
-        <stop offset="55%" stopColor="#5856D6" />
-        <stop offset="100%" stopColor="#3730A3" />
-      </radialGradient>
-      <radialGradient id="faceGrad3d" cx="40%" cy="35%" r="70%">
-        <stop offset="0%" stopColor="#ffffff" />
-        <stop offset="100%" stopColor="#e8e5f8" />
-      </radialGradient>
-      <radialGradient id="eyeGrad3d" cx="30%" cy="28%" r="72%">
-        <stop offset="0%" stopColor="#1a1a50" />
-        <stop offset="100%" stopColor="#040415" />
-      </radialGradient>
-      <filter id="eddyShadow3d" x="-20%" y="-20%" width="140%" height="140%">
-        <feDropShadow dx="0" dy="10" stdDeviation="16" floodColor="#3730A3" floodOpacity="0.35" />
-      </filter>
-    </defs>
-    <ellipse cx="100" cy="192" rx="60" ry="10" fill="#3730A3" opacity="0.18" />
-    <ellipse cx="100" cy="158" rx="52" ry="42" fill="url(#bodyGrad3d)" filter="url(#eddyShadow3d)" />
-    <ellipse cx="100" cy="166" rx="34" ry="30" fill="url(#faceGrad3d)" opacity="0.95" />
-    <circle cx="100" cy="88" r="66" fill="url(#bodyGrad3d)" filter="url(#eddyShadow3d)" />
-    <polygon points="46,36 34,8 60,30" fill="#4c46cc" />
-    <polygon points="42,34 30,6 56,28" fill="#3730A3" />
-    <polygon points="154,36 166,8 140,30" fill="#4c46cc" />
-    <polygon points="158,34 170,6 144,28" fill="#3730A3" />
-    <ellipse cx="100" cy="91" rx="56" ry="50" fill="url(#faceGrad3d)" />
-    <circle cx="72" cy="84" r="24" fill="white" />
-    <circle cx="72" cy="84" r="16" fill="url(#eyeGrad3d)" />
-    <circle cx="64" cy="76" r="5.5" fill="white" />
-    <circle cx="72" cy="84" r="24" fill="none" stroke="#1a1a3e" strokeWidth="3.5" />
-    <circle cx="128" cy="84" r="24" fill="white" />
-    <circle cx="128" cy="84" r="16" fill="url(#eyeGrad3d)" />
-    <circle cx="120" cy="76" r="5.5" fill="white" />
-    <circle cx="128" cy="84" r="24" fill="none" stroke="#1a1a3e" strokeWidth="3.5" />
-    <line x1="96" y1="84" x2="104" y2="84" stroke="#1a1a3e" strokeWidth="3.5" strokeLinecap="round" />
-    <path d="M86,118 Q100,134 114,118 Q100,128 86,118 Z" fill="#f59e0b" />
-    <path d="M90,118 Q100,126 110,118" fill="none" stroke="#d97706" strokeWidth="2" strokeLinecap="round" />
-    <ellipse cx="52" cy="155" rx="18" ry="30" fill="#4c46cc" transform="rotate(-18 52 155)" />
-    <ellipse cx="148" cy="155" rx="18" ry="30" fill="#4c46cc" transform="rotate(18 148 155)" />
-    <ellipse cx="83" cy="196" rx="18" ry="7" fill="#f59e0b" />
-    <ellipse cx="117" cy="196" rx="18" ry="7" fill="#f59e0b" />
-  </svg>
+  <div style={{ width: size, height: size, borderRadius: Math.round(size * 0.2) + 'px', overflow: 'hidden', background: '#2563FF', display: 'inline-block', boxShadow: '0 20px 60px rgba(37,99,255,0.4)', flexShrink: 0 }}>
+    <img src={EDDY_URL} width={size} height={size} alt="Eddy die HausMatch-Eule" style={{ display: 'block', objectFit: 'cover' }} />
+  </div>
 );
 
 const LandingHome = () => {
@@ -147,7 +87,7 @@ const LandingHome = () => {
             <div className="mt-8 md:mt-10 flex flex-wrap justify-center items-center gap-x-6 gap-y-3 opacity-70">
               {['Community-Forum', 'Experten-Netzwerk', 'KI-Ratgeber', 'Kreditrechner'].map(feature => (
                 <div key={feature} className="flex items-center gap-2">
-                  <svg className="w-4 h-4 text-blue-600" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" /></svg>
+                  <svg className="w-4 h-4 text-blue-600" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 001.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" /></svg>
                   <span className="text-[10px] md:text-xs font-black text-slate-900 uppercase tracking-widest">{feature}</span>
                 </div>
               ))}
@@ -203,9 +143,9 @@ const LandingHome = () => {
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {[
-              { icon: <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" /></svg>, title: 'Community', desc: 'Vernetzen Sie sich mit Eigentümern und Verwaltern in ganz Deutschland.', link: '/network', linkText: 'Zum Netzwerk' },
+              { icon: <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" /></svg>, title: 'Community', desc: 'Vernetzen Sie sich mit Eigentümern sowohl als auch Verwaltern in ganz Deutschland.', link: '/network', linkText: 'Zum Netzwerk' },
               { icon: <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" /></svg>, title: 'Forum & Austausch', desc: 'Stellen Sie Fragen, teilen Sie Erfahrungen und lernen Sie von der Community.', link: '/forum', linkText: 'Zum Forum' },
-              { icon: <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" /></svg>, title: 'Kreditrechner', desc: 'Berechnen Sie Rendite, monatliche Rate und Nebenkosten für Ihr Projekt.', link: '/kreditrechner', linkText: 'Zum Rechner' },
+              { icon: <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" /></svg>, title: 'Kreditrechner', desc: 'Berechnung von Rendite, monatliche Rate und Nebenkosten für Ihr Projekt.', link: '/kreditrechner', linkText: 'Zum Rechner' },
               { icon: <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" /></svg>, title: 'Ratgeber', desc: 'Expertenwissen zu Recht, Verwaltung und Investitionen — klar und praxisnah.', link: '/ratgeber', linkText: 'Zum Ratgeber' }
             ].map((item, i) => (
               <div key={i} className="bg-white rounded-2xl p-6 border border-slate-100 shadow-sm hover:shadow-md transition-shadow group">
@@ -254,8 +194,8 @@ const LandingHome = () => {
           <h2 className="text-3xl md:text-4xl font-black text-white tracking-tighter mb-4">Werden Sie Teil der Community</h2>
           <p className="text-slate-400 font-medium mb-8 text-sm md:text-base">Kostenlos registrieren und sofort mit Experten und Eigentümern vernetzen.</p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link to="/register" className="px-8 py-4 bg-blue-600 text-white rounded-2xl font-black uppercase tracking-widest text-sm hover:bg-blue-500 transition-all shadow-xl shadow-blue-900/40 active:scale-95">Kostenlos starten</Link>
-            <Link to="/ratgeber" className="px-8 py-4 bg-white/10 text-white rounded-2xl font-black uppercase tracking-widest text-sm hover:bg-white/20 transition-all border border-white/10 active:scale-95">Ratgeber lesen</Link>
+            <Link to="/register" className="px-8 py-4 bg-blue-600 text-white rounded-2xl font-black uppercase tracking-widest text-sm hover:bg-blue-500 transition-all shadow-xl shadow-blue-900/40 active:scale-95">Ko�tenlos starten</Link>
+            <Link to="/ratgeber" className="px-8 py-4 bg-white/10 text-white rounded-2xl font-black uppercase tracking-widest text-sm hover:bg-white/20 transition-all border border-white/10 active:scale-95">Ratweber lesen</Link>
           </div>
         </div>
       </section>
