@@ -1,6 +1,80 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 
+// Eddy die Eule - flach
+const EddyOwl = ({ size = 40 }: { size?: number }) => (
+  <svg width={size} height={size} viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+    <ellipse cx="50" cy="80" rx="28" ry="22" fill="#5856D6" />
+    <ellipse cx="50" cy="84" rx="17" ry="15" fill="#f0eef8" />
+    <circle cx="50" cy="44" r="34" fill="#5856D6" />
+    <polygon points="25,20 17,4 34,16" fill="#4c46cc" />
+    <polygon points="75,20 83,4 66,16" fill="#4c46cc" />
+    <ellipse cx="50" cy="47" rx="29" ry="26" fill="#f0eef8" />
+    <circle cx="36" cy="43" r="13.5" fill="white" />
+    <circle cx="36" cy="43" r="9" fill="#080820" />
+    <circle cx="31" cy="38" r="3" fill="white" />
+    <circle cx="36" cy="43" r="13.5" fill="none" stroke="#1a1a3e" strokeWidth="2.5" />
+    <circle cx="64" cy="43" r="13.5" fill="white" />
+    <circle cx="64" cy="43" r="9" fill="#080820" />
+    <circle cx="59" cy="38" r="3" fill="white" />
+    <circle cx="64" cy="43" r="13.5" fill="none" stroke="#1a1a3e" strokeWidth="2.5" />
+    <line x1="49.5" y1="43" x2="50.5" y2="43" stroke="#1a1a3e" strokeWidth="2.5" strokeLinecap="round" />
+    <path d="M44,60 Q50,68 56,60 Q50,65 44,60 Z" fill="#f59e0b" />
+    <ellipse cx="24" cy="78" rx="9" ry="16" fill="#4c46cc" transform="rotate(-12 24 78)" />
+    <ellipse cx="76" cy="78" rx="9" ry="16" fill="#4c46cc" transform="rotate(12 76 78)" />
+    <ellipse cx="41" cy="98" rx="9" ry="4" fill="#f59e0b" />
+    <ellipse cx="59" cy="98" rx="9" ry="4" fill="#f59e0b" />
+  </svg>
+);
+
+// Eddy 3D-Stil mit Farbverlauf
+const EddyOwl3D = ({ size = 180 }: { size?: number }) => (
+  <svg width={size} height={size} viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <radialGradient id="bodyGrad3d" cx="35%" cy="28%" r="72%">
+        <stop offset="0%" stopColor="#8B7FE8" />
+        <stop offset="55%" stopColor="#5856D6" />
+        <stop offset="100%" stopColor="#3730A3" />
+      </radialGradient>
+      <radialGradient id="faceGrad3d" cx="40%" cy="35%" r="70%">
+        <stop offset="0%" stopColor="#ffffff" />
+        <stop offset="100%" stopColor="#e8e5f8" />
+      </radialGradient>
+      <radialGradient id="eyeGrad3d" cx="30%" cy="28%" r="72%">
+        <stop offset="0%" stopColor="#1a1a50" />
+        <stop offset="100%" stopColor="#040415" />
+      </radialGradient>
+      <filter id="eddyShadow3d" x="-20%" y="-20%" width="140%" height="140%">
+        <feDropShadow dx="0" dy="10" stdDeviation="16" floodColor="#3730A3" floodOpacity="0.35" />
+      </filter>
+    </defs>
+    <ellipse cx="100" cy="192" rx="60" ry="10" fill="#3730A3" opacity="0.18" />
+    <ellipse cx="100" cy="158" rx="52" ry="42" fill="url(#bodyGrad3d)" filter="url(#eddyShadow3d)" />
+    <ellipse cx="100" cy="166" rx="34" ry="30" fill="url(#faceGrad3d)" opacity="0.95" />
+    <circle cx="100" cy="88" r="66" fill="url(#bodyGrad3d)" filter="url(#eddyShadow3d)" />
+    <polygon points="46,36 34,8 60,30" fill="#4c46cc" />
+    <polygon points="42,34 30,6 56,28" fill="#3730A3" />
+    <polygon points="154,36 166,8 140,30" fill="#4c46cc" />
+    <polygon points="158,34 170,6 144,28" fill="#3730A3" />
+    <ellipse cx="100" cy="91" rx="56" ry="50" fill="url(#faceGrad3d)" />
+    <circle cx="72" cy="84" r="24" fill="white" />
+    <circle cx="72" cy="84" r="16" fill="url(#eyeGrad3d)" />
+    <circle cx="64" cy="76" r="5.5" fill="white" />
+    <circle cx="72" cy="84" r="24" fill="none" stroke="#1a1a3e" strokeWidth="3.5" />
+    <circle cx="128" cy="84" r="24" fill="white" />
+    <circle cx="128" cy="84" r="16" fill="url(#eyeGrad3d)" />
+    <circle cx="120" cy="76" r="5.5" fill="white" />
+    <circle cx="128" cy="84" r="24" fill="none" stroke="#1a1a3e" strokeWidth="3.5" />
+    <line x1="96" y1="84" x2="104" y2="84" stroke="#1a1a3e" strokeWidth="3.5" strokeLinecap="round" />
+    <path d="M86,118 Q100,134 114,118 Q100,128 86,118 Z" fill="#f59e0b" />
+    <path d="M90,118 Q100,126 110,118" fill="none" stroke="#d97706" strokeWidth="2" strokeLinecap="round" />
+    <ellipse cx="52" cy="155" rx="18" ry="30" fill="#4c46cc" transform="rotate(-18 52 155)" />
+    <ellipse cx="148" cy="155" rx="18" ry="30" fill="#4c46cc" transform="rotate(18 148 155)" />
+    <ellipse cx="83" cy="196" rx="18" ry="7" fill="#f59e0b" />
+    <ellipse cx="117" cy="196" rx="18" ry="7" fill="#f59e0b" />
+  </svg>
+);
+
 const LandingHome = () => {
   const [city, setCity] = useState('');
   const navigate = useNavigate();
@@ -30,7 +104,6 @@ const LandingHome = () => {
                   Deutschlands Immobilien-Community
                 </span>
               </div>
-
               <h1 className="text-5xl sm:text-7xl md:text-8xl font-black text-slate-900 leading-[0.95] mb-6 md:mb-10 tracking-tighter">
                 Vernetzt.<br className="hidden sm:block" />
                 <span className="text-transparent bg-clip-text bg-gradient-to-br from-blue-600 via-blue-500 to-indigo-600">
@@ -83,6 +156,44 @@ const LandingHome = () => {
         </div>
       </section>
 
+      {/* Eddy — KI-Berater Banner */}
+      <section className="relative overflow-hidden bg-gradient-to-br from-indigo-700 via-indigo-600 to-blue-600 py-12 md:py-16">
+        <div className="absolute top-0 right-0 w-80 h-80 bg-white/5 rounded-full -translate-y-1/2 translate-x-1/4 pointer-events-none" />
+        <div className="absolute bottom-0 left-0 w-56 h-56 bg-white/5 rounded-full translate-y-1/2 -translate-x-1/4 pointer-events-none" />
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex flex-col md:flex-row items-center gap-8 md:gap-12">
+            <div className="flex-shrink-0 relative">
+              <div className="absolute inset-0 bg-white/10 rounded-full blur-3xl scale-75 pointer-events-none" />
+              <EddyOwl3D size={180} />
+            </div>
+            <div className="text-center md:text-left">
+              <div className="inline-flex items-center gap-2 bg-white/20 backdrop-blur-sm px-3 py-1 rounded-full text-[10px] font-black text-white mb-4 uppercase tracking-widest">
+                🦉 KI-Immobilienassistent
+              </div>
+              <h2 className="text-3xl md:text-4xl font-black text-white tracking-tighter mb-3">
+                Hallo, ich bin Eddy!
+              </h2>
+              <p className="text-indigo-100 font-medium text-base mb-6 max-w-md leading-relaxed">
+                Ihr persönlicher KI-Immobilienberater von HausMatch. Ich beantworte Ihre Fragen zu Hausverwaltung, Mietrecht, Finanzierung und Investment — sofort und kostenlos.
+              </p>
+              <div className="flex flex-col sm:flex-row gap-3 justify-center md:justify-start">
+                <Link
+                  to="/ki-berater"
+                  className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-white text-indigo-700 rounded-2xl font-black text-sm hover:bg-indigo-50 transition-all shadow-xl active:scale-95"
+                >
+                  <EddyOwl size={24} />
+                  Mit Eddy chatten
+                </Link>
+                <div className="flex items-center justify-center gap-2 text-indigo-200 text-xs font-medium">
+                  <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" /></svg>
+                  Kostenlos · Rund um die Uhr
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Community Features */}
       <section className="py-16 md:py-24 bg-slate-50 border-y border-slate-100">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -92,39 +203,13 @@ const LandingHome = () => {
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {[
-              {
-                icon: <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" /></svg>,
-                title: 'Community',
-                desc: 'Vernetzen Sie sich mit Eigentümern und Verwaltern in ganz Deutschland.',
-                link: '/network',
-                linkText: 'Zum Netzwerk'
-              },
-              {
-                icon: <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" /></svg>,
-                title: 'Forum & Austausch',
-                desc: 'Stellen Sie Fragen, teilen Sie Erfahrungen und lernen Sie von der Community.',
-                link: '/forum',
-                linkText: 'Zum Forum'
-              },
-              {
-                icon: <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" /></svg>,
-                title: 'Kreditrechner',
-                desc: 'Berechnen Sie Rendite, monatliche Rate und Nebenkosten für Ihr Projekt.',
-                link: '/kreditrechner',
-                linkText: 'Zum Rechner'
-              },
-              {
-                icon: <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" /></svg>,
-                title: 'Ratgeber',
-                desc: 'Expertenwissen zu Recht, Verwaltung und Investitionen — klar und praxisnah.',
-                link: '/ratgeber',
-                linkText: 'Zum Ratgeber'
-              }
+              { icon: <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" /></svg>, title: 'Community', desc: 'Vernetzen Sie sich mit Eigentümern und Verwaltern in ganz Deutschland.', link: '/network', linkText: 'Zum Netzwerk' },
+              { icon: <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" /></svg>, title: 'Forum & Austausch', desc: 'Stellen Sie Fragen, teilen Sie Erfahrungen und lernen Sie von der Community.', link: '/forum', linkText: 'Zum Forum' },
+              { icon: <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" /></svg>, title: 'Kreditrechner', desc: 'Berechnen Sie Rendite, monatliche Rate und Nebenkosten für Ihr Projekt.', link: '/kreditrechner', linkText: 'Zum Rechner' },
+              { icon: <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" /></svg>, title: 'Ratgeber', desc: 'Expertenwissen zu Recht, Verwaltung und Investitionen — klar und praxisnah.', link: '/ratgeber', linkText: 'Zum Ratgeber' }
             ].map((item, i) => (
               <div key={i} className="bg-white rounded-2xl p-6 border border-slate-100 shadow-sm hover:shadow-md transition-shadow group">
-                <div className="w-12 h-12 bg-blue-50 text-blue-600 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
-                  {item.icon}
-                </div>
+                <div className="w-12 h-12 bg-blue-50 text-blue-600 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">{item.icon}</div>
                 <h3 className="text-lg font-black text-slate-900 mb-2">{item.title}</h3>
                 <p className="text-slate-500 text-sm font-medium mb-4 leading-relaxed">{item.desc}</p>
                 <Link to={item.link} className="text-blue-600 text-xs font-black uppercase tracking-widest hover:text-blue-700 flex items-center gap-1">
@@ -146,30 +231,13 @@ const LandingHome = () => {
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-10 md:gap-8">
             {[
-              {
-                step: '01',
-                icon: <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>,
-                title: 'Profil anlegen',
-                desc: 'Registrieren Sie sich kostenlos und beschreiben Sie Ihr Objekt oder Angebot als Verwalter.'
-              },
-              {
-                step: '02',
-                icon: <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>,
-                title: 'KI-Matching',
-                desc: 'Unsere KI analysiert Bedarf und Angebot und schlägt die besten Matches in Ihrer Region vor.'
-              },
-              {
-                step: '03',
-                icon: <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" /></svg>,
-                title: 'Vernetzen & profitieren',
-                desc: 'Treten Sie mit Experten in Kontakt, tauschen Sie sich im Forum aus und nutzen Sie das volle Netzwerk.'
-              }
+              { step: '01', icon: <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>, title: 'Profil anlegen', desc: 'Registrieren Sie sich kostenlos und beschreiben Sie Ihr Objekt oder Angebot als Verwalter.' },
+              { step: '02', icon: <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>, title: 'KI-Matching', desc: 'Unsere KI analysiert Bedarf und Angebot und schlägt die besten Matches in Ihrer Region vor.' },
+              { step: '03', icon: <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" /></svg>, title: 'Vernetzen & profitieren', desc: 'Treten Sie mit Experten in Kontakt, tauschen Sie sich im Forum aus und nutzen Sie das volle Netzwerk.' }
             ].map((s, i) => (
               <div key={i} className="flex flex-col items-center text-center group">
                 <div className="relative mb-6">
-                  <div className="w-16 h-16 bg-blue-600 text-white rounded-2xl flex items-center justify-center shadow-xl shadow-blue-200 group-hover:scale-110 transition-transform">
-                    {s.icon}
-                  </div>
+                  <div className="w-16 h-16 bg-blue-600 text-white rounded-2xl flex items-center justify-center shadow-xl shadow-blue-200 group-hover:scale-110 transition-transform">{s.icon}</div>
                   <span className="absolute -top-3 -right-3 w-7 h-7 bg-slate-900 text-white rounded-full text-[10px] font-black flex items-center justify-center">{s.step}</span>
                 </div>
                 <h3 className="text-xl font-black text-slate-900 mb-2">{s.title}</h3>
@@ -186,12 +254,8 @@ const LandingHome = () => {
           <h2 className="text-3xl md:text-4xl font-black text-white tracking-tighter mb-4">Werden Sie Teil der Community</h2>
           <p className="text-slate-400 font-medium mb-8 text-sm md:text-base">Kostenlos registrieren und sofort mit Experten und Eigentümern vernetzen.</p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link to="/register" className="px-8 py-4 bg-blue-600 text-white rounded-2xl font-black uppercase tracking-widest text-sm hover:bg-blue-500 transition-all shadow-xl shadow-blue-900/40 active:scale-95">
-              Kostenlos starten
-            </Link>
-            <Link to="/ratgeber" className="px-8 py-4 bg-white/10 text-white rounded-2xl font-black uppercase tracking-widest text-sm hover:bg-white/20 transition-all border border-white/10 active:scale-95">
-              Ratgeber lesen
-            </Link>
+            <Link to="/register" className="px-8 py-4 bg-blue-600 text-white rounded-2xl font-black uppercase tracking-widest text-sm hover:bg-blue-500 transition-all shadow-xl shadow-blue-900/40 active:scale-95">Kostenlos starten</Link>
+            <Link to="/ratgeber" className="px-8 py-4 bg-white/10 text-white rounded-2xl font-black uppercase tracking-widest text-sm hover:bg-white/20 transition-all border border-white/10 active:scale-95">Ratgeber lesen</Link>
           </div>
         </div>
       </section>
