@@ -17,33 +17,36 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   }
 
   try {
-    const prompt = `Suche nach echten, aktiven deutschen Hausverwaltungsunternehmen für die Suchanfrage: "${query}".
+    const prompt = `Du hilfst dabei, echte Hausverwaltungsunternehmen für die Anfrage "${query}" zu finden.
 
-Nutze Google-Suchergebnisse um ECHTE Unternehmen mit echten Kontaktdaten zu finden.
-Gib exakt 8 Unternehmen zurück, sortiert nach Google-Bewertung (höchste zuerst).
+STRENGE QUALITÄTSREGELN – diese sind ABSOLUT verbindlich:
 
-WICHTIG – Vollständige Kontaktdaten recherchieren: Die Felder "address", "phone", "website" und "email" sind für den Nutzer besonders wichtig, damit er die Hausverwaltung direkt erreichen kann. Recherchiere daher für JEDES Unternehmen aktiv und gründlich nach ALLEN diesen Angaben, bevor du ein Feld leer lässt:
-1. Prüfe die offizielle Unternehmenswebsite, insbesondere die Seiten "Kontakt", "Impressum" oder "Über uns" – dort stehen meist die vollständige Postadresse, Telefonnummer und E-Mail-Adresse.
-2. Das Impressum ist in Deutschland gesetzlich vorgeschrieben und enthält fast immer Postanschrift, Telefonnummer und E-Mail – suche gezielt danach (z.B. "<Firmenname> Impressum").
-3. Prüfe zusätzlich Brancheneinträge wie Google-Unternehmensprofil, Gelbe Seiten, Das Örtliche, branchenbuch.de oder Immobilienscout24/Immowelt-Profile, die oft vollständige Adress-, Telefon- und E-Mail-Angaben enthalten.
-4. Erfinde oder rate NIEMALS Angaben (z.B. keine geratene Adresse, keine geratene E-Mail wie "info@domain.de") – verwende nur Daten, die du tatsächlich auf einer Quelle gefunden hast.
-Setze ein Feld nur dann auf einen leeren String "", wenn du nach gründlicher Recherche über alle oben genannten Quellen wirklich keine Angabe findest.
-Antworte NUR mit einem JSON-Array (kein Markdown, kein erklärender Text), in diesem Format:
+1. EXAKTE ÜBEREINSTIMMUNG: Stelle sicher, dass Firmenname UND Stadt genau übereinstimmen. "B&W Immobilien Gladbeck" und "B&W Immobilien München" sind VÖLLIG VERSCHIEDENE Firmen – verwechsle sie NIEMALS.
+
+2. WEBSITE-VERIFIZIERUNG: Prüfe, ob die Domain der Website zum GENAUEN Firmennamen passt. Beispiel: Wenn du "Müller Hausverwaltung Köln" suchst, darf die Website NICHT von "Müller & Partner Immobilien Hamburg" sein. Im Zweifelsfall: Website-Feld LEER lassen.
+
+3. KONTAKTDATEN-VERIFIKATION: Telefonnummer, E-Mail und Adresse müssen zu GENAU DIESEM Unternehmen in GENAU DIESER Stadt gehören. Keine Daten von ähnlichen Firmen übernehmen.
+
+4. LIEBER WENIGER ALS FALSCH: Gib nur 3–6 Ergebnisse zurück, wenn du dir bei mehr nicht sicher bist. Qualität vor Quantität.
+
+5. FELDER LEER LASSEN statt erfinden: Wenn du dir bei Website, Telefon oder E-Mail nicht 100% sicher bist, dass sie zu genau diesem Unternehmen gehören – lass das Feld als leeren String "".
+
+Antworte NUR mit einem JSON-Array (kein Markdown, kein Text davor/danach):
 [
   {
-    "name": "Firmenname GmbH",
-    "address": "Musterstraße 1, 80331 München",
-    "city": "München",
-    "phone": "+49 89 123456",
-    "website": "https://example.de",
-    "email": "info@example.de",
-    "rating": 4.7,
-    "reviews": 83,
+    "name": "Exakter Firmenname",
+    "address": "Straße Hausnummer, PLZ Stadt",
+    "city": "Stadt",
+    "phone": "+49 ...",
+    "website": "https://...",
+    "email": "info@...",
+    "rating": 4.5,
+    "reviews": 47,
     "specialization": "WEG-Verwaltung, Mietverwaltung"
   }
 ]
 
-Felder die unbekannt sind als leeren String "" angeben, rating als 0 wenn unbekannt.`;
+Unbekannte Felder als "" angeben, rating als 0 wenn unbekannt.`;
 
     const response = await fetch(
       `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`,
@@ -54,8 +57,8 @@ Felder die unbekannt sind als leeren String "" angeben, rating als 0 wenn unbeka
           tools: [{ googleSearch: {} }],
           contents: [{ role: 'user', parts: [{ text: prompt }] }],
           generationConfig: {
-            temperature: 0.1,
-            maxOutputTokens: 8192,
+            temperature: 0.0,
+            maxOutputTokens: 4096,
             thinkingConfig: { thinkingBudget: 0 }
           }
         })
@@ -99,6 +102,7 @@ Felder die unbekannt sind als leeren String "" angeben, rating als 0 wenn unbeka
         specialization: String(c.specialization || 'Hausverwaltung'),
         isPartner: false
       }))
+      .filter((c: { name: string }) => c.name.length > 0)
       .sort((a: { rating: number }, b: { rating: number }) => b.rating - a.rating);
 
     return res.status(200).json({ companies });
