@@ -177,7 +177,7 @@ const SearchResults = () => {
   const mailtoHref = selectedWithEmail.length > 0 ? buildMailto(selectedWithEmail, city) : undefined;
 
   const openInquiryModal = () => {
-    if (selectedWithEmail.length === 0) return;
+    if (selectedCompanies.length === 0) return;
     setInquiryMessage(
       'Sehr geehrte Damen und Herren,\n\n' +
       'über die Plattform HausMatch suche ich für eine Immobilie in ' + city + ' eine professionelle Hausverwaltung und möchte Sie gerne kontaktieren.\n\n' +
@@ -203,7 +203,7 @@ const SearchResults = () => {
           senderEmail,
           message: inquiryMessage,
           city,
-          recipients: selectedWithEmail.map((c) => ({ name: c.name, email: c.email }))
+          companies: selectedCompanies.map((c) => ({ name: c.name, address: c.address, phone: c.phone, email: c.email }))
         })
       });
       const data = await res.json();
@@ -323,7 +323,7 @@ const SearchResults = () => {
               <button
                 type="button"
                 onClick={openInquiryModal}
-                disabled={!mailtoHref}
+                disabled={selectedCompanies.length === 0}
                 className={`w-full flex items-center justify-center gap-2 py-5 rounded-2xl font-black text-lg transition-all shadow-xl ${
                   mailtoHref
                     ? 'bg-white text-indigo-700 hover:bg-indigo-50 active:scale-95'
