@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { fetchLatestIndustryBlog } from '../services/geminiService';
@@ -11,23 +10,53 @@ const SectionHeader = ({ title, subtitle }: { title: string; subtitle: string })
   </div>
 );
 
+// Eddy die Eule â fÃ¼r About-Seite
+const EddyOwl = ({ size = 120 }: { size?: number }) => (
+  <svg width={size} height={size} viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+    <ellipse cx="50" cy="80" rx="28" ry="22" fill="#5856D6" />
+    <ellipse cx="50" cy="84" rx="17" ry="15" fill="#f0eef8" />
+    <circle cx="50" cy="44" r="34" fill="#5856D6" />
+    <polygon points="25,20 17,4 34,16" fill="#4c46cc" />
+    <polygon points="75,20 83,4 66,16" fill="#4c46cc" />
+    <ellipse cx="50" cy="47" rx="29" ry="26" fill="#f0eef8" />
+    <circle cx="36" cy="43" r="13.5" fill="white" />
+    <circle cx="36" cy="43" r="9" fill="#080820" />
+    <circle cx="31" cy="38" r="3" fill="white" />
+    <circle cx="36" cy="43" r="13.5" fill="none" stroke="#1a1a3e" strokeWidth="2.5" />
+    <circle cx="64" cy="43" r="13.5" fill="white" />
+    <circle cx="64" cy="43" r="9" fill="#080820" />
+    <circle cx="59" cy="38" r="3" fill="white" />
+    <circle cx="64" cy="43" r="13.5" fill="none" stroke="#1a1a3e" strokeWidth="2.5" />
+    <line x1="49.5" y1="43" x2="50.5" y2="43" stroke="#1a1a3e" strokeWidth="2.5" strokeLinecap="round" />
+    <path d="M44,60 Q50,68 56,60 Q50,65 44,60 Z" fill="#f59e0b" />
+    <ellipse cx="24" cy="78" rx="9" ry="16" fill="#4c46cc" transform="rotate(-12 24 78)" />
+    <ellipse cx="76" cy="78" rx="9" ry="16" fill="#4c46cc" transform="rotate(12 76 78)" />
+    <ellipse cx="41" cy="98" rx="9" ry="4" fill="#f59e0b" />
+    <ellipse cx="59" cy="98" rx="9" ry="4" fill="#f59e0b" />
+  </svg>
+);
+
 export const AboutPage: React.FC = () => (
   <div className="max-w-7xl mx-auto px-4 py-20">
-    <SectionHeader 
-      title="Über HausMatch" 
-      subtitle="Wir revolutionieren die Art und Weise, wie Eigentümer und Hausverwaltungen zueinander finden." 
+    <SectionHeader
+      title="Ãber HausMatch"
+      subtitle="Wir revolutionieren die Art und Weise, wie EigentÃ¼mer und Hausverwaltungen zueinander finden."
     />
     <div className="grid md:grid-cols-2 gap-12 items-center mb-20">
       <div className="space-y-6 text-slate-600">
-        <p>HausMatch ist die Antwort auf die wachsende Komplexität im Immobilienmanagement. Wir glauben, dass die richtige Verwaltung der Schlüssel zu wertbeständigen Immobilien und zufriedenen Hausgemeinschaften ist.</p>
-        <p>Unser Team kombiniert jahrzehntelange Erfahrung in der Immobilienwirtschaft mit modernster KI-Technologie, um den Matching-Prozess so effizient wie möglich zu gestalten.</p>
+        <p>HausMatch ist die Antwort auf die wachsende KomplexitÃ¤t im Immobilienmanagement. Wir glauben, dass die richtige Verwaltung der SchlÃ¼ssel zu wertbestÃ¤ndigen Immobilien und zufriedenen Hausgemeinschaften ist.</p>
+        <p>Unser Team kombiniert jahrzehntelange Erfahrung in der Immobilienwirtschaft mit modernster KI-Technologie, um den Matching-Prozess so effizient wie mÃ¶glich zu gestalten.</p>
         <div className="bg-indigo-50 p-6 rounded-2xl border border-indigo-100">
           <h4 className="font-bold text-indigo-900 mb-2">Unsere Mission</h4>
-          <p className="text-indigo-800">Transparenz und Vertrauen in den oft unübersichtlichen Markt der Hausverwaltungen bringen.</p>
+          <p className="text-indigo-800">Transparenz und Vertrauen in den oft unÃ¼bersichtlichen Markt der Hausverwaltungen bringen.</p>
         </div>
       </div>
-      <div className="bg-slate-200 aspect-video rounded-3xl overflow-hidden shadow-inner flex items-center justify-center text-slate-400">
-        <svg className="w-20 h-20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" /></svg>
+      <div className="bg-gradient-to-br from-indigo-600 to-indigo-800 aspect-video rounded-3xl overflow-hidden shadow-2xl flex flex-col items-center justify-center gap-4">
+        <EddyOwl size={120} />
+        <div className="text-white text-center">
+          <p className="font-black text-lg tracking-tight">Eddy â Ihr KI-Assistent ð¦</p>
+          <p className="text-indigo-200 text-sm font-medium">Rund um die Uhr fÃ¼r Sie da</p>
+        </div>
       </div>
     </div>
 
@@ -35,7 +64,7 @@ export const AboutPage: React.FC = () => (
       <div className="max-w-3xl">
         <h3 className="text-3xl font-black text-slate-900 mb-6 tracking-tighter">Das HausMatch Netzwerk</h3>
         <p className="text-lg text-slate-600 mb-10 leading-relaxed">
-          Wir bringen Verwalter und Eigentümer in einem exklusiven Netzwerk zusammen. Tauschen Sie sich aus, vernetzen Sie sich mit Experten und finden Sie die passenden Partner für Ihre Immobilienprojekte.
+          Wir bringen Verwalter und EigentÃ¼mer in einem exklusiven Netzwerk zusammen. Tauschen Sie sich aus, vernetzen Sie sich mit Experten und finden Sie die passenden Partner fÃ¼r Ihre Immobilienprojekte.
         </p>
         <div className="flex flex-wrap gap-4">
           <Link to="/network" className="bg-slate-900 text-white px-10 py-5 rounded-2xl font-black uppercase text-xs tracking-widest hover:bg-indigo-600 transition-all shadow-2xl shadow-slate-200 flex items-center gap-3">
@@ -71,11 +100,11 @@ export const BlogPage: React.FC = () => {
       <div className="flex flex-col items-center mb-20">
         <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-slate-900 text-white text-[10px] font-black uppercase tracking-widest mb-6 shadow-xl shadow-slate-200">
            <span className="w-2 h-2 rounded-full bg-green-400 animate-pulse"></span>
-           Live Update: Jeden Montag & Freitag
+           Live Update: Jeden Montag &amp; Freitag
         </div>
-        <SectionHeader 
-          title="Verwalter-Wissen" 
-          subtitle="Die wichtigsten Updates zu Recht, Technik und Management – kuratiert von HausMatch KI." 
+        <SectionHeader
+          title="Verwalter-Wissen"
+          subtitle="Die wichtigsten Updates zu Recht, Technik und Management â kuratiert von HausMatch KI."
         />
       </div>
 
@@ -109,9 +138,8 @@ export const BlogPage: React.FC = () => {
                    </div>
                    <h2 className="text-4xl md:text-5xl font-black text-slate-900 mb-6 tracking-tighter leading-tight">{articles[0].title}</h2>
                    <p className="text-xl text-slate-500 font-medium leading-relaxed mb-8">{articles[0].summary}</p>
-                   
                    <div className="bg-slate-50 p-8 rounded-[2rem] border border-slate-100 mb-8">
-                      <h4 className="text-[10px] font-black text-indigo-600 uppercase tracking-widest mb-4">Seriöse Quellen & Referenzen</h4>
+                      <h4 className="text-[10px] font-black text-indigo-600 uppercase tracking-widest mb-4">SeriÃ¶se Quellen &amp; Referenzen</h4>
                       <div className="flex flex-wrap gap-3">
                          {articles[0].sources?.map((s, idx) => (
                            <a key={idx} href={s.url} target="_blank" rel="noopener noreferrer" className="text-xs font-bold text-slate-400 hover:text-indigo-600 underline decoration-2 underline-offset-4 flex items-center gap-1">
@@ -121,12 +149,11 @@ export const BlogPage: React.FC = () => {
                          ))}
                       </div>
                    </div>
-                   
-                   <button 
+                   <button
                     onClick={() => setSelectedArticle(articles[0])}
                     className="text-slate-900 font-black uppercase text-xs tracking-widest border-b-2 border-slate-900 pb-1 hover:text-indigo-600 hover:border-indigo-600 transition-all"
                    >
-                    Vollständigen Bericht lesen
+                    VollstÃ¤ndigen Bericht lesen
                    </button>
                 </div>
              </div>
@@ -142,7 +169,6 @@ export const BlogPage: React.FC = () => {
                 </div>
                 <h3 className="text-2xl font-black text-slate-900 mb-4 group-hover:text-indigo-600 transition-colors tracking-tight">{post.title}</h3>
                 <p className="text-slate-500 font-medium leading-relaxed mb-8 flex-1">{post.summary}</p>
-                
                 <div className="bg-slate-50 p-6 rounded-2xl border border-slate-100 mb-6">
                   <h4 className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-3">Quellen</h4>
                   <div className="flex flex-wrap gap-3">
@@ -154,8 +180,7 @@ export const BlogPage: React.FC = () => {
                     ))}
                   </div>
                 </div>
-
-                <button 
+                <button
                   onClick={() => setSelectedArticle(post)}
                   className="text-slate-900 font-black uppercase text-[10px] tracking-widest border-b border-slate-900 self-start hover:text-indigo-600 hover:border-indigo-600 transition-all"
                 >
@@ -166,7 +191,7 @@ export const BlogPage: React.FC = () => {
           </div>
         </div>
       ) : (
-        <div className="text-center py-20 text-slate-300 font-black uppercase tracking-[0.2em]">Keine neuen Updates verfügbar.</div>
+        <div className="text-center py-20 text-slate-300 font-black uppercase tracking-[0.2em]">Keine neuen Updates verfÃ¼gbar.</div>
       )}
 
       {/* Article Modal */}
@@ -191,9 +216,8 @@ export const BlogPage: React.FC = () => {
                   {selectedArticle.fullContent}
                 </div>
               </div>
-
               <div className="mt-12 pt-12 border-t border-slate-100">
-                <h4 className="text-xs font-black text-slate-400 uppercase tracking-widest mb-6">Referenzen & Weiterführende Links</h4>
+                <h4 className="text-xs font-black text-slate-400 uppercase tracking-widest mb-6">Referenzen &amp; WeiterfÃ¼hrende Links</h4>
                 <div className="grid sm:grid-cols-2 gap-4">
                   {selectedArticle.sources?.map((s, idx) => (
                     <a key={idx} href={s.url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-4 p-4 bg-slate-50 rounded-2xl border border-slate-100 hover:border-indigo-300 hover:bg-white transition-all group">
@@ -210,7 +234,7 @@ export const BlogPage: React.FC = () => {
               </div>
             </div>
             <div className="p-8 bg-slate-50 border-t border-slate-100 flex justify-center">
-              <button onClick={() => setSelectedArticle(null)} className="bg-slate-900 text-white px-12 py-4 rounded-2xl font-black uppercase text-xs tracking-widest hover:bg-indigo-600 transition-all shadow-xl shadow-slate-200">Schließen</button>
+              <button onClick={() => setSelectedArticle(null)} className="bg-slate-900 text-white px-12 py-4 rounded-2xl font-black uppercase text-xs tracking-widest hover:bg-indigo-600 transition-all shadow-xl shadow-slate-200">SchlieÃen</button>
             </div>
           </div>
         </div>
@@ -219,63 +243,126 @@ export const BlogPage: React.FC = () => {
   );
 };
 
-export const ContactPage: React.FC = () => (
-  <div className="max-w-3xl mx-auto px-4 py-20">
-    <SectionHeader 
-      title="Kontaktieren Sie uns" 
-      subtitle="Wir sind für Sie da. Senden Sie uns eine Nachricht." 
-    />
-    <form className="bg-white p-8 rounded-3xl border border-slate-200 shadow-sm space-y-4">
-      <div className="grid grid-cols-2 gap-4">
-        <div>
-          <label className="block text-sm font-bold mb-2">Vorname</label>
-          <input className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl" placeholder="Max" />
+export const ContactPage: React.FC = () => {
+  const [form, setForm] = useState({ firstName: '', lastName: '', email: '', message: '' });
+  const [status, setStatus] = useState<'idle' | 'sending' | 'success' | 'error'>('idle');
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setStatus('sending');
+    try {
+      const res = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(form),
+      });
+      if (!res.ok) throw new Error('Fehler beim Senden');
+      setStatus('success');
+      setForm({ firstName: '', lastName: '', email: '', message: '' });
+    } catch {
+      setStatus('error');
+    }
+  };
+
+  return (
+    <div className="max-w-3xl mx-auto px-4 py-20">
+      <SectionHeader
+        title="Kontaktieren Sie uns"
+        subtitle="Wir sind fÃ¼r Sie da. Senden Sie uns eine Nachricht."
+      />
+      {status === 'success' ? (
+        <div className="bg-green-50 border border-green-200 rounded-3xl p-12 text-center">
+          <div className="text-4xl mb-4">â</div>
+          <h3 className="text-2xl font-black text-green-900 mb-2">Nachricht gesendet!</h3>
+          <p className="text-green-700 font-medium">Wir melden uns in KÃ¼rze bei Ihnen.</p>
+          <button onClick={() => setStatus('idle')} className="mt-6 px-6 py-3 bg-green-600 text-white rounded-xl font-bold text-sm hover:bg-green-700 transition-all">Weitere Nachricht senden</button>
         </div>
-        <div>
-          <label className="block text-sm font-bold mb-2">Nachname</label>
-          <input className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl" placeholder="Mustermann" />
-        </div>
-      </div>
-      <div>
-        <label className="block text-sm font-bold mb-2">Email</label>
-        <input className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl" placeholder="max@example.com" />
-      </div>
-      <div>
-        <label className="block text-sm font-bold mb-2">Nachricht</label>
-        <textarea className="w-full h-32 p-3 bg-slate-50 border border-slate-200 rounded-xl" placeholder="Wie können wir helfen?" />
-      </div>
-      <button type="button" onClick={() => alert('Danke! Nachricht wurde simuliert gesendet.')} className="w-full bg-indigo-600 text-white py-4 rounded-xl font-bold shadow-lg shadow-indigo-100">Nachricht senden</button>
-    </form>
-  </div>
-);
+      ) : (
+        <form onSubmit={handleSubmit} className="bg-white p-8 rounded-3xl border border-slate-200 shadow-sm space-y-4">
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-bold mb-2">Vorname</label>
+              <input
+                required
+                className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+                placeholder="Franz-Josef"
+                value={form.firstName}
+                onChange={e => setForm(f => ({ ...f, firstName: e.target.value }))}
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-bold mb-2">Nachname</label>
+              <input
+                required
+                className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+                placeholder="Mustermann"
+                value={form.lastName}
+                onChange={e => setForm(f => ({ ...f, lastName: e.target.value }))}
+              />
+            </div>
+          </div>
+          <div>
+            <label className="block text-sm font-bold mb-2">E-Mail</label>
+            <input
+              required
+              type="email"
+              className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+              placeholder="ihre@email.de"
+              value={form.email}
+              onChange={e => setForm(f => ({ ...f, email: e.target.value }))}
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-bold mb-2">Nachricht</label>
+            <textarea
+              required
+              className="w-full h-32 p-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:outline-none resize-none"
+              placeholder="Wie kÃ¶nnen wir helfen?"
+              value={form.message}
+              onChange={e => setForm(f => ({ ...f, message: e.target.value }))}
+            />
+          </div>
+          {status === 'error' && (
+            <p className="text-red-600 text-sm font-medium bg-red-50 p-3 rounded-xl">Beim Senden ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut oder schreiben Sie uns direkt an info@bundwimmobilien.de.</p>
+          )}
+          <button
+            type="submit"
+            disabled={status === 'sending'}
+            className="w-full bg-indigo-600 text-white py-4 rounded-xl font-bold shadow-lg shadow-indigo-100 hover:bg-indigo-700 transition-all disabled:opacity-60"
+          >
+            {status === 'sending' ? 'Wird gesendetâ¦' : 'Nachricht senden'}
+          </button>
+        </form>
+      )}
+    </div>
+  );
+};
 
 export const LegalPage: React.FC<{ type: 'impressum' | 'privacy' | 'agb' }> = ({ type }) => (
   <div className="max-w-4xl mx-auto px-4 py-20">
-    <SectionHeader 
-      title={type === 'impressum' ? 'Impressum' : type === 'privacy' ? 'Datenschutz' : 'AGB'} 
-      subtitle="Rechtliche Informationen zur Nutzung von HausMatch." 
+    <SectionHeader
+      title={type === 'impressum' ? 'Impressum' : type === 'privacy' ? 'DatenschutzerklÃ¤rung' : 'Allgemeine GeschÃ¤ftsbedingungen'}
+      subtitle="Rechtliche Informationen zur Nutzung von HausMatch."
     />
     <div className="prose prose-slate max-w-none text-slate-600 space-y-8">
       {type === 'impressum' && (
         <>
           <section>
-            <h3 className="text-xl font-bold text-slate-900 mb-4">Angaben gemäß § 5 TMG</h3>
+            <h3 className="text-xl font-bold text-slate-900 mb-4">Angaben gemÃ¤Ã Â§ 5 TMG</h3>
             <p>
-              B & W Immobilien Management UG (haftungsbeschränkt)<br />
-              Goethestraße 42<br />
+              B &amp; W Immobilien Management UG (haftungsbeschrÃ¤nkt)<br />
+              GoethestraÃe 42<br />
               45964 Gladbeck<br />
               Deutschland
             </p>
           </section>
-
           <section>
             <h3 className="text-xl font-bold text-slate-900 mb-4">Vertreten durch:</h3>
             <p>
-              Franz-Josef Barth (Geschäftsführer)<br />
-              Alexander Wachtel (stellvertretender Geschäftsführer)
+              Franz-Josef Barth (GescN[¤ftsfÃ¼hrer)<br />
+              Alexander Wachtel (stellvertretender GeschÃ¤ftsfÃ¼hrer)
             </p>
           </section>
-
           <section>
             <h3 className="text-xl font-bold text-slate-900 mb-4">Kontakt:</h3>
             <p>
@@ -284,7 +371,6 @@ export const LegalPage: React.FC<{ type: 'impressum' | 'privacy' | 'agb' }> = ({
               Web: www.bundwimmobilien.de
             </p>
           </section>
-
           <section>
             <h3 className="text-xl font-bold text-slate-900 mb-4">Registereintrag:</h3>
             <p>
@@ -292,23 +378,18 @@ export const LegalPage: React.FC<{ type: 'impressum' | 'privacy' | 'agb' }> = ({
               Handelsregisternummer: HRB 19149
             </p>
           </section>
-
           <section>
             <h3 className="text-xl font-bold text-slate-900 mb-4">Umsatzsteuer-ID:</h3>
-            <p>
-              Umsatzsteuer-Identifikationsnummer gemäß § 27a Umsatzsteuergesetz: DE456949310
-            </p>
+            <p>Umsatzsteuer-Identifikationsnummer gemÃ¤Ã Â§ 27a Umsatzsteuergesetz: DE456949310</p>
           </section>
-
           <section>
-            <h3 className="text-xl font-bold text-slate-900 mb-4">Erlaubnis nach § 34c GewO:</h3>
+            <h3 className="text-xl font-bold text-slate-900 mb-4">Erlaubnis nach Â§ 34c GewO:</h3>
             <p>
               Erteilt durch: Ordnungsamt Recklinghausen<br />
               Kurt-Schumacher-Allee 1<br />
               45657 Recklinghausen
             </p>
           </section>
-
           <section>
             <h3 className="text-xl font-bold text-slate-900 mb-4">Berufshaftpflichtversicherung:</h3>
             <p>
@@ -318,12 +399,11 @@ export const LegalPage: React.FC<{ type: 'impressum' | 'privacy' | 'agb' }> = ({
               Geltungsraum der Versicherung: Deutschland
             </p>
           </section>
-
           <section>
-            <h3 className="text-xl font-bold text-slate-900 mb-4">Verantwortlich für den Inhalt nach § 55 Abs. 2 RStV:</h3>
+            <h3 className="text-xl font-bold text-slate-900 mb-4">Verantwortlich fÃ¼r den Inhalt nach Â§ 55 Abs. 2 RStV:</h3>
             <p>
               Franz-Josef Barth<br />
-              Goethestraße 42<br />
+              GoethestraÃe 42<br />
               45964 Gladbeck
             </p>
           </section>
@@ -333,33 +413,108 @@ export const LegalPage: React.FC<{ type: 'impressum' | 'privacy' | 'agb' }> = ({
       {type === 'privacy' && (
         <>
           <section>
-            <h3 className="text-xl font-bold text-slate-900 mb-4">1. Datenschutz auf einen Blick</h3>
-            <h4 className="font-bold text-slate-800 mb-2">Allgemeine Hinweise</h4>
-            <p>Die folgenden Hinweise geben einen einfachen Überblick darüber, was mit Ihren personenbezogenen Daten passiert, wenn Sie diese Website besuchen. Personenbezogene Daten sind alle Daten, mit denen Sie persönlich identifiziert werden können. Ausführliche Informationen zum Thema Datenschutz entnehmen Sie unserer unter diesem Text aufgeführten Datenschutzerklärung.</p>
+            <h3 className="text-xl font-bold text-slate-900 mb-4">1. Verantwortlicher</h3>
+            <p>Verantwortlicher im Sinne der DSGVO ist:<br />
+            B &amp; W Immobilien Management UG (haftungsbeschrÃ¤nkt)<br />
+            GoethestraÃe 42, 45964 Gladbeck<br />
+            E-Mail: info@bundwimmobilien.de</p>
           </section>
 
           <section>
-            <h3 className="text-xl font-bold text-slate-900 mb-4">2. Datenerfassung auf dieser Website</h3>
-            <h4 className="font-bold text-slate-800 mb-2">Wer ist verantwortlich für die Datenerfassung auf dieser Website?</h4>
-            <p>Die Datenverarbeitung auf dieser Website erfolgt durch den Websitebetreiber. Dessen Kontaktdaten können Sie dem Impressum dieser Website entnehmen.</p>
-            <h4 className="font-bold text-slate-800 mb-2">Wie erfassen wir Ihre Daten?</h4>
-            <p>Ihre Daten werden zum einen dadurch erhoben, dass Sie uns diese mitteilen. Hierbei kann es sich z. B. um Daten handeln, die Sie in ein Kontaktformular eingeben.</p>
-            <p>Andere Daten werden automatisch oder nach Ihrer Einwilligung beim Besuch der Website durch unsere IT-Systeme erfasst. Das sind vor allem technische Daten (z. B. Internetbrowser, Betriebssystem oder Uhrzeit des Seitenaufrufs). Die Erfassung dieser Daten erfolgt automatisch, sobald Sie diese Website betreten.</p>
+            <h3 className="text-xl font-bold text-slate-900 mb-4">2. Erhebung und Verarbeitung personenbezogener Daten</h3>
+            <p>Wir erheben personenbezogene Daten nur, soweit dies fÃ¼r die Bereitstellung unserer Dienste erforderlich ist. Dazu gehÃ¶ren bei Registrierung: Name, E-Mail-Adresse, Rollenangabe (EigentÃ¼mer/Verwalter). Diese Daten werden fÃ¼r den Betrieb der Plattform genutzt und nicht an Dritte verkauft.</p>
           </section>
 
           <section>
-            <h3 className="text-xl font-bold text-slate-900 mb-4">3. Ihre Rechte</h3>
-            <p>Sie haben jederzeit das Recht, unentgeltlich Auskunft über Herkunft, Empfänger und Zweck Ihrer gespeicherten personenbezogenen Daten zu erhalten. Sie haben außerdem ein Recht, die Berichtigung oder Löschung dieser Daten zu verlangen. Wenn Sie eine Einwilligung zur Datenverarbeitung erteilt haben, können Sie diese Einwilligung jederzeit für die Zukunft widerrufen. Außerdem haben Sie das Recht, unter bestimmten Umständen die Einschränkung der Verarbeitung Ihrer personenbezogenen Daten zu verlangen. Des Weiteren steht Ihnen ein Beschwerderecht bei der zuständigen Aufsichtsbehörde zu.</p>
+            <h3 className="text-xl font-bold text-slate-900 mb-4">3. Eingesetzte Dienste und Drittanbieter</h3>
+
+            <h4 className="font-bold text-slate-800 mb-2">3.1 Google Firebase (Authentifizierung &amp; Datenbank)</h4>
+            <p>Wir nutzen Google Firebase (Google LLC, 1600 Amphitheatre Parkway, Mountain View, CA 94043, USA) fÃ¼r Nutzeranmeldung und Datenspeicherung. Daten kÃ¶nnen auf Servern in den USA verarbeitet werden. Grundlage ist ein Standardvertragsklauseln-Abkommen gemÃ¤Ã Art. 46 DSGVO. DatenschutzerklÃ¤rung Google: <a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer" className="text-indigo-600 underline">policies.google.com/privacy</a></p>
+
+            <h4 className="font-bold text-slate-800 mb-2 mt-4">3.2 Google Gemini KI</h4>
+            <p>Unser KI-Assistent âEddy" und die Suchfunktion nutzen Google Gemini (Google LLC). Anfragen, die Sie an Eddy stellen, werden zur Verarbeitung an die Google Gemini API Ã¸bertragen. Wir empfehlen, keine sensiblen personenbezogenen Daten in Chat-Anfragen einzugeben. Rechtsgrundlage: Art. 6 Abs. 1 lit. b DSGVO (VertragserfÃ¸llung / Bereitstellung des Dienstes).</p>
+
+            <h4 className="font-bold text-slate-800 mb-2 mt-4">3.3 Resend (E-Mail-Versand)</h4>
+            <p>FÃ¼r den Versand von E-Mails (Anfragen, Kontaktformular) nutzen wir Resend (Resend Inc., USA). Dabei werden Name und E-Mail-Adresse der Absender an Resend Ã¼bermittelt. DatenschutzerklÃ¤rung: <a href="https://resend.com/legal/privacy-policy" target="_blank" rel="noopener noreferrer" className="text-indigo-600 underline">resend.com/legal/privacy-policy</a></p>
+
+            <h4 className="font-bold text-slate-800 mb-2 mt-4">3.4 Vercel (Hosting)</h4>
+            <p>Die Plattform wird auf Vercel (Vercel Inc., USA) gehostet. Beim Seitenaufruf werden technische Daten (IP-Adresse, Browsertyp, Zugriffszeit) im Rahmen des regulÃ¤ren Serverbetriebs verarbeitet. DatenschutzerklÃ¤rung: <a href="https://vercel.com/legal/privacy-policy" target="_blank" rel="noopener noreferrer" className="text-indigo-600 underline">vercel.com/legal/privacy-policy</a></p>
+          </section>
+
+          <section>
+            <h3 className="text-xl font-bold text-slate-900 mb-4">4. Cookies</h3>
+            <p>Diese Website verwendet ausschlieÃlich technisch notwendige Cookies (z. B. fÃ¼r die Anmeldesitzung). Es werden keine Tracking- oder Marketing-Cookies gesetzt. Eine Cookie-Einwilligung ist daher nicht erforderlich.</p>
+          </section>
+
+          <section>
+            <h3 className="text-xl font-bold text-slate-900 mb-4">5. Speicherdauer</h3>
+            <p>Nutzerdaten werden gespeichert, solange das Konto aktiv ist. Nach KontolÃ¶schung werden alle personenbezogenen Daten innerhalb von 30 Tagen gelÃ¶scht, sofern keine gesetzlichen Aufbewahrungspflichten entgegenstehen.</p>
+          </section>
+
+          <section>
+            <h3 className="text-xl font-bold text-slate-900 mb-4">6. Ihre Rechte</h3>
+            <p>Sie haben das Recht auf Auskunft (Art. 15 DSGVO), Berichtigung (Art. 16), LÃ¶schung (Art. 17), EinschrÃ¤nkung der Verarbeitung (Art. 18), DatenÃ¼bertragbarkeit (Art. 20) sowie Widerspruch (Art. 21 DSGVO). Beschwerden kÃ¶nnen an die zustÃ¤ndige DatenschutzaufsichtsbehÃ¶rde gerichtet werden (Landesbeauftragte fÃ¼r Datenschutz NRW).</p>
+            <p className="mt-2">Anfragen richten Sie bitte an: <a href="mailto:info@bundwimmobilien.de" className="text-indigo-600 underline">info@bundwimmobilien.de</a></p>
           </section>
         </>
       )}
 
       {type === 'agb' && (
-        <section>
-          <h3 className="text-xl font-bold text-slate-900 mb-4">Allgemeine Geschäftsbedingungen</h3>
-          <p>Unsere AGB regeln die Nutzung der HausMatch Plattform. Wir legen Wert auf Transparenz und faire Bedingungen für alle Nutzer.</p>
-          <p>Detaillierte AGB werden hier in Kürze veröffentlicht. Bei Fragen wenden Sie sich bitte an unseren Support.</p>
-        </section>
+        <>
+          <section>
+            <h3 className="text-xl font-bold text-slate-900 mb-4">Â§ 1 Geltungsbereich</h3>
+            <p>Diese Allgemeinen GeschÃ¤ftsbedingungen (AGB) gelten fÃ¼r die Nutzung der Plattform HausMatch, betrieben von der B &amp; W Immobilien Management UG (haftungsbeschrÃ¤nkt), GoethestraÃe 42, 45964 Gladbeck (nachfolgend âBetreiber"). Mit der Registrierung akzeptieren Sie diese AGB in der jeweils gÃ¼ltigen Fassung.</p>
+          </section>
+
+          <section>
+            <h3 className="text-xl font-bold text-slate-900 mb-4">Â§ 2 Leistungsbeschreibung</h3>
+            <p>HausMatch ist eine digitale Vermittlungsplattform, die EigentÃ¼mer von Immobilien mit professionellen Hausverwaltungsunternehmen zusammenfÃ¼hrt. Der Betreiber vermittelt lediglich den Kontakt zwischen den Parteien und ist nicht Vertragspartner der zwischen EigentÃ¼mern und Verwaltern geschlossenen VerwaltungsvertrÃ¤ge.</p>
+            <p className="mt-2">Die Plattform bietet zusÃ¤tzlich einen KI-gestÃ¼tzten Assistenten (âEddy"), der allgemeine Informationen zu Immobilienthemen bereitstellt. Eddy ersetzt keine Rechts-, Steuer- oder Finanzberatung.</p>
+          </section>
+
+          <section>
+            <h3 className="text-xl font-bold text-slate-900 mb-4">Â§ 3 Registrierung und Nutzerkonto</h3>
+            <p>Die Nutzung bestimmter Funktionen setzt eine Registrierung voraus. Nutzer mÃ¼ssen volljÃ¤hrig sein und die angegebenen Daten wahrheitsgemÃ¤Ã angeben. Pro Person ist nur ein Konto zulÃ¤ssig. Der Betreiber behÃ¤lt sich vor, Konten bei VerstÃ¶Ãen gegen diese AGB zu sperren oder zu lÃ¶schen.</p>
+          </section>
+
+          <section>
+            <h3 className="text-xl font-bold text-slate-900 mb-4">Â§ 4 Pflichten der Nutzer</h3>
+            <p>Nutzer verpflichten sich, die Plattform nicht fÃ¼r rechtswidrige Zwecke zu nutzen, keine falschen Angaben zu machen, keine Spam-Nachrichten oder Werbung ohne Zustimmung zu versenden und keine Inhalte zu verÃ¶ffentlichen, die gegen geltendes Recht, Rechte Dritter oder die guten Sitten verstoÃen.</p>
+          </section>
+
+          <section>
+            <h3 className="text-xl font-bold text-slate-900 mb-4">Â§ 5 HaftungsbeschrÃ¤nkung</h3>
+            <p>Der Betreiber Ã¼bernimmt keine Haftung fÃ¼r die QualitÃ¤t, ZuverlÃ¤ssigkeit oder BonitÃ¤t der auf der Plattform gelisteten Hausverwaltungsunternehmen. Angaben zu Bewertungen und Spezialisierungen basieren auf Ã¶ffentlich verfÃ¼gbaren Informationen und KI-Auswertungen â eine Garantie fÃ¼r deren Richtigkeit wird nicht gegeben.</p>
+            <p className="mt-2">Die Haftung des Betreibers fÃ¼r SchÃ¤den aus einfacher FahrlÃ¤ssigkeit ist â auÃer bei Verletzung wesentlicher Vertragspflichten sowie bei ScN[¤den aus der Verletzung von Leben, KÃ¶rper oder Gesundheit â ausgeschlossen.</p>
+          </section>
+
+          <section>
+            <h3 className="text-xl font-bold text-slate-900 mb-4">Â§ 6 KI-Assistent (Eddy)</h3>
+            <p>Der KI-Assistent Eddy stellt automatisch generierte Informationen bereit. Diese Informationen sind allgemeiner Natur und stellen keine Rechts-, Steuer- oder Finanzberatung dar. FÃ¸r Entscheidungen, die auf Eddy-Antworten basieren, Ã¼bernimmt der Betreiber keine Haftung. Nutzer werden ausdrÃ¼cklich aufgefordert, bei rechtlichen oder finanziellen Fragen einen zugelassenen Fachberater hinzuzuziehen.</p>
+          </section>
+
+          <section>
+            <h3 className="text-xl font-bold text-slate-900 mb-4">Â§ 7 Ãnderungen der AGB</h3>
+            <p>Der Betreiber behÃ¤lt sich vor, diese AGB jederzeit zu Ã¤ndern. Registrierte Nutzer werden Ã¼ber wesentliche Ãnderungen per E-Mail informiert. Die fortgesetzte Nutzung der Plattform nach Bekanntgabe der Ãnderungen gilt als Zustimmung.</p>
+          </section>
+
+          <section>
+            <h3 className="text-xl font-bold text-slate-900 mb-4">Â§ 8 KÃ¼ndigung</h3>
+            <p>Nutzer kÃ¶nnen ihr Konto jederzeit ohne Angabe von GrÃ¼nden lÃ¶schen. Der Betreiber kann Konten bei schwerwiegenden VerstÃ¶Ãen gegen diese AGB fristlos sperren oder kÃ¼ndigen.</p>
+          </section>
+
+          <section>
+            <h3 className="text-xl font-bold text-slate-900 mb-4">Â§ 9 Anwendbares Recht und Gerichtsstand</h3>
+            <p>Es gilt das Recht der Bundesrepublik Deutschland. Gerichtsstand fÃ¼r alle Streitigkeiten aus oder im Zusammenhang mit diesen AGB ist, soweit gesetzlich zulÃ¤ssig, Gelsenkirchen.</p>
+          </section>
+
+          <section>
+            <h3 className="text-xl font-bold text-slate-900 mb-4">Â§ 10 Salvatorische Klausel</h3>
+            <p>Sollten einzelne Bestimmungen dieser AGB unwirksam sein oder werden, bleibt die Wirksamkeit der Ã¼brigen Bestimmungen unberÃ¸hrt.</p>
+          </section>
+
+          <p className="text-sm text-slate-400 italic mt-8">Stand: Juni 2026 | B &amp; W Immobilien Management UG (haftungsbeschrÃ¤nkt)</p>
+        </>
       )}
     </div>
   </div>
