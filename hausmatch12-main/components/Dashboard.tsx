@@ -12,12 +12,21 @@ const Dashboard = () => {
   const [replyText, setReplyText] = useState('');
 
   useEffect(() => {
+    if (!user) return;
     setLoading(true);
     getInquiries().then(data => {
-      setInquiries(data);
+      // Filtere nach Manager-Stadt wenn vorhanden
+      const filtered = (user.role === 'manager' && user.city)
+        ? data.filter(i => {
+            const iCity = (i.city || '').toLowerCase().trim();
+            const uCity = (user.city || '').toLowerCase().trim();
+            return iCity.includes(uCity) || uCity.includes(iCity);
+          })
+        : data;
+      setInquiries(filtered);
       setLoading(false);
     });
-  }, []);
+  }, [user]);
 
   const handleStatusUpdate = async (id: string, status: Inquiry['status']) => {
     try {
