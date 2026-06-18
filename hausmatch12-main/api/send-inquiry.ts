@@ -44,39 +44,36 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       ? companies.map((c: { name: string }) => c.name).join(', ')
       : 'Keine Unternehmen ausgewählt';
 
-  const userNote =
-    '\n\nHinweis: Die Sandbox erlaubt nur E-Mails an die Resend-Konto-Adresse. Für Produktions-E-Mails bitte Domain in Resend verifizieren.';
-
   // E-Mail 1: Admin-Benachrichtigung (kritisch)
   const adminResult = await sendEmail(apiKey, {
     from: FROM_EMAIL,
     to: [ADMIN_EMAIL],
     reply_to: senderEmail,
-    subject: `Neue Anfrage HausMatch – ${city || 'unbekannte Stadt'}`,
-    text: `Neue Express-Matching Anfrage\n\nVon: ${senderName}\nE-Mail: ${senderEmail}\nTelefon: ${senderPhone || 'nicht angegeben'}\nStadt: ${city || 'nicht angegeben'}\n\nNachricht:\n${message || '(keine Nachricht)'}\n\nAngefragte Unternehmen: ${companyList}${userNote}`,
+    subject: `Neue Express-Matching Anfrage – ${city || 'unbekannte Stadt'}`,
+    text: `Neue Express-Matching Anfrage\n\nVon: ${senderName}\nE-Mail: ${senderEmail}\nTelefon: ${senderPhone || 'nicht angegeben'}\nStadt: ${city || 'nicht angegeben'}\n\nNachricht:\n${message || '(keine Nachricht)'}\n\nAngefragte Unternehmen: ${companyList}`,
   });
 
   if (!adminResult.ok) {
     return res.status(500).json({ error: 'Anfrage konnte nicht gesendet werden. Bitte versuchen Sie es erneut.' });
   }
 
-  // E-Mail 2: Bestätigung an Nutzer (optional)
+  // E-Mail 2: Bestätigung an Interessent (optional)
   await sendEmail(apiKey, {
     from: FROM_EMAIL,
     to: [senderEmail],
     subject: 'Ihre Anfrage bei HausMatch wurde empfangen',
-    text: `Hallo ${senderName},\n\nvielen Dank für Ihre Anfrage bei HausMatch.\n\nWir haben Ihre Anfrage für folgende Unternehmen in ${city || 'Ihrer Stadt'} erhalten:\n${companyList}\n\nWir werden uns in Kürze bei Ihnen melden.\n\nMit freundlichen Grüßen,\nIhr HausMatch-Team`,
+    text: `Hallo ${senderName},\n\nvielen Dank für Ihre Anfrage bei HausMatch.\n\nWir haben Ihre Anfrage für folgende Unternehmen in ${city || 'Ihrer Stadt'} erhalten: ${companyList}\n\nWir werden uns in Kürze bei Ihnen melden.\n\nMit freundlichen Grüßen,\nIhr HausMatch-Team`,
   });
 
-  // E-Mail 3: An Unternehmen (optional)
+  // E-Mail 3: An Verwalter – ohne Kontaktdaten, mit Registrierungsaufforderung (optional)
   if (Array.isArray(companies)) {
+    const einheiten = message?.match(/\d+/)?.[0] ? message.match(/\d+/)[0] + ' Einheiten' : 'eine WEG';
     for (const company of companies.filter((c: { email?: string }) => !!c.email)) {
       await sendEmail(apiKey, {
         from: FROM_EMAIL,
         to: [company.email],
-        reply_to: senderEmail,
-        subject: `Neue Anfrage über HausMatch von ${senderName}`,
-        text: `Hallo ${company.name},\n\nüber HausMatch ist eine neue Anfrage eingegangen.\n\nKontaktdaten:\nName: ${senderName}\nE-Mail: ${senderEmail}\nTelefon: ${senderPhone || 'nicht angegeben'}\nStadt: ${city || 'nicht angegeben'}\n\nNachricht:\n${message || '(keine Nachricht)'}\n\nMit freundlichen Grüßen,\nHausMatch`,
+        subject: `Neue Anfrage über HausMatch – ${city || 'Ihre Region'}`,
+        text: `Guten Tag,\n\nein Interessent sucht eine WEG-Verwaltung in ${city || 'Ihrer Region'} für ${einheiten}.\n\nUm Ihr Angebot abzugeben und die Kontaktdaten des Interessenten zu erhalten, registrieren Sie sich bitte kostenlos auf:\n\nhttps://www.haus-match.de/register\n\nNach der Registrierung können Sie direkt mit dem Interessenten in Kontakt treten.\n\nMit freundlichen Grüßen,\nIhr HausMatch-Team`,
       });
     }
   }
