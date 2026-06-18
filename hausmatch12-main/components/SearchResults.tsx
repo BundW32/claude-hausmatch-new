@@ -6,6 +6,32 @@ import { ManagerSearchResult, SearchCompany, User } from '../types';
 
 const EDDY_URL = "https://cdn.jsdelivr.net/gh/BundW32/claude-hausmatch-new@main/hf_20260616_092652_b3b38af5-a913-44c1-80ef-1ac5d9adedb4.png";
 
+interface SelectableEntry {
+  key: string;
+  name: string;
+  email?: string;
+  address?: string;
+  phone?: string;
+}
+
+// ─── Checkbox ──────────────────────────────────────────────────────────────────
+const Checkbox = ({ checked, onToggle }: { checked: boolean; onToggle: () => void }) => (
+  <button
+    onClick={e => { e.stopPropagation(); onToggle(); }}
+    className={`w-7 h-7 rounded-full border-2 flex items-center justify-center flex-shrink-0 transition-all ${
+      checked ? 'bg-indigo-600 border-indigo-600' : 'bg-white border-slate-300 hover:border-indigo-400'
+    }`}
+    aria-label={checked ? 'Abwählen' : 'Auswählen'}
+  >
+    {checked && (
+      <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 13l4 4L19 7" />
+      </svg>
+    )}
+  </button>
+);
+
+// ─── StarRating ─────────────────────────────────────────────────────────────────
 const StarRating = ({ rating }: { rating: number }) => {
   const full = Math.floor(rating);
   const half = rating - full >= 0.5;
@@ -20,17 +46,17 @@ const StarRating = ({ rating }: { rating: number }) => {
   );
 };
 
-const CompanyCard = ({ company }: { company: SearchCompany }) => {
+// ─── CompanyCard ────────────────────────────────────────────────────────────────
+const CompanyCard = ({ company, selected, onToggle }: { company: SearchCompany; selected: boolean; onToggle: () => void }) => {
   const [showContact, setShowContact] = useState(false);
   return (
-    <div className="bg-white rounded-3xl border border-slate-100 shadow-sm hover:shadow-md transition-shadow overflow-hidden">
+    <div className={`bg-white rounded-3xl border-2 shadow-sm hover:shadow-md transition-all overflow-hidden ${selected ? 'border-indigo-400 ring-2 ring-indigo-100' : 'border-slate-100'}`}>
       <div className="p-8">
-        <div className="flex items-start justify-between gap-4 mb-4">
+        <div className="flex items-start gap-3 mb-4">
+          <Checkbox checked={selected} onToggle={onToggle} />
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 mb-1 flex-wrap">
-              {company.isPartner && (
-                <span className="bg-indigo-600 text-white text-[9px] font-black px-2 py-0.5 rounded-full uppercase tracking-widest">Partner</span>
-              )}
+              {company.isPartner && <span className="bg-indigo-600 text-white text-[9px] font-black px-2 py-0.5 rounded-full uppercase tracking-widest">Partner</span>}
               <h3 className="text-xl font-black text-slate-900 truncate">{company.name}</h3>
             </div>
             <p className="text-slate-500 text-sm font-medium truncate">{company.address || company.city}</p>
@@ -53,19 +79,13 @@ const CompanyCard = ({ company }: { company: SearchCompany }) => {
         )}
 
         <div className="flex items-center gap-3 flex-wrap">
-          <button
-            onClick={() => setShowContact(!showContact)}
-            className="flex-1 bg-indigo-600 text-white py-3 px-6 rounded-2xl font-black text-sm hover:bg-indigo-700 transition-colors active:scale-95"
-          >
+          <button onClick={() => setShowContact(!showContact)}
+            className="flex-1 bg-indigo-600 text-white py-3 px-6 rounded-2xl font-black text-sm hover:bg-indigo-700 transition-colors active:scale-95">
             {showContact ? 'Verbergen' : 'Kontakt anzeigen'}
           </button>
           {company.website && (
-            <a
-              href={company.website}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center gap-2 bg-slate-100 text-slate-700 py-3 px-5 rounded-2xl font-semibold text-sm hover:bg-slate-200 transition-colors"
-            >
+            <a href={company.website} target="_blank" rel="noopener noreferrer"
+              className="flex items-center gap-2 bg-slate-100 text-slate-700 py-3 px-5 rounded-2xl font-semibold text-sm hover:bg-slate-200 transition-colors">
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" /></svg>
               Website
             </a>
@@ -90,9 +110,7 @@ const CompanyCard = ({ company }: { company: SearchCompany }) => {
                 <span className="font-semibold">{company.email}</span>
               </a>
             )}
-            {!company.phone && !company.email && (
-              <p className="text-slate-400 text-sm">Keine Kontaktdaten verfügbar. Bitte Website besuchen.</p>
-            )}
+            {!company.phone && !company.email && <p className="text-slate-400 text-sm">Keine Kontaktdaten verfügbar. Bitte Website besuchen.</p>}
           </div>
         )}
       </div>
@@ -100,20 +118,24 @@ const CompanyCard = ({ company }: { company: SearchCompany }) => {
   );
 };
 
-const NetworkManagerCard = ({ manager }: { manager: User }) => {
+// ─── NetworkManagerCard ─────────────────────────────────────────────────────────
+const NetworkManagerCard = ({ manager, selected, onToggle }: { manager: User; selected: boolean; onToggle: () => void }) => {
   const [showContact, setShowContact] = useState(false);
   const displayName = manager.companyName || manager.name;
   const location = manager.city || manager.location || '';
   const specs = (manager.specialization || []).join(', ');
   return (
-    <div className="bg-white rounded-3xl border-2 border-indigo-200 shadow-sm hover:shadow-md transition-shadow overflow-hidden relative">
+    <div className={`bg-white rounded-3xl border-2 shadow-sm hover:shadow-md transition-all overflow-hidden relative ${selected ? 'border-indigo-400 ring-2 ring-indigo-100' : 'border-indigo-200'}`}>
       <div className="absolute top-4 right-4">
         <span className="bg-indigo-600 text-white text-[9px] font-black px-2.5 py-1 rounded-full uppercase tracking-widest">HausMatch Netzwerk</span>
       </div>
       <div className="p-8 pt-10">
-        <div className="mb-4">
-          <h3 className="text-xl font-black text-slate-900 pr-36">{displayName}</h3>
-          {location && <p className="text-slate-500 text-sm font-medium mt-0.5">{location}</p>}
+        <div className="flex items-start gap-3 mb-4">
+          <Checkbox checked={selected} onToggle={onToggle} />
+          <div className="min-w-0 flex-1">
+            <h3 className="text-xl font-black text-slate-900 pr-32 truncate">{displayName}</h3>
+            {location && <p className="text-slate-500 text-sm font-medium mt-0.5">{location}</p>}
+          </div>
         </div>
         {specs && (
           <div className="flex flex-wrap gap-2 mb-6">
@@ -124,10 +146,8 @@ const NetworkManagerCard = ({ manager }: { manager: User }) => {
         )}
         {manager.bio && <p className="text-slate-500 text-sm mb-6 leading-relaxed">{manager.bio}</p>}
         <div className="flex items-center gap-3 flex-wrap">
-          <button
-            onClick={() => setShowContact(!showContact)}
-            className="flex-1 bg-indigo-600 text-white py-3 px-6 rounded-2xl font-black text-sm hover:bg-indigo-700 transition-colors active:scale-95"
-          >
+          <button onClick={() => setShowContact(!showContact)}
+            className="flex-1 bg-indigo-600 text-white py-3 px-6 rounded-2xl font-black text-sm hover:bg-indigo-700 transition-colors active:scale-95">
             {showContact ? 'Verbergen' : 'Kontakt anzeigen'}
           </button>
           {manager.website && (
@@ -161,6 +181,155 @@ const NetworkManagerCard = ({ manager }: { manager: User }) => {
   );
 };
 
+// ─── ExpressModal ───────────────────────────────────────────────────────────────
+const ExpressModal = ({ selected, city, onClose }: { selected: SelectableEntry[]; city: string; onClose: () => void }) => {
+  const [ownerName, setOwnerName] = useState('');
+  const [ownerEmail, setOwnerEmail] = useState('');
+  const [ownerPhone, setOwnerPhone] = useState('');
+  const [description, setDescription] = useState('');
+  const [sending, setSending] = useState(false);
+  const [done, setDone] = useState(false);
+  const [error, setError] = useState('');
+
+  const handleSend = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setSending(true);
+    setError('');
+    try {
+      const res = await fetch('/api/send-inquiry', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          senderName: ownerName,
+          senderEmail: ownerEmail,
+          senderPhone: ownerPhone,
+          message: description,
+          city,
+          companies: selected.map(s => ({ name: s.name, email: s.email, address: s.address, phone: s.phone })),
+        }),
+      });
+      if (!res.ok) {
+        const d = await res.json();
+        throw new Error(d.error || 'Fehler beim Senden');
+      }
+      setDone(true);
+    } catch (err: any) {
+      setError(err.message || 'Anfrage konnte nicht gesendet werden.');
+    } finally {
+      setSending(false);
+    }
+  };
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4">
+      <div className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm" onClick={onClose} />
+      <div className="relative w-full sm:max-w-lg bg-white rounded-t-[2rem] sm:rounded-[2rem] shadow-2xl overflow-hidden max-h-[90vh] flex flex-col">
+
+        <div className="bg-indigo-600 px-8 py-6 flex items-center gap-4 flex-shrink-0">
+          <div className="w-12 h-12 rounded-xl overflow-hidden flex-shrink-0" style={{ background: '#2563FF' }}>
+            <img src={EDDY_URL} alt="Eddy" width={48} height={48} style={{ display: 'block', objectFit: 'cover' }} />
+          </div>
+          <div className="flex-1">
+            <h2 className="text-white font-black text-xl">Express-Matching</h2>
+            <p className="text-indigo-200 text-sm font-medium">{selected.length} Verwalter werden kontaktiert</p>
+          </div>
+          <button onClick={onClose} className="text-white/60 hover:text-white transition-colors">
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M6 18L18 6M6 6l12 12" /></svg>
+          </button>
+        </div>
+
+        <div className="overflow-y-auto flex-1 p-8">
+          {done ? (
+            <div className="text-center py-8">
+              <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                <svg className="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M5 13l4 4L19 7" />
+                </svg>
+              </div>
+              <h3 className="text-2xl font-black text-slate-900 mb-3">Anfragen versendet!</h3>
+              <p className="text-slate-500 font-medium mb-2">
+                Wir haben <span className="font-black text-indigo-600">{selected.length} Hausverwaltungen</span> in {city} um ein Angebot gebeten.
+              </p>
+              <p className="text-slate-400 text-sm mb-8">Die Angebote werden direkt an <span className="font-semibold">{ownerEmail}</span> gesendet.</p>
+              <div className="bg-slate-50 rounded-2xl p-4 text-left mb-6">
+                <p className="text-xs font-black text-slate-400 uppercase tracking-widest mb-3">Kontaktierte Verwalter</p>
+                {selected.map((s, i) => (
+                  <div key={i} className="flex items-center gap-2 py-1.5 border-b border-slate-100 last:border-0">
+                    <div className="w-2 h-2 bg-indigo-500 rounded-full flex-shrink-0" />
+                    <span className="text-sm font-semibold text-slate-700">{s.name}</span>
+                    {!s.email && <span className="text-[10px] text-amber-600 bg-amber-50 px-2 py-0.5 rounded-full">keine Email – via HausMatch</span>}
+                  </div>
+                ))}
+              </div>
+              <button onClick={onClose} className="w-full bg-indigo-600 text-white py-4 rounded-2xl font-black hover:bg-indigo-700 transition-colors">
+                Schließen
+              </button>
+            </div>
+          ) : (
+            <form onSubmit={handleSend} className="space-y-5">
+              <div className="bg-indigo-50 rounded-2xl p-4 mb-6">
+                <p className="text-xs font-black text-indigo-600 uppercase tracking-widest mb-2">Ausgewählte Verwalter ({selected.length})</p>
+                <div className="space-y-1">
+                  {selected.map((s, i) => (
+                    <div key={i} className="flex items-center gap-2">
+                      <div className="w-1.5 h-1.5 bg-indigo-400 rounded-full" />
+                      <span className="text-sm font-semibold text-slate-700">{s.name}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-xs font-black text-slate-400 uppercase tracking-widest mb-2">Ihr Name *</label>
+                <input required value={ownerName} onChange={e => setOwnerName(e.target.value)}
+                  placeholder="Max Mustermann"
+                  className="w-full bg-slate-50 rounded-2xl px-5 py-4 text-slate-900 font-medium ring-1 ring-slate-200 focus:ring-2 focus:ring-indigo-500 outline-none transition-all" />
+              </div>
+              <div>
+                <label className="block text-xs font-black text-slate-400 uppercase tracking-widest mb-2">Ihre E-Mail *</label>
+                <input required type="email" value={ownerEmail} onChange={e => setOwnerEmail(e.target.value)}
+                  placeholder="name@beispiel.de"
+                  className="w-full bg-slate-50 rounded-2xl px-5 py-4 text-slate-900 font-medium ring-1 ring-slate-200 focus:ring-2 focus:ring-indigo-500 outline-none transition-all" />
+              </div>
+              <div>
+                <label className="block text-xs font-black text-slate-400 uppercase tracking-widest mb-2">Telefon (optional)</label>
+                <input value={ownerPhone} onChange={e => setOwnerPhone(e.target.value)}
+                  placeholder="+49 ..."
+                  className="w-full bg-slate-50 rounded-2xl px-5 py-4 text-slate-900 font-medium ring-1 ring-slate-200 focus:ring-2 focus:ring-indigo-500 outline-none transition-all" />
+              </div>
+              <div>
+                <label className="block text-xs font-black text-slate-400 uppercase tracking-widest mb-2">Objekt-Beschreibung *</label>
+                <textarea required rows={4} value={description} onChange={e => setDescription(e.target.value)}
+                  placeholder="z.B. WEG mit 12 Einheiten, Baujahr 1978, suche neue Verwaltung ab Januar 2026..."
+                  className="w-full bg-slate-50 rounded-2xl px-5 py-4 text-slate-900 font-medium ring-1 ring-slate-200 focus:ring-2 focus:ring-indigo-500 outline-none transition-all resize-none" />
+              </div>
+
+              {error && (
+                <div className="bg-red-50 text-red-700 text-sm font-semibold px-4 py-3 rounded-2xl border border-red-100">{error}</div>
+              )}
+
+              <button type="submit" disabled={sending}
+                className="w-full bg-indigo-600 text-white py-5 rounded-2xl font-black text-lg hover:bg-indigo-700 transition-colors disabled:opacity-60 disabled:cursor-not-allowed active:scale-95 shadow-xl shadow-indigo-200/50">
+                {sending ? (
+                  <span className="flex items-center justify-center gap-3">
+                    <svg className="animate-spin h-5 w-5" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                    </svg>
+                    Anfragen werden gesendet...
+                  </span>
+                ) : `Angebote bei ${selected.length} Verwaltern anfragen`}
+              </button>
+              <p className="text-slate-400 text-xs text-center">Die Verwalter erhalten Ihre Anfrage und senden ihr Angebot direkt an Ihre E-Mail.</p>
+            </form>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// ─── SearchResults ──────────────────────────────────────────────────────────────
 const SearchResults = () => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
@@ -168,6 +337,8 @@ const SearchResults = () => {
   const [result, setResult] = useState<ManagerSearchResult | null>(null);
   const [networkManagers, setNetworkManagers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
+  const [selectedKeys, setSelectedKeys] = useState<Set<string>>(new Set());
+  const [showModal, setShowModal] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -183,18 +354,33 @@ const SearchResults = () => {
     fetchData();
   }, [city]);
 
+  const toggle = (key: string) => setSelectedKeys(prev => {
+    const next = new Set(prev);
+    next.has(key) ? next.delete(key) : next.add(key);
+    return next;
+  });
+
+  const getSelectedEntries = (): SelectableEntry[] => {
+    const entries: SelectableEntry[] = [];
+    networkManagers.forEach(m => {
+      if (selectedKeys.has(`net_${m.id}`)) {
+        entries.push({ key: `net_${m.id}`, name: m.companyName || m.name, email: m.email, phone: m.phone, address: m.city || m.location });
+      }
+    });
+    result?.companies.forEach((c, i) => {
+      if (selectedKeys.has(`comp_${i}`)) {
+        entries.push({ key: `comp_${i}`, name: c.name, email: c.email, phone: c.phone, address: c.address });
+      }
+    });
+    return entries;
+  };
+
   return (
-    <div className="bg-slate-50 min-h-screen pt-12 pb-24 font-sans">
+    <div className="bg-slate-50 min-h-screen pt-12 pb-32 font-sans">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex flex-col md:flex-row md:items-center justify-between mb-12 gap-6">
-          <div>
-            <div className="flex items-center gap-3 mb-3">
-              <span className="bg-indigo-600 text-white text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-widest shadow-lg shadow-indigo-100">Live Matching</span>
-              <h1 className="text-4xl font-black text-slate-900 tracking-tight">
-                Empfohlene Partner in {city}
-              </h1>
-            </div>
-          </div>
+        <div className="flex items-center gap-3 mb-12">
+          <span className="bg-indigo-600 text-white text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-widest shadow-lg shadow-indigo-100">Live Matching</span>
+          <h1 className="text-4xl font-black text-slate-900 tracking-tight">Empfohlene Partner in {city}</h1>
         </div>
 
         <div className="grid lg:grid-cols-3 gap-10">
@@ -207,7 +393,7 @@ const SearchResults = () => {
                     <img src={EDDY_URL} alt="Eddy" width={96} height={96} style={{ display: 'block', objectFit: 'cover' }} className="animate-pulse" />
                   </div>
                   <div className="absolute -bottom-2 -right-2 w-8 h-8 bg-indigo-600 rounded-full flex items-center justify-center">
-                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
                   </div>
                 </div>
                 <h3 className="text-2xl font-black text-slate-900 mb-3 tracking-tight">Eddy sucht für Sie...</h3>
@@ -216,28 +402,40 @@ const SearchResults = () => {
               </div>
             ) : result ? (
               <div className="space-y-6 animate-in fade-in slide-in-from-bottom-8 duration-700">
-                <div className="bg-white p-8 rounded-3xl shadow-sm border border-slate-100">
-                  <div className="flex items-center gap-3 mb-3">
+                <div className="bg-white p-6 rounded-3xl shadow-sm border border-slate-100 flex items-center justify-between gap-4 flex-wrap">
+                  <div className="flex items-center gap-3">
                     <div className="w-10 h-10 bg-indigo-50 text-indigo-600 rounded-xl flex items-center justify-center">
                       <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                     </div>
-                    <h2 className="text-xl font-black text-slate-900">Suchergebnis</h2>
+                    <p className="text-slate-600 font-medium">{result.introText}</p>
                   </div>
-                  <p className="text-slate-600 font-medium">{result.introText}</p>
+                  {(networkManagers.length + (result.companies?.length || 0)) > 0 && (
+                    <button
+                      onClick={() => {
+                        const allKeys = new Set<string>();
+                        networkManagers.forEach(m => allKeys.add(`net_${m.id}`));
+                        result.companies.forEach((_, i) => allKeys.add(`comp_${i}`));
+                        setSelectedKeys(selectedKeys.size === allKeys.size ? new Set() : allKeys);
+                      }}
+                      className="text-xs font-black text-indigo-600 hover:text-indigo-800 uppercase tracking-widest transition-colors flex-shrink-0"
+                    >
+                      {selectedKeys.size > 0 ? 'Alle abwählen' : 'Alle auswählen'}
+                    </button>
+                  )}
                 </div>
 
                 {networkManagers.length > 0 && (
                   <div className="space-y-4">
                     <div className="flex items-center gap-2 px-1">
-                      <div className="w-2 h-2 bg-indigo-500 rounded-full"></div>
+                      <div className="w-2 h-2 bg-indigo-500 rounded-full" />
                       <span className="text-xs font-black text-indigo-600 uppercase tracking-widest">HausMatch Netzwerk — Verifizierte Partner</span>
                     </div>
                     {networkManagers.map((m) => (
-                      <NetworkManagerCard key={m.id} manager={m} />
+                      <NetworkManagerCard key={m.id} manager={m} selected={selectedKeys.has(`net_${m.id}`)} onToggle={() => toggle(`net_${m.id}`)} />
                     ))}
                     {result.companies.length > 0 && (
                       <div className="flex items-center gap-2 px-1 pt-4">
-                        <div className="w-2 h-2 bg-slate-400 rounded-full"></div>
+                        <div className="w-2 h-2 bg-slate-400 rounded-full" />
                         <span className="text-xs font-black text-slate-400 uppercase tracking-widest">Weitere Ergebnisse aus dem Web</span>
                       </div>
                     )}
@@ -246,7 +444,7 @@ const SearchResults = () => {
 
                 {result.companies.length > 0 ? (
                   result.companies.map((company, idx) => (
-                    <CompanyCard key={idx} company={company} />
+                    <CompanyCard key={idx} company={company} selected={selectedKeys.has(`comp_${idx}`)} onToggle={() => toggle(`comp_${idx}`)} />
                   ))
                 ) : networkManagers.length === 0 ? (
                   <div className="bg-white p-12 rounded-3xl border border-slate-100 text-center">
@@ -267,20 +465,59 @@ const SearchResults = () => {
                   <img src={EDDY_URL} alt="Eddy" width={64} height={64} style={{ display: 'block', objectFit: 'cover' }} />
                 </div>
                 <div>
-                  <h4 className="text-xl font-black tracking-tight">Eddy hilft Ihnen</h4>
-                  <p className="text-indigo-200 text-sm font-medium">Ihr KI-Assistent</p>
+                  <h4 className="text-xl font-black tracking-tight">Express-Matching</h4>
+                  <p className="text-indigo-200 text-sm font-medium">Angebote direkt anfragen</p>
                 </div>
               </div>
               <p className="text-indigo-100 text-base mb-8 leading-relaxed font-semibold">
-                Lassen Sie Eddy die Vorauswahl treffen. Wir kontaktieren passende Firmen diskret für Sie.
+                Wählen Sie Verwalter aus der Liste aus und fordern Sie mit einem Klick Angebote an — diskret und kostenlos.
               </p>
-              <button onClick={() => navigate('/wizard')} className="w-full bg-white text-indigo-700 py-5 rounded-2xl font-black text-lg hover:bg-indigo-50 transition-all shadow-xl active:scale-95">
-                Express-Matching
-              </button>
+              {selectedKeys.size > 0 ? (
+                <button onClick={() => setShowModal(true)} className="w-full bg-white text-indigo-700 py-5 rounded-2xl font-black text-lg hover:bg-indigo-50 transition-all shadow-xl active:scale-95">
+                  {selectedKeys.size} Angebot{selectedKeys.size > 1 ? 'e' : ''} anfragen →
+                </button>
+              ) : (
+                <div className="w-full bg-white/20 text-white/70 py-5 rounded-2xl font-black text-base text-center">
+                  Bitte erst Verwalter auswählen
+                </div>
+              )}
             </div>
           </div>
         </div>
       </div>
+
+      {/* Sticky selection bar */}
+      {selectedKeys.size > 0 && !showModal && (
+        <div className="fixed bottom-0 left-0 right-0 z-40 p-4 pointer-events-none">
+          <div className="max-w-xl mx-auto pointer-events-auto">
+            <div className="bg-slate-900 rounded-3xl px-6 py-4 flex items-center gap-4 shadow-2xl shadow-slate-900/40">
+              <div className="w-9 h-9 bg-indigo-600 rounded-xl flex items-center justify-center flex-shrink-0">
+                <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M5 13l4 4L19 7" />
+                </svg>
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-white font-black text-sm">{selectedKeys.size} Verwalter ausgewählt</p>
+                <p className="text-slate-400 text-xs font-medium truncate">
+                  {getSelectedEntries().map(e => e.name).join(', ')}
+                </p>
+              </div>
+              <button onClick={() => setShowModal(true)}
+                className="bg-indigo-600 text-white px-5 py-3 rounded-2xl font-black text-sm hover:bg-indigo-500 transition-colors active:scale-95 flex-shrink-0 whitespace-nowrap">
+                Angebote anfragen
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {showModal && (
+        <ExpressModal
+          selected={getSelectedEntries()}
+          city={city}
+          onClose={() => setShowModal(false)}
+        />
+      )}
     </div>
   );
 };

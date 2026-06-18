@@ -52,14 +52,14 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     await resend.emails.send({
       from: FROM_EMAIL,
       to: [senderEmail],
-      subject: 'Ihre Anfrage bei HausMatch ist eingegangen',
-      text: `Hallo ${senderName},\n\nvielen Dank für Ihre Anfrage über HausMatch!\n\nWir haben Ihre Kontaktanfrage für folgende Hausverwaltungen in ${city || 'Ihrer Region'} erhalten:\n\n${companyList}\n\nWir kümmern uns schnellstmöglich um Ihre Anfrage.\n\nMit freundlichen Grüßen\nIhr HausMatch-Team\n\n---\nhaus-match.de`,
+      subject: 'Ihre Angebotsanfrage bei HausMatch ist eingegangen',
+      text: `Hallo ${senderName},\n\nvielen Dank für Ihre Angebotsanfrage über HausMatch!\n\nWir haben folgende Hausverwaltungen in ${city || 'Ihrer Region'} um ein Angebot gebeten:\n\n${companyList}\n\nDie Verwaltungen werden sich direkt bei Ihnen melden und ihr Angebot an ${senderEmail} senden.\n\nSobald Sie die Angebote erhalten haben, können Sie diese in Ruhe vergleichen und die passende Verwaltung auswählen.\n\nMit freundlichen Grüßen\nIhr HausMatch-Team\n\n---\nhaus-match.de`,
     });
   } catch (err) {
     console.warn('Bestätigungs-E-Mail Fehler:', err);
   }
 
-  // E-Mail 3: Direkt an Unternehmen mit bekannter E-Mail (optional)
+  // E-Mail 3: Angebotsanfrage direkt an Hausverwaltungen mit bekannter E-Mail
   if (Array.isArray(companies)) {
     for (const company of companies.filter((c: { email?: string }) => !!c.email)) {
       try {
@@ -67,8 +67,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
           from: FROM_EMAIL,
           to: [company.email],
           replyTo: senderEmail,
-          subject: `Anfrage über HausMatch von ${senderName}`,
-          text: `Sehr geehrte Damen und Herren,\n\nüber HausMatch (haus-match.de) hat sich ein Eigentümer an Sie gewandt.\n\nName:    ${senderName}\nE-Mail:  ${senderEmail}\nTelefon: ${senderPhone || 'nicht angegeben'}\nRegion:  ${city || 'nicht angegeben'}${userNote}\n\nBitte nehmen Sie direkt Kontakt auf.\n\nMit freundlichen Grüßen\nHausMatch-Team`,
+          subject: `Angebotsanfrage über HausMatch – ${city || 'Neue Anfrage'}`,
+          text: `Sehr geehrte Damen und Herren,\n\nüber HausMatch (haus-match.de) liegt uns eine Angebotsanfrage eines Immobilieneigentümers vor, der nach einer neuen Hausverwaltung in ${city || 'Ihrer Region'} sucht.\n\nEigentümer:\nName:    ${senderName}\nE-Mail:  ${senderEmail}\nTelefon: ${senderPhone || 'nicht angegeben'}\nRegion:  ${city || 'nicht angegeben'}${userNote}\n\nWir bitten Sie, Ihr Angebot direkt an den Eigentümer zu senden:\n  ${senderEmail}${senderPhone ? `\n  ${senderPhone}` : ''}\n\nDer Eigentümer vergleicht aktuell mehrere Angebote und entscheidet sich anschließend für einen Verwalter. Bitte melden Sie sich zeitnah, um Ihre Chancen zu erhöhen.\n\nVielen Dank für Ihr Interesse.\n\nMit freundlichen Grüßen\nHausMatch-Team\nhaus-match.de`,
         });
       } catch (err) {
         console.warn(`E-Mail an ${company.email} fehlgeschlagen:`, err);
