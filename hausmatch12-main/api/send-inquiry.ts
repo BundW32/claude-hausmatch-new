@@ -2,6 +2,8 @@ import type { VercelRequest, VercelResponse } from '@vercel/node';
 
 const ADMIN_EMAIL = process.env.ADMIN_EMAIL || 'barth@bundwimmobilien.de';
 const FROM_EMAIL = process.env.RESEND_FROM_EMAIL || 'HausMatch <onboarding@resend.dev>';
+const FIREBASE_PROJECT = 'hausmatch-1';
+const FIREBASE_API_KEY = process.env.FIREBASE_API_KEY || 'AIzaSyC1o_LoqOxhmK4J0lhIzf8qcHABS7XNoY8';
 
 async function sendEmail(apiKey: string, payload: object): Promise<{ ok: boolean; error?: string }> {
   const res = await fetch('https://api.resend.com/emails', {
@@ -17,6 +19,41 @@ async function sendEmail(apiKey: string, payload: object): Promise<{ ok: boolean
     console.error('Resend error (non-JSON):', res.status);
   }
   return { ok: false, error: 'E-Mail-Versand fehlgeschlagen.' };
+}
+
+async function saveToFirestore(data: {
+  city: string; senderName: string; senderEmail: string;
+  senderPhone: string; message: string; companies: { name: string; email?: string }[];
+}): Promise<void> {
+  const units = parseInt(data.message?.match(/\d+/)?.[0] || '0') || 0;
+  const body = {
+    fields: {
+      city:          { stringValue: data.city || '' },
+      ownerName:     { stringValue: data.senderName },
+      ownerEmail:    { stringValue: data.senderEmail },
+      ownerPhone:    { stringValue: data.senderPhone || '' },
+      description:   { stringValue: data.message || '' },
+      units:         { integerValue: String(units) },
+      propertyType:  { stringValue: 'WEG' },
+      status:        { stringValue: 'neu' },
+      source:        { stringValue: 'express-matching' },
+      companiesRequested: {
+        arrayValue: {
+          values: data.companies.map(c => ({ stringValue: c.name }))
+        }
+      },
+    },
+  };
+  const res = await fetch(
+    `https://firestore.googleapis.com/v1/projects/${FIREBASE_PROJECT}/databases/(default)/documents/inquiries?key=${FIREBASE_API_KEY}`,
+    { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) }
+  );
+  if (!res.ok) {
+    const err = await res.text();
+    console.error('Firestore save error:', res.status, err);
+  } else {
+    console.log('Inquiry saved to Firestore');
+  }
 }
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
@@ -56,6 +93,10 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (!adminResult.ok) {
     return res.status(500).json({ error: 'Anfrage konnte nicht gesendet werden. Bitte versuchen Sie es erneut.' });
   }
+
+  // Firestore: Anfrage speichern (optional, Fehler werden nur geloggt)
+  saveToFirestore({ city, senderName, senderEmail, senderPhone: senderPhone || '', message: message || '', companies: Array.isArray(companies) ? companies : [] })
+    .catch(err => console.error('Firestore save failed:', err));
 
   // E-Mail 2: Bestätigung an Interessent (optional)
   await sendEmail(apiKey, {
