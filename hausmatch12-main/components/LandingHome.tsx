@@ -22,7 +22,7 @@ const LandingHome = () => {
   const handleStartFunnel = (e: React.FormEvent) => {
     e.preventDefault();
     if (city.trim()) {
-      navigate(`/wizard?city=${encodeURIComponent(city)}`);
+      navigate(`/search-results?city=${encodeURIComponent(city)}`);
     } else {
       navigate('/wizard');
     }

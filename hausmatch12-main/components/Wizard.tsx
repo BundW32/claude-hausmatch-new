@@ -22,15 +22,14 @@ const Wizard = () => {
   });
 
   const handleSubmit = async () => {
-    if (!formData.city || !formData.description) {
-      alert("Bitte füllen Sie alle Pflichtfelder aus (Stadt und Beschreibung).");
+    if (!formData.city) {
+      alert("Bitte geben Sie eine Stadt ein.");
       return;
     }
     setLoading(true);
     try {
       const analysis = await analyzePropertyRequirement(formData);
-      
-      await createInquiry({
+      createInquiry({
         ...formData,
         ownerId: user?.id || 'gast',
         ownerName: user?.name || 'Gast',
@@ -39,12 +38,11 @@ const Wizard = () => {
         aiAnalysis: analysis,
         units: Number(formData.units),
         propertyType: formData.propertyType as 'WEG' | 'Mietshaus' | 'Gewerbe',
-      });
-      setTimeout(() => navigate(`/search-results?city=${encodeURIComponent(formData.city)}`), 3000);
+      }).catch(e => console.error('Anfrage speichern fehlgeschlagen:', e));
     } catch (e) {
       console.error(e);
-      setLoading(false);
     }
+    setTimeout(() => navigate(`/search-results?city=${encodeURIComponent(formData.city)}`), 3000);
   };
 
   if (loading) {
