@@ -5,35 +5,11 @@ interface Message {
   text: string;
 }
 
-// Eddy die Eule — lila Farben, große Augen, Brille
-const EddyOwl = ({ size = 40 }: { size?: number }) => (
-  <svg width={size} height={size} viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-    <ellipse cx="50" cy="80" rx="28" ry="22" fill="#5856D6" />
-    <ellipse cx="50" cy="84" rx="17" ry="15" fill="#f0eef8" />
-    <circle cx="50" cy="44" r="34" fill="#5856D6" />
-    <polygon points="25,20 17,4 34,16" fill="#4c46cc" />
-    <polygon points="75,20 83,4 66,16" fill="#4c46cc" />
-    <ellipse cx="50" cy="47" rx="29" ry="26" fill="#f0eef8" />
-    <circle cx="36" cy="43" r="13.5" fill="white" />
-    <circle cx="36" cy="43" r="9" fill="#080820" />
-    <circle cx="31" cy="38" r="3" fill="white" />
-    <circle cx="36" cy="43" r="13.5" fill="none" stroke="#1a1a3e" strokeWidth="2.5" />
-    <circle cx="64" cy="43" r="13.5" fill="white" />
-    <circle cx="64" cy="43" r="9" fill="#080820" />
-    <circle cx="59" cy="38" r="3" fill="white" />
-    <circle cx="64" cy="43" r="13.5" fill="none" stroke="#1a1a3e" strokeWidth="2.5" />
-    <line x1="49.5" y1="43" x2="50.5" y2="43" stroke="#1a1a3e" strokeWidth="2.5" strokeLinecap="round" />
-    <path d="M44,60 Q50,68 56,60 Q50,65 44,60 Z" fill="#f59e0b" />
-    <ellipse cx="24" cy="78" rx="9" ry="16" fill="#4c46cc" transform="rotate(-12 24 78)" />
-    <ellipse cx="76" cy="78" rx="9" ry="16" fill="#4c46cc" transform="rotate(12 76 78)" />
-    <ellipse cx="41" cy="98" rx="9" ry="4" fill="#f59e0b" />
-    <ellipse cx="59" cy="98" rx="9" ry="4" fill="#f59e0b" />
-  </svg>
-);
+const EDDY_URL = "https://cdn.jsdelivr.net/gh/BundW32/claude-hausmatch-new@main/hf_20260616_092652_b3b38af5-a913-44c1-80ef-1ac5d9adedb4.png";
 
-const EddyAvatar = () => (
-  <div className="w-10 h-10 rounded-xl overflow-hidden bg-indigo-700 flex items-center justify-center flex-shrink-0">
-    <EddyOwl size={38} />
+const EddyAvatar = ({ size = 40 }: { size?: number }) => (
+  <div style={{ width: size, height: size, background: '#2563FF', borderRadius: size * 0.25, overflow: 'hidden', flexShrink: 0 }}>
+    <img src={EDDY_URL} alt="Eddy" width={size} height={size} style={{ display: 'block', objectFit: 'cover' }} />
   </div>
 );
 
@@ -130,7 +106,7 @@ const ChatBot = () => {
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M6 18L18 6M6 6l12 12" />
           </svg>
         ) : (
-          <EddyOwl size={52} />
+          <img src={EDDY_URL} alt="Eddy" width={52} height={52} style={{ display: 'block', objectFit: 'cover' }} />
         )}
       </button>
 
@@ -143,7 +119,7 @@ const ChatBot = () => {
       {open && (
         <div className="fixed bottom-28 right-4 sm:right-6 z-50 w-[calc(100vw-2rem)] sm:w-96 max-h-[80vh] flex flex-col bg-white rounded-2xl shadow-2xl border border-slate-100 overflow-hidden">
           <div className="bg-indigo-600 px-4 py-3 flex items-center gap-3">
-            <EddyAvatar />
+            <EddyAvatar size={40} />
             <div>
               <div className="text-white font-black text-sm">Eddy — Immobilien-KI 🦉</div>
               <div className="text-indigo-200 text-xs font-medium flex items-center gap-1">
@@ -172,7 +148,7 @@ const ChatBot = () => {
               <div key={i} className={`flex gap-2 ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
                 {msg.role === 'assistant' && (
                   <div className="w-7 h-7 rounded-full bg-indigo-600 flex items-center justify-center flex-shrink-0 mt-0.5 overflow-hidden">
-                    <EddyOwl size={26} />
+                    <img src={EDDY_URL} alt="Eddy" width={28} height={28} style={{ display: 'block', objectFit: 'cover' }} />
                   </div>
                 )}
                 <div className={`max-w-[85%] px-4 py-3 rounded-2xl text-sm font-medium leading-relaxed ${
