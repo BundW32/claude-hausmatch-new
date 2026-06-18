@@ -43,7 +43,7 @@ const Profile = () => {
             name: currentUser.name,
             email: currentUser.email || '',
             bio: currentUser.bio || '',
-            location: currentUser.location || '',
+            location: currentUser.location || currentUser.city || '',
             phone: currentUser.phone || '',
             website: currentUser.website || '',
             avatar: currentUser.avatar || '',
@@ -64,8 +64,16 @@ const Profile = () => {
 
   const handleSave = async () => {
     if (!currentUser) return;
+    if (!formData.location?.trim()) {
+      alert('Bitte geben Sie Ihren Standort (Stadt) an. Dieser wird für die Verwalter-Suche benötigt.');
+      return;
+    }
     setSaveLoading(true);
-    await updateUserProfile(currentUser.id, formData);
+    await updateUserProfile(currentUser.id, {
+      ...formData,
+      city: formData.location.trim(),
+      location: formData.location.trim(),
+    });
     await refreshUser();
     setIsEditing(false);
     setSaveLoading(false);
@@ -242,8 +250,8 @@ const Profile = () => {
                        <input className="w-full bg-slate-50 border-0 rounded-[2rem] px-8 py-5 text-black font-bold ring-1 ring-slate-100 focus:ring-2 focus:ring-indigo-600 outline-none transition-all text-xl" value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} />
                      </div>
                      <div className="space-y-3">
-                       <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-6">Hauptstandort</label>
-                       <input className="w-full bg-slate-50 border-0 rounded-[2rem] px-8 py-5 text-black font-bold ring-1 ring-slate-100 focus:ring-2 focus:ring-indigo-600 outline-none transition-all text-xl" value={formData.location} onChange={e => setFormData({...formData, location: e.target.value})} />
+                       <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-6">Stadt / Standort <span className="text-indigo-500">*</span></label>
+                       <input required className="w-full bg-slate-50 border-0 rounded-[2rem] px-8 py-5 text-black font-bold ring-1 ring-slate-100 focus:ring-2 focus:ring-indigo-600 outline-none transition-all text-xl" placeholder="z.B. Gladbeck" value={formData.location || ''} onChange={e => setFormData({...formData, location: e.target.value})} />
                      </div>
                      <div className="space-y-3">
                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-6">E-Mail</label>

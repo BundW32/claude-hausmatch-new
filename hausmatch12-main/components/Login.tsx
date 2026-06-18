@@ -20,6 +20,7 @@ const Login: React.FC<LoginProps> = ({ initialView = 'login' }) => {
   const [password, setPassword] = useState('');
   const [name, setName] = useState('');
   const [bio, setBio] = useState('');
+  const [city, setCity] = useState('');
   const [avatar, setAvatar] = useState<string>('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
@@ -68,7 +69,7 @@ const Login: React.FC<LoginProps> = ({ initialView = 'login' }) => {
     setLoading(true);
     setError('');
     try {
-      await registerUser(email, password, name, role, avatar, bio);
+      await registerUser(email, password, name, role, avatar, bio, city);
       if (role === 'manager') {
         navigate('/dashboard');
       } else {
@@ -201,6 +202,19 @@ const Login: React.FC<LoginProps> = ({ initialView = 'login' }) => {
                                 onChange={(e) => setName(e.target.value)}
                                 className="w-full bg-slate-50 border-0 rounded-2xl px-5 py-4 text-slate-900 ring-1 ring-slate-200 focus:ring-2 focus:ring-indigo-600 transition-all font-medium"
                                 placeholder="Max Mustermann"
+                            />
+                        </div>
+                        <div>
+                            <label className="block text-xs font-black text-slate-400 uppercase tracking-widest mb-2 ml-1">
+                                Stadt / Standort <span className="text-indigo-500">*</span>
+                            </label>
+                            <input
+                                required
+                                type="text"
+                                value={city}
+                                onChange={(e) => setCity(e.target.value)}
+                                className="w-full bg-slate-50 border-0 rounded-2xl px-5 py-4 text-slate-900 ring-1 ring-slate-200 focus:ring-2 focus:ring-indigo-600 transition-all font-medium"
+                                placeholder="z.B. Gladbeck"
                             />
                         </div>
                     </div>

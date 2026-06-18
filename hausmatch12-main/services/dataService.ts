@@ -73,20 +73,21 @@ export const logoutUser = async () => {
   await signOut(auth);
 };
 
-export const registerUser = async (email: string, password: string, name: string, role: UserRole, avatar?: string, bio?: string): Promise<User> => {
+export const registerUser = async (email: string, password: string, name: string, role: UserRole, avatar?: string, bio?: string, city?: string): Promise<User> => {
   try {
     const userCredential = await createUserWithEmailAndPassword(auth, email, password);
     const uid = userCredential.user.uid;
-    const newUser: User = { 
-      id: uid, 
-      email, 
-      name, 
+    const newUser: User = {
+      id: uid,
+      email,
+      name,
       role,
       avatar: avatar || '',
       bio: bio || '',
       friends: [],
       pendingFriends: [],
-      location: '',
+      city: city || '',
+      location: city || '',
       specialization: []
     };
     await setDoc(doc(db, "users", uid), newUser);
