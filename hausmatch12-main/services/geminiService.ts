@@ -42,7 +42,7 @@ export const analyzePropertyRequirement = async (formData: {
     `;
 
     const response = await ai.models.generateContent({
-      model: "gemini-3-flash-preview",
+      model: "gemini-2.5-flash",
       contents: prompt,
       config: {
         responseMimeType: "application/json",
@@ -100,7 +100,7 @@ export const fetchLatestIndustryBlog = async (): Promise<BlogArticle[]> => {
   try {
     const ai = new GoogleGenAI({ apiKey: API_KEY });
     const response = await ai.models.generateContent({
-      model: "gemini-3-flash-preview",
+      model: "gemini-2.5-flash",
       contents: "Finde die 3 aktuellsten und wichtigsten Nachrichten für Hausverwaltungen und Immobilieneigentümer in Deutschland (März 2025). Berücksichtige rechtliche Änderungen, technische Innovationen und Markt-News.",
       config: {
         tools: [{ googleSearch: {} }],
