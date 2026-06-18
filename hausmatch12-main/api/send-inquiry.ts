@@ -114,7 +114,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         from: FROM_EMAIL,
         to: [company.email],
         subject: `Neue Anfrage über HausMatch – ${city || 'Ihre Region'}`,
-        text: `Guten Tag,\n\nein Interessent sucht eine WEG-Verwaltung in ${city || 'Ihrer Region'} für ${einheiten}.\n\nUm Ihr Angebot abzugeben und die Kontaktdaten des Interessenten zu erhalten, registrieren Sie sich bitte kostenlos auf:\n\nhttps://www.haus-match.de/register\n\nNach der Registrierung können Sie direkt mit dem Interessenten in Kontakt treten.\n\nMit freundlichen Grüßen,\nIhr HausMatch-Team`,
+        text: `Guten Tag,\n\nein Interessent sucht eine WEG-Verwaltung in ${city || 'Ihrer Region'} für ${einheiten}.\n\nUm Ihr Angebot abzugeben und die Kontaktdaten des Interessenten zu erhalten, registrieren Sie sich bitte kostenlos auf:\n\nhttps://www.haus-match.de/#/register\n\nNach der Registrierung können Sie direkt mit dem Interessenten in Kontakt treten.\n\nMit freundlichen Grüßen,\nIhr HausMatch-Team`,
       });
     }
   }
