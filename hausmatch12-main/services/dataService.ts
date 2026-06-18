@@ -152,6 +152,23 @@ export const addFriend = async (myUid: string, friendUid: string) => {
   }
 };
 
+export const getManagersByCity = async (city: string): Promise<User[]> => {
+  try {
+    const q = query(collection(db, "users"), where("role", "==", "manager"), limit(50));
+    const snapshot = await getDocs(q);
+    const managers = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as User));
+    const needle = city.trim().toLowerCase();
+    return managers.filter(m => {
+      const managerCity = (m.city || m.location || '').toLowerCase();
+      const areas = (m.serviceAreas || []).map(a => a.toLowerCase());
+      return managerCity.includes(needle) || needle.includes(managerCity.split(',')[0].trim()) ||
+             areas.some(a => a.includes(needle) || needle.includes(a));
+    });
+  } catch {
+    return [];
+  }
+};
+
 export const removeFriend = async (myUid: string, friendUid: string) => {
   try {
     await updateDoc(doc(db, "users", myUid), {

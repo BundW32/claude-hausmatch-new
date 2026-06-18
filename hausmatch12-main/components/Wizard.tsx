@@ -1,4 +1,4 @@
-import React, { useState, useContext, useEffect, useRef } from 'react';
+import React, { useState, useContext } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { AuthContext } from '../App';
 import { analyzePropertyRequirement } from '../services/geminiService';
@@ -48,28 +48,21 @@ const Wizard = () => {
   if (loading) {
     return (
       <div className="min-h-[80vh] flex flex-col items-center justify-center p-8">
-        <div className="w-full max-w-2xl bg-slate-900 rounded-[2rem] p-8 shadow-2xl font-mono text-indigo-400 overflow-hidden relative">
-           <div className="flex gap-2 mb-6">
-              <div className="w-3 h-3 rounded-full bg-red-500"></div>
-              <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
-              <div className="w-3 h-3 rounded-full bg-green-500"></div>
-           </div>
-           
-           {/* 👇 HIER WAR DER FEHLER: Wir nutzen jetzt {">>"} statt >> */}
-           <div className="space-y-2 text-sm">
-              <p className="animate-pulse">{">>"} INITIALIZING HAUSMATCH ENGINE...</p>
-              <p className="opacity-60">{">>"} ANALYZING PROPERTY DATA FOR: {formData.city.toUpperCase()}</p>
-              <p className="opacity-60">{">>"} QUERYING GOOGLE GROUNDING API...</p>
-              <p className="opacity-80">{">>"} GENERATING EFFORT SCORE FOR {formData.units} UNITS...</p>
-              <p className="text-white font-bold">{">>"} ANALYSING GERMAN WEG COMPLIANCE...</p>
-              <div className="flex gap-1 mt-4">
-                 {[1,2,3,4,5,6].map(i => (
-                   <div key={i} className="h-1 flex-1 bg-indigo-500 animate-pulse" style={{animationDelay: `${i*200}ms`}}></div>
-                 ))}
-              </div>
-           </div>
+        <div className="w-full max-w-sm text-center space-y-8">
+          <div className="w-20 h-20 rounded-[1.5rem] overflow-hidden mx-auto shadow-xl shadow-indigo-200" style={{ background: '#2563FF' }}>
+            <img src="https://cdn.jsdelivr.net/gh/BundW32/claude-hausmatch-new@main/hf_20260616_092652_b3b38af5-a913-44c1-80ef-1ac5d9adedb4.png"
+              alt="Eddy" width={80} height={80} style={{ display: 'block', objectFit: 'cover' }} className="animate-pulse" />
+          </div>
+          <div>
+            <h3 className="text-2xl font-black text-slate-900 tracking-tight mb-2">Eddy sucht für Sie...</h3>
+            <p className="text-slate-400 font-medium">Verwalter in <span className="text-indigo-600 font-black">{formData.city}</span> werden analysiert</p>
+          </div>
+          <div className="w-full bg-slate-100 rounded-full h-2 overflow-hidden">
+            <div className="h-2 bg-indigo-600 rounded-full animate-[progress_3s_ease-in-out_forwards]"
+              style={{ animation: 'progress 3s ease-in-out forwards' }} />
+          </div>
+          <style>{`@keyframes progress { from { width: 0% } to { width: 92% } }`}</style>
         </div>
-        <p className="mt-8 text-slate-500 font-black uppercase tracking-widest animate-bounce">KI wird berechnet...</p>
       </div>
     );
   }
