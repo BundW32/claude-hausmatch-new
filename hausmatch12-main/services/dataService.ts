@@ -152,17 +152,62 @@ export const addFriend = async (myUid: string, friendUid: string) => {
   }
 };
 
+const geocodeCity = async (cityName: string): Promise<{ lat: number; lon: number } | null> => {
+  try {
+    const res = await fetch(
+      `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(cityName + ' Deutschland')}&format=json&limit=1&countrycodes=de`,
+      { headers: { 'Accept': 'application/json' } }
+    );
+    if (!res.ok) return null;
+    const data = await res.json();
+    if (!Array.isArray(data) || data.length === 0) return null;
+    return { lat: parseFloat(data[0].lat), lon: parseFloat(data[0].lon) };
+  } catch {
+    return null;
+  }
+};
+
+const haversineKm = (lat1: number, lon1: number, lat2: number, lon2: number): number => {
+  const R = 6371;
+  const dLat = (lat2 - lat1) * Math.PI / 180;
+  const dLon = (lon2 - lon1) * Math.PI / 180;
+  const a = Math.sin(dLat / 2) ** 2 +
+    Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * Math.sin(dLon / 2) ** 2;
+  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+};
+
 export const getManagersByCity = async (city: string): Promise<User[]> => {
   try {
     const q = query(collection(db, "users"), where("role", "==", "manager"), limit(50));
     const snapshot = await getDocs(q);
     const managers = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as User));
-    const needle = city.trim().toLowerCase();
+    if (managers.length === 0) return [];
+
+    // Geocode search city; fall back to string match if unavailable
+    const searchCoords = await geocodeCity(city);
+    if (!searchCoords) {
+      const needle = city.trim().toLowerCase();
+      return managers.filter(m => {
+        const mc = (m.city || m.location || '').toLowerCase();
+        return mc.includes(needle) || needle.includes(mc.split(',')[0].trim());
+      });
+    }
+
+    // Geocode each unique manager city sequentially (respects Nominatim 1 req/s limit)
+    const uniqueCities = [...new Set(
+      managers.map(m => (m.city || m.location || '').split(',')[0].trim()).filter(Boolean)
+    )];
+    const coordMap = new Map<string, { lat: number; lon: number } | null>();
+    for (const c of uniqueCities) {
+      coordMap.set(c, await geocodeCity(c));
+      await new Promise(r => setTimeout(r, 300));
+    }
+
     return managers.filter(m => {
-      const managerCity = (m.city || m.location || '').toLowerCase();
-      const areas = (m.serviceAreas || []).map(a => a.toLowerCase());
-      return managerCity.includes(needle) || needle.includes(managerCity.split(',')[0].trim()) ||
-             areas.some(a => a.includes(needle) || needle.includes(a));
+      const mc = (m.city || m.location || '').split(',')[0].trim();
+      const coords = coordMap.get(mc);
+      if (!coords) return false;
+      return haversineKm(searchCoords.lat, searchCoords.lon, coords.lat, coords.lon) <= 20;
     });
   } catch {
     return [];
