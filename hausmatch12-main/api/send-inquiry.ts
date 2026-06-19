@@ -38,9 +38,7 @@ async function saveToFirestore(data: {
       status: { stringValue: 'neu' },
       source: { stringValue: 'express-matching' },
       companiesRequested: {
-        arrayValue: {
-          values: data.companies.map(c => ({ stringValue: c.name }))
-        }
+        arrayValue: { values: data.companies.map(c => ({ stringValue: c.name })) }
       },
     },
   };
@@ -49,51 +47,47 @@ async function saveToFirestore(data: {
     { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) }
   );
   if (!res.ok) {
-    const err = await res.text();
-    console.error('Firestore save error:', res.status, err);
+    console.error('Firestore save error:', res.status, await res.text());
   } else {
     console.log('Inquiry saved to Firestore');
   }
 }
 
-// Fetch all registered managers in the given city from Firebase
+// Fetch registered managers matching the city using listDocuments (simpler than runQuery)
 async function getManagersInCity(city: string): Promise<{ name: string; email: string }[]> {
   if (!city) return [];
-  const url = `https://firestore.googleapis.com/v1/projects/${FIREBASE_PROJECT}/databases/(default)/documents:runQuery?key=${FIREBASE_API_KEY}`;
-  const body = {
-    structuredQuery: {
-      from: [{ collectionId: 'users' }],
-      where: {
-        fieldFilter: {
-          field: { fieldPath: 'role' },
-          op: 'EQUAL',
-          value: { stringValue: 'manager' },
-        },
-      },
-      limit: 100,
-    },
-  };
   try {
-    const res = await fetch(url, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(body),
-    });
-    if (!res.ok) return [];
-    const data: any[] = await res.json();
+    const url = `https://firestore.googleapis.com/v1/projects/${FIREBASE_PROJECT}/databases/(default)/documents/users?key=${FIREBASE_API_KEY}&pageSize=200`;
+    const res = await fetch(url);
+    if (!res.ok) {
+      console.error('Firebase listDocuments error:', res.status, await res.text());
+      return [];
+    }
+    const data = await res.json();
+    const docs = data.documents || [];
+    console.log(`Firebase returned ${docs.length} user documents`);
+
     const cityLower = city.toLowerCase().trim();
-    return data
-      .filter(item => item.document?.fields)
-      .map(item => {
-        const f = item.document.fields;
+    const managers = docs
+      .map((doc: any) => {
+        const f = doc.fields || {};
         return {
           name: f.name?.stringValue || '',
           email: f.email?.stringValue || '',
+          role: f.role?.stringValue || '',
           city: (f.city?.stringValue || f.location?.stringValue || '').toLowerCase().trim(),
         };
       })
-      .filter(m => m.email && (m.city.includes(cityLower) || cityLower.includes(m.city)))
-      .map(m => ({ name: m.name, email: m.email }));
+      .filter((m: any) => {
+        if (m.role !== 'manager' || !m.email) return false;
+        const match = m.city.includes(cityLower) || cityLower.includes(m.city);
+        console.log(`Manager ${m.name} (city: "${m.city}") vs inquiry city "${cityLower}": ${match ? 'MATCH' : 'no match'}`);
+        return match;
+      })
+      .map((m: any) => ({ name: m.name, email: m.email }));
+
+    console.log(`Found ${managers.length} matching managers in ${city}`);
+    return managers;
   } catch (err) {
     console.error('getManagersInCity error:', err);
     return [];
@@ -125,7 +119,11 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       ? companies.map((c: { name: string }) => c.name).join(', ')
       : 'Keine Unternehmen ausgewählt';
 
-  // E-Mail 1: Admin-Benachrichtigung (kritisch)
+  const einheiten = message?.match(/\d+/)?.[0]
+    ? message.match(/\d+/)![0] + ' Einheiten'
+    : 'eine WEG';
+
+  // E-Mail 1: Admin-Benachrichtigung
   const adminResult = await sendEmail(apiKey, {
     from: FROM_EMAIL,
     to: [ADMIN_EMAIL],
@@ -138,7 +136,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     return res.status(500).json({ error: 'Anfrage konnte nicht gesendet werden. Bitte versuchen Sie es erneut.' });
   }
 
-  // Firestore: Anfrage speichern (optional)
+  // Firestore: Anfrage speichern (damit neue Verwalter sie nach Registrierung im Dashboard sehen)
   saveToFirestore({
     city,
     senderName,
@@ -148,45 +146,44 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     companies: Array.isArray(companies) ? companies : [],
   }).catch(err => console.error('Firestore save failed:', err));
 
-  // E-Mail 2: Bestätigung an Interessent (optional)
+  // E-Mail 2: Bestätigung an Eigentümer
   await sendEmail(apiKey, {
     from: FROM_EMAIL,
     to: [senderEmail],
     subject: 'Ihre Anfrage bei HausMatch wurde empfangen',
-    text: `Hallo ${senderName},\n\nvielen Dank für Ihre Anfrage bei HausMatch.\n\nWir haben Ihre Anfrage für folgende Unternehmen in ${city || 'Ihrer Stadt'} erhalten: ${companyList}\n\nWir werden uns in Kürze bei Ihnen melden.\n\nMit freundlichen Grüßen,\nIhr HausMatch-Team`,
+    text: `Hallo ${senderName},\n\nvielen Dank für Ihre Anfrage bei HausMatch.\n\nWir haben Ihre Anfrage für folgende Unternehmen in ${city || 'Ihrer Stadt'} erhalten:\n${companyList}\n\nDie Unternehmen werden sich in Kürze bei Ihnen melden.\n\nMit freundlichen Grüßen,\nIhr HausMatch-Team`,
   });
 
-  // E-Mail 3: An registrierte Verwalter in der Stadt (aus Firebase) + companies mit E-Mail
-  const einheiten = message?.match(/\d+/)?.[0]
-    ? message.match(/\d+/)![0] + ' Einheiten'
-    : 'eine WEG';
-
-  // Aus Firebase: registrierte Manager in der Stadt
+  // E-Mail 3: An registrierte Verwalter in der Stadt (aus Firebase)
   const firebaseManagers = await getManagersInCity(city || '');
 
-  // Aus dem Formular: companies mit bekannter E-Mail (z.B. aus Gemini-Suche)
+  // Aus dem Formular: companies mit bekannter E-Mail
   const formCompanies: { name: string; email: string }[] = Array.isArray(companies)
-    ? companies.filter((c: { email?: string }) => !!c.email).map((c: { name: string; email: string }) => ({ name: c.name, email: c.email }))
+    ? companies.filter((c: any) => !!c.email).map((c: any) => ({ name: c.name, email: c.email }))
     : [];
 
   // Kombinieren und deduplizieren
   const emailSet = new Set<string>();
   const allManagers: { name: string; email: string }[] = [];
   for (const m of [...firebaseManagers, ...formCompanies]) {
-    if (!emailSet.has(m.email.toLowerCase())) {
-      emailSet.add(m.email.toLowerCase());
+    const key = m.email.toLowerCase();
+    if (!emailSet.has(key)) {
+      emailSet.add(key);
       allManagers.push(m);
     }
   }
 
-  console.log(`Sending Verwalter email to ${allManagers.length} managers in ${city}`);
+  console.log(`Sending Verwalter email to ${allManagers.length} recipients in ${city}`);
+
+  const verwalterText = (name: string) =>
+    `Guten Tag${name ? ' ' + name : ''},\n\nein Eigentümer sucht eine WEG-Verwaltung in ${city || 'Ihrer Region'} für ${einheiten}.\n\nMelden Sie sich kostenlos an, um die Anfrage im Detail zu sehen und den Eigentümer zu kontaktieren:\n\nhttps://www.haus-match.de/#/register\n\nNach der Anmeldung finden Sie die Anfrage direkt in Ihrem Lead Center.\n\nMit freundlichen Grüßen,\nIhr HausMatch-Team`;
 
   for (const manager of allManagers) {
     await sendEmail(apiKey, {
       from: FROM_EMAIL,
       to: [manager.email],
-      subject: `Neue Anfrage über HausMatch – ${city || 'Ihre Region'}`,
-      text: `Guten Tag${manager.name ? ' ' + manager.name : ''},\n\nein Eigentümer sucht eine WEG-Verwaltung in ${city || 'Ihrer Region'} für ${einheiten}.\n\nUm Ihr Angebot abzugeben und die Kontaktdaten des Eigentümers zu erhalten, melden Sie sich bitte an auf:\n\nhttps://www.haus-match.de/#/register\n\nNach der Anmeldung sehen Sie die Anfrage direkt in Ihrem Dashboard.\n\nMit freundlichen Grüßen,\nIhr HausMatch-Team`,
+      subject: `Neue WEG-Anfrage in ${city || 'Ihrer Region'} – ${einheiten}`,
+      text: verwalterText(manager.name),
     });
   }
 
