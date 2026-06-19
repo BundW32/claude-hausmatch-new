@@ -145,7 +145,7 @@ Felder die unbekannt sind als leeren String "" angeben, rating als 0 wenn unbeka
 
     // Gescrapte Daten zusammenfuehren
     companies = companies.map((c, i) => {
-      const scraped = scrapeResults[i].status === 'fulfilled' ? scrapeResults[i].value : {};
+      const scraped: { email?: string; phone?: string } = scrapeResults[i].status === 'fulfilled' ? scrapeResults[i].value as { email?: string; phone?: string } : {};
       return {
         ...c,
         email: c.email || scraped.email || '',

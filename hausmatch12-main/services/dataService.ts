@@ -1,6 +1,7 @@
 
-import { User, UserRole, Inquiry, ForumThread, Message } from "../types";
-import { auth, db } from "./firebase";
+import { User, UserRole, UserType, Inquiry, ForumThread, Message } from "../types";
+import { auth, db, storage } from "./firebase";
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { 
   signInWithEmailAndPassword, 
   createUserWithEmailAndPassword, 
@@ -37,10 +38,9 @@ export const getUserProfile = async (uid: string): Promise<User | null> => {
     }
   } catch (error: any) {
     console.warn("Firestore getUserProfile error (using fallback):", error.message);
-    // Return a mock user if requested UID matches a mock
-    if (uid === 'm1') return { id: 'm1', name: 'Max Mustermann', email: 'max@hausverwaltung-berlin.de', role: 'manager', bio: 'Experte für WEG-Verwaltung in Berlin.', friends: [] };
-    if (uid === 'm2') return { id: 'm2', name: 'Erika Musterfrau', email: 'erika@immobilien-muenchen.de', role: 'manager', bio: 'Spezialistin für Mietverwaltung und Sanierung.', friends: [] };
-    if (uid === 's1') return { id: 's1', name: 'John Doe', email: 'john@owner.com', role: 'seeker', bio: 'Immobilienbesitzer mit Fokus auf Mehrfamilienhäuser.', friends: [] };
+    if (uid === 'm1') return { id: 'm1', name: 'Max Mustermann', email: 'max@hausverwaltung-berlin.de', role: 'manager', userType: 'hausverwaltung' as UserType, bio: 'Experte für WEG-Verwaltung in Berlin.', friends: [] };
+    if (uid === 'm2') return { id: 'm2', name: 'Erika Musterfrau', email: 'erika@immobilien-muenchen.de', role: 'manager', userType: 'hausverwaltung' as UserType, bio: 'Spezialistin für Mietverwaltung und Sanierung.', friends: [] };
+    if (uid === 's1') return { id: 's1', name: 'John Doe', email: 'john@owner.com', role: 'seeker', userType: 'owner' as UserType, bio: 'Immobilienbesitzer mit Fokus auf Mehrfamilienhäuser.', friends: [] };
   }
   return null;
 };
@@ -55,11 +55,12 @@ export const loginUser = async (email: string, password: string): Promise<User> 
     if (profile) {
       return profile;
     } else {
-      return { 
-        id: uid, 
-        email: email, 
-        name: email.split('@')[0], 
+      return {
+        id: uid,
+        email: email,
+        name: email.split('@')[0],
         role: 'seeker',
+        userType: 'owner',
         friends: []
       } as User;
     }
@@ -73,7 +74,8 @@ export const logoutUser = async () => {
   await signOut(auth);
 };
 
-export const registerUser = async (email: string, password: string, name: string, role: UserRole, avatar?: string, bio?: string, city?: string): Promise<User> => {
+export const registerUser = async (email: string, password: string, name: string, role: UserRole, avatar?: string, bio?: string, city?: string, userType?: UserType): Promise<User> => {
+  const resolvedUserType: UserType = userType ?? (role === 'manager' ? 'hausverwaltung' : role === 'profi' ? 'sonstige_profi' : 'owner');
   try {
     const userCredential = await createUserWithEmailAndPassword(auth, email, password);
     const uid = userCredential.user.uid;
@@ -82,6 +84,7 @@ export const registerUser = async (email: string, password: string, name: string
       email,
       name,
       role,
+      userType: resolvedUserType,
       avatar: avatar || '',
       bio: bio || '',
       friends: [],
@@ -121,9 +124,9 @@ export const searchUsers = async (searchTerm: string): Promise<User[]> => {
     console.warn("Firestore searchUsers error (using fallback):", error.message);
     // Fallback Mock Data for Networking
     const mockUsers: User[] = [
-      { id: 'm1', name: 'Max Mustermann', email: 'max@hausverwaltung-berlin.de', role: 'manager', bio: 'Experte für WEG-Verwaltung in Berlin.', friends: [] },
-      { id: 'm2', name: 'Erika Musterfrau', email: 'erika@immobilien-muenchen.de', role: 'manager', bio: 'Spezialistin für Mietverwaltung und Sanierung.', friends: [] },
-      { id: 's1', name: 'John Doe', email: 'john@owner.com', role: 'seeker', bio: 'Immobilienbesitzer mit Fokus auf Mehrfamilienhäuser.', friends: [] }
+      { id: 'm1', name: 'Max Mustermann', email: 'max@hausverwaltung-berlin.de', role: 'manager', userType: 'hausverwaltung', bio: 'Experte für WEG-Verwaltung in Berlin.', friends: [] },
+      { id: 'm2', name: 'Erika Musterfrau', email: 'erika@immobilien-muenchen.de', role: 'manager', userType: 'hausverwaltung', bio: 'Spezialistin für Mietverwaltung und Sanierung.', friends: [] },
+      { id: 's1', name: 'John Doe', email: 'john@owner.com', role: 'seeker', userType: 'owner', bio: 'Immobilienbesitzer mit Fokus auf Mehrfamilienhäuser.', friends: [] }
     ];
     if (!searchTerm) return mockUsers;
     return mockUsers.filter(u => u.name.toLowerCase().includes(searchTerm.toLowerCase()));
@@ -317,4 +320,10 @@ export const sendMessage = async (messageData: Omit<Message, 'id' | 'timestamp' 
 
 export const markMessageRead = async (messageId: string) => {
   await updateDoc(doc(db, "messages", messageId), { read: true });
+};
+
+export const uploadFile = async (file: File, path: string): Promise<string> => {
+  const fileRef = ref(storage, path);
+  await uploadBytes(fileRef, file);
+  return getDownloadURL(fileRef);
 };

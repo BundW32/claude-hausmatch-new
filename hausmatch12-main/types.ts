@@ -1,6 +1,6 @@
 // ─── USER TYPES ───────────────────────────────────────────────────────────────
 
-export type UserRole = 'seeker' | 'manager';
+export type UserRole = 'seeker' | 'manager' | 'profi';
 
 export type UserType =
   | 'owner'          // Privater Eigentümer
@@ -233,6 +233,13 @@ export interface Review {
 
 // ─── MESSAGING ─────────────────────────────────────────────────────────────────
 
+export interface MessageAttachment {
+  name: string;
+  url: string;
+  type: string;
+  size: number;
+}
+
 export interface Message {
   id: string;
   senderId: string;
@@ -243,6 +250,7 @@ export interface Message {
   content: string;
   timestamp: FirebaseTimestamp;
   read: boolean;
+  attachments?: MessageAttachment[];
 }
 
 // ─── LEGACY / COMPATIBILITY ────────────────────────────────────────────────────
@@ -288,6 +296,7 @@ export interface SearchCompany {
   rating: number;
   reviews: number;
   specialization: string;
+  isPartner?: boolean;
 }
 
 export interface ManagerSearchResult {
