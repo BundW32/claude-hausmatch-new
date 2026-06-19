@@ -6,10 +6,13 @@ const FIREBASE_PROJECT = 'hausmatch-1';
 const FIREBASE_API_KEY = process.env.FIREBASE_API_KEY || 'AIzaSyC1o_LoqOxhmK4J0lhIzf8qcHABS7XNoY8';
 
 async function sendEmail(apiKey: string, payload: object): Promise<{ ok: boolean; error?: string }> {
+  // In Resend test mode, RESEND_TEST_EMAIL overrides all TO addresses
+  const testEmail = process.env.RESEND_TEST_EMAIL;
+  const p = testEmail ? { ...(payload as any), to: [testEmail] } : payload;
   const res = await fetch('https://api.resend.com/emails', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + apiKey },
-    body: JSON.stringify(payload),
+    body: JSON.stringify(p),
   });
   if (res.ok) return { ok: true };
   try {
