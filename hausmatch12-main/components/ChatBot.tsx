@@ -162,7 +162,7 @@ const ChatBot = () => {
             {loading && (
               <div className="flex gap-2 justify-start">
                 <div className="w-7 h-7 rounded-full bg-indigo-600 flex items-center justify-center flex-shrink-0 overflow-hidden">
-                  <EddyOwl size={26} />
+                  <EddyAvatar size={26} />
                 </div>
                 <div className="bg-slate-100 px-4 py-3 rounded-2xl rounded-bl-sm flex gap-1.5 items-center">
                   <span className="w-2 h-2 bg-slate-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></span>

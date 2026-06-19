@@ -187,6 +187,9 @@ const Navbar = () => {
               <>
                 <Link to="/profile" className="block px-4 py-3 rounded-xl text-sm font-black text-slate-900 hover:bg-slate-50 transition-all">
                   Profil — <span className="text-blue-600">{user.name}</span>
+                  <span className="block text-[10px] font-black text-blue-600 uppercase tracking-widest">
+                    {user.userType ? USER_TYPE_LABELS[user.userType] : user.role === 'manager' ? 'Hausverwaltung' : 'Eigentümer'}
+                  </span>
                 </Link>
                 <button onClick={logout} className="w-full text-center px-4 py-3 rounded-xl border border-red-100 text-sm font-black uppercase tracking-widest text-red-500 hover:bg-red-50 transition-all">
                   Abmelden

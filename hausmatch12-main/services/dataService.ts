@@ -38,9 +38,9 @@ export const getUserProfile = async (uid: string): Promise<User | null> => {
   } catch (error: any) {
     console.warn("Firestore getUserProfile error (using fallback):", error.message);
     // Return a mock user if requested UID matches a mock
-    if (uid === 'm1') return { id: 'm1', name: 'Max Mustermann', email: 'max@hausverwaltung-berlin.de', role: 'manager', bio: 'Experte für WEG-Verwaltung in Berlin.', friends: [] };
-    if (uid === 'm2') return { id: 'm2', name: 'Erika Musterfrau', email: 'erika@immobilien-muenchen.de', role: 'manager', bio: 'Spezialistin für Mietverwaltung und Sanierung.', friends: [] };
-    if (uid === 's1') return { id: 's1', name: 'John Doe', email: 'john@owner.com', role: 'seeker', bio: 'Immobilienbesitzer mit Fokus auf Mehrfamilienhäuser.', friends: [] };
+    if (uid === 'm1') return { id: 'm1', name: 'Max Mustermann', email: 'max@hausverwaltung-berlin.de', role: 'manager', userType: 'hausverwaltung', bio: 'Experte für WEG-Verwaltung in Berlin.', friends: [] };
+    if (uid === 'm2') return { id: 'm2', name: 'Erika Musterfrau', email: 'erika@immobilien-muenchen.de', role: 'manager', userType: 'hausverwaltung', bio: 'Spezialistin für Mietverwaltung und Sanierung.', friends: [] };
+    if (uid === 's1') return { id: 's1', name: 'John Doe', email: 'john@owner.com', role: 'seeker', userType: 'owner', bio: 'Immobilienbesitzer mit Fokus auf Mehrfamilienhäuser.', friends: [] };
   }
   return null;
 };
@@ -55,11 +55,12 @@ export const loginUser = async (email: string, password: string): Promise<User> 
     if (profile) {
       return profile;
     } else {
-      return { 
-        id: uid, 
-        email: email, 
-        name: email.split('@')[0], 
+      return {
+        id: uid,
+        email: email,
+        name: email.split('@')[0],
         role: 'seeker',
+        userType: 'owner',
         friends: []
       } as User;
     }
@@ -123,9 +124,9 @@ export const searchUsers = async (searchTerm: string): Promise<User[]> => {
     console.warn("Firestore searchUsers error (using fallback):", error.message);
     // Fallback Mock Data for Networking
     const mockUsers: User[] = [
-      { id: 'm1', name: 'Max Mustermann', email: 'max@hausverwaltung-berlin.de', role: 'manager', bio: 'Experte für WEG-Verwaltung in Berlin.', friends: [] },
-      { id: 'm2', name: 'Erika Musterfrau', email: 'erika@immobilien-muenchen.de', role: 'manager', bio: 'Spezialistin für Mietverwaltung und Sanierung.', friends: [] },
-      { id: 's1', name: 'John Doe', email: 'john@owner.com', role: 'seeker', bio: 'Immobilienbesitzer mit Fokus auf Mehrfamilienhäuser.', friends: [] }
+      { id: 'm1', name: 'Max Mustermann', email: 'max@hausverwaltung-berlin.de', role: 'manager', userType: 'hausverwaltung', bio: 'Experte für WEG-Verwaltung in Berlin.', friends: [] },
+      { id: 'm2', name: 'Erika Musterfrau', email: 'erika@immobilien-muenchen.de', role: 'manager', userType: 'hausverwaltung', bio: 'Spezialistin für Mietverwaltung und Sanierung.', friends: [] },
+      { id: 's1', name: 'John Doe', email: 'john@owner.com', role: 'seeker', userType: 'owner', bio: 'Immobilienbesitzer mit Fokus auf Mehrfamilienhäuser.', friends: [] }
     ];
     if (!searchTerm) return mockUsers;
     return mockUsers.filter(u => u.name.toLowerCase().includes(searchTerm.toLowerCase()));

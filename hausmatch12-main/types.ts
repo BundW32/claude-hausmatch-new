@@ -288,6 +288,7 @@ export interface SearchCompany {
   rating: number;
   reviews: number;
   specialization: string;
+  isPartner?: boolean;
 }
 
 export interface ManagerSearchResult {

@@ -47,6 +47,7 @@ const Profile = () => {
             phone: currentUser.phone || '',
             website: currentUser.website || '',
             avatar: currentUser.avatar || '',
+            userType: currentUser.userType || 'owner',
             teamSize: currentUser.teamSize || 0,
             foundedYear: currentUser.foundedYear || 0,
             vatId: currentUser.vatId || '',
