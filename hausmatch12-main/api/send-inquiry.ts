@@ -231,15 +231,21 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   saveToFirestore({ city, senderName, senderEmail, senderPhone: senderPhone || '', message: note, companies: companyArr })
     .catch(err => console.error('Firestore save failed:', err));
 
-  // E-Mail 2: Bestätigung an Eigentümer (HTML)
-  await sendEmail(apiKey, {
-    from: FROM_EMAIL,
-    to: [senderEmail],
-    subject: `Ihre Angebotsanfrage in ${city || 'Ihrer Region'} – HausMatch`,
-    html: ownerHtml(senderName, senderEmail, city || 'Ihrer Region', companyArr),
-  });
+  const isAllowed = (email: string) => email.toLowerCase().endsWith('@bundwimmobilien.de');
 
-  // E-Mail 3: Angebotsanfrage an Verwalter (HTML)
+  // E-Mail 2: Bestätigung an Eigentümer (nur wenn @bundwimmobilien.de)
+  if (isAllowed(senderEmail)) {
+    await sendEmail(apiKey, {
+      from: FROM_EMAIL,
+      to: [senderEmail],
+      subject: `Ihre Angebotsanfrage in ${city || 'Ihrer Region'} – HausMatch`,
+      html: ownerHtml(senderName, senderEmail, city || 'Ihrer Region', companyArr),
+    });
+  } else {
+    console.log(`Bestätigungs-Mail an ${senderEmail} übersprungen (kein @bundwimmobilien.de)`);
+  }
+
+  // E-Mail 3: Angebotsanfrage an Verwalter (nur @bundwimmobilien.de Empfänger)
   const registeredManagers = await getManagersInCity(city || '');
   const formCompaniesWithEmail = companyArr.filter(c => !!c.email);
 
@@ -252,9 +258,10 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     }
   }
 
-  console.log(`Sending manager emails to ${allManagers.length} recipients`);
+  const allowedManagers = allManagers.filter(m => isAllowed(m.email));
+  console.log(`Manager-Mails: ${allManagers.length} gesamt, ${allowedManagers.length} erlaubt (@bundwimmobilien.de)`);
 
-  for (const manager of allManagers) {
+  for (const manager of allowedManagers) {
     await sendEmail(apiKey, {
       from: FROM_EMAIL,
       to: [manager.email],
