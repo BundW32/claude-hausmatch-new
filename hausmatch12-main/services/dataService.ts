@@ -1,5 +1,5 @@
 
-import { User, UserRole, Inquiry, ForumThread, Message } from "../types";
+import { User, UserRole, UserType, Inquiry, ForumThread, Message } from "../types";
 import { auth, db } from "./firebase";
 import { 
   signInWithEmailAndPassword, 
@@ -73,7 +73,8 @@ export const logoutUser = async () => {
   await signOut(auth);
 };
 
-export const registerUser = async (email: string, password: string, name: string, role: UserRole, avatar?: string, bio?: string, city?: string): Promise<User> => {
+export const registerUser = async (email: string, password: string, name: string, role: UserRole, avatar?: string, bio?: string, city?: string, userType?: UserType): Promise<User> => {
+  const resolvedUserType: UserType = userType ?? (role === 'manager' ? 'hausverwaltung' : role === 'profi' ? 'sonstige_profi' : 'owner');
   try {
     const userCredential = await createUserWithEmailAndPassword(auth, email, password);
     const uid = userCredential.user.uid;
@@ -82,6 +83,7 @@ export const registerUser = async (email: string, password: string, name: string
       email,
       name,
       role,
+      userType: resolvedUserType,
       avatar: avatar || '',
       bio: bio || '',
       friends: [],

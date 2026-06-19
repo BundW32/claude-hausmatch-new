@@ -3,7 +3,7 @@ import React, { useState, useContext, useRef, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../App';
 import { updateUserProfile, getUserProfile, addFriend, removeFriend, sendMessage } from '../services/dataService';
-import { User } from '../types';
+import { User, UserType, USER_TYPE_LABELS } from '../types';
 
 const DAYS = [
   { key: 'mon', label: 'Montag' },
@@ -73,6 +73,7 @@ const Profile = () => {
       ...formData,
       city: formData.location.trim(),
       location: formData.location.trim(),
+      ...(formData.userType ? { userType: formData.userType } : {}),
     });
     await refreshUser();
     setIsEditing(false);
@@ -145,6 +146,10 @@ const Profile = () => {
   );
 
   const isManager = profileUser.role === 'manager';
+  const isProfi = profileUser.role === 'profi';
+  const roleLabel = profileUser.userType
+    ? USER_TYPE_LABELS[profileUser.userType]
+    : isManager ? 'Hausverwaltung' : 'Eigentümer';
   const isFriend = currentUser?.friends?.includes(profileUser.id);
   const currentDisplayName = isEditing ? (formData.name || '') : profileUser.name;
   const currentAvatar = isEditing ? formData.avatar : profileUser.avatar;
@@ -196,8 +201,8 @@ const Profile = () => {
                          {currentDisplayName}
                        </h1>
                        <div className="flex flex-wrap justify-center md:justify-start gap-3">
-                          <span className="px-5 py-2 rounded-full bg-indigo-600 text-white text-[11px] font-black uppercase tracking-widest shadow-lg shadow-indigo-100">
-                            {isManager ? 'Hausverwaltung' : 'Eigentümer'}
+                          <span className={`px-5 py-2 rounded-full text-white text-[11px] font-black uppercase tracking-widest shadow-lg ${isProfi ? 'bg-gradient-to-r from-purple-600 to-indigo-600' : 'bg-indigo-600 shadow-indigo-100'}`}>
+                            {roleLabel}
                           </span>
                           {profileUser.location && !isEditing && (
                             <span className="px-5 py-2 rounded-full bg-slate-100 text-slate-500 text-[11px] font-black uppercase tracking-widest border border-slate-200 flex items-center gap-2">
@@ -266,6 +271,23 @@ const Profile = () => {
                        <input className="w-full bg-slate-50 border-0 rounded-[2rem] px-8 py-5 text-black font-bold ring-1 ring-slate-100 focus:ring-2 focus:ring-indigo-600 outline-none transition-all text-xl" value={formData.website || ''} onChange={e => setFormData({...formData, website: e.target.value})} placeholder="www.firma.de" />
                      </div>
 </div>
+
+                   {isProfi && (
+                     <div className="space-y-3">
+                       <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-6">Berufsfeld</label>
+                       <select
+                         className="w-full bg-slate-50 border-0 rounded-[2rem] px-8 py-5 text-black font-bold ring-1 ring-slate-100 focus:ring-2 focus:ring-indigo-600 outline-none transition-all text-xl"
+                         value={formData.userType || 'sonstige_profi'}
+                         onChange={e => setFormData({ ...formData, userType: e.target.value as UserType })}
+                       >
+                         {(Object.entries(USER_TYPE_LABELS) as [UserType, string][])
+                           .filter(([t]) => !['owner', 'weg', 'hausverwaltung'].includes(t))
+                           .map(([t, label]) => (
+                             <option key={t} value={t}>{label}</option>
+                           ))}
+                       </select>
+                     </div>
+                   )}
 
                    {isManager && (
                      <div className="bg-slate-50 p-10 md:p-14 rounded-[3.5rem] border border-slate-100">

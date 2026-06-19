@@ -231,7 +231,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   saveToFirestore({ city, senderName, senderEmail, senderPhone: senderPhone || '', message: note, companies: companyArr })
     .catch(err => console.error('Firestore save failed:', err));
 
-  const isAllowed = (email: string) => email.toLowerCase().endsWith('@bundwimmobilien.de');
+  const isProduction = process.env.VERCEL_ENV === 'production';
+  const isAllowed = (email: string) => isProduction || email.toLowerCase().endsWith('@bundwimmobilien.de');
 
   // E-Mail 2: Bestätigung an Eigentümer (nur wenn @bundwimmobilien.de)
   if (isAllowed(senderEmail)) {
