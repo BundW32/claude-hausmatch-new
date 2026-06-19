@@ -1,20 +1,19 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-    
-    // Hilfsfunktionen
+
     function isSignedIn() {
       return request.auth != null;
     }
-    
+
     function isOwner(userId) {
       return request.auth.uid == userId;
     }
-    
+
     function getUserData() {
       return get(/databases/$(database)/documents/users/$(request.auth.uid)).data;
     }
-    
+
     function hasRole(role) {
       return getUserData().role == role;
     }
@@ -25,33 +24,44 @@ service cloud.firestore {
       allow create: if isSignedIn() && isOwner(userId);
       allow update: if isSignedIn() && isOwner(userId);
     }
-    
+
     // Inquiries Collection
     match /inquiries/{inquiryId} {
       allow read: if isSignedIn() && (isOwner(resource.data.ownerId) || hasRole('manager'));
       allow create: if isSignedIn();
       allow update: if isSignedIn() && (isOwner(resource.data.ownerId) || hasRole('manager'));
     }
-    
+
     // Forum Threads
     match /forum_threads/{threadId} {
-      allow read: if true; // Öffentlich lesbar
+      allow read: if true;
       allow create: if isSignedIn();
       allow update: if isSignedIn() && (isOwner(resource.data.authorId) || hasRole('manager'));
     }
-    
+
     // Forum Replies
     match /forum_replies/{replyId} {
       allow read: if true;
       allow create: if isSignedIn();
       allow delete: if isSignedIn() && (isOwner(resource.data.authorId) || hasRole('manager'));
     }
-    
+
     // Messages
+    // IMPORTANT: list (query) and get (single read) are separate operations.
+    // For onSnapshot queries (where senderId==uid or receiverId==uid) to work,
+    // list must be allowed for any signed-in user. Individual document access
+    // remains restricted to sender/receiver.
     match /messages/{messageId} {
-      allow read: if isSignedIn() && (request.auth.uid == resource.data.senderId || request.auth.uid == resource.data.receiverId);
+      allow get: if isSignedIn() && (
+        request.auth.uid == resource.data.senderId ||
+        request.auth.uid == resource.data.receiverId
+      );
+      allow list: if isSignedIn();
       allow create: if isSignedIn() && request.auth.uid == request.resource.data.senderId;
-      allow update: if isSignedIn() && request.auth.uid == resource.data.receiverId; // Zum Markieren als gelesen
+      allow update: if isSignedIn() && (
+        request.auth.uid == resource.data.receiverId ||
+        request.auth.uid == resource.data.senderId
+      );
     }
   }
 }
