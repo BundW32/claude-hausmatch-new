@@ -14,30 +14,20 @@ const QUICK_QUESTIONS = [
   'Wie funktioniert die Nebenkostenabrechnung?',
 ];
 
-// Eddy die Eule
-const EddyOwl = ({ size = 40 }: { size?: number }) => (
-  <svg width={size} height={size} viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-    <ellipse cx="50" cy="80" rx="28" ry="22" fill="#5856D6" />
-    <ellipse cx="50" cy="84" rx="17" ry="15" fill="#f0eef8" />
-    <circle cx="50" cy="44" r="34" fill="#5856D6" />
-    <polygon points="25,20 17,4 34,16" fill="#4c46cc" />
-    <polygon points="75,20 83,4 66,16" fill="#4c46cc" />
-    <ellipse cx="50" cy="47" rx="29" ry="26" fill="#f0eef8" />
-    <circle cx="36" cy="43" r="13.5" fill="white" />
-    <circle cx="36" cy="43" r="9" fill="#080820" />
-    <circle cx="31" cy="38" r="3" fill="white" />
-    <circle cx="36" cy="43" r="13.5" fill="none" stroke="#1a1a3e" strokeWidth="2.5" />
-    <circle cx="64" cy="43" r="13.5" fill="white" />
-    <circle cx="64" cy="43" r="9" fill="#080820" />
-    <circle cx="59" cy="38" r="3" fill="white" />
-    <circle cx="64" cy="43" r="13.5" fill="none" stroke="#1a1a3e" strokeWidth="2.5" />
-    <line x1="49.5" y1="43" x2="50.5" y2="43" stroke="#1a1a3e" strokeWidth="2.5" strokeLinecap="round" />
-    <path d="M44,60 Q50,68 56,60 Q50,65 44,60 Z" fill="#f59e0b" />
-    <ellipse cx="24" cy="78" rx="9" ry="16" fill="#4c46cc" transform="rotate(-12 24 78)" />
-    <ellipse cx="76" cy="78" rx="9" ry="16" fill="#4c46cc" transform="rotate(12 76 78)" />
-    <ellipse cx="41" cy="98" rx="9" ry="4" fill="#f59e0b" />
-    <ellipse cx="59" cy="98" rx="9" ry="4" fill="#f59e0b" />
-  </svg>
+const EDDY_URL = "https://cdn.jsdelivr.net/gh/BundW32/claude-hausmatch-new@main/hf_20260616_092652_b3b38af5-a913-44c1-80ef-1ac5d9adedb4.png";
+
+const EddyAvatar = ({ size = 40, radius }: { size?: number; radius?: number }) => (
+  <div style={{
+    width: size,
+    height: size,
+    borderRadius: radius ?? Math.round(size * 0.25),
+    overflow: 'hidden',
+    background: '#2563FF',
+    display: 'inline-block',
+    flexShrink: 0
+  }}>
+    <img src={EDDY_URL} alt="Eddy" width={size} height={size} style={{ display: 'block', objectFit: 'cover' }} />
+  </div>
 );
 
 const KIBerater: React.FC = () => {
@@ -95,12 +85,12 @@ const KIBerater: React.FC = () => {
       <div className="bg-white border-b border-slate-100 py-8">
         <div className="max-w-3xl mx-auto px-4 text-center">
           <div className="flex items-center justify-center mb-4">
-            <div className="w-20 h-20 rounded-2xl bg-indigo-600 flex items-center justify-center shadow-xl shadow-indigo-200">
-              <EddyOwl size={64} />
+            <div className="shadow-xl shadow-indigo-200 rounded-3xl overflow-hidden" style={{ width: 88, height: 88 }}>
+              <EddyAvatar size={88} radius={24} />
             </div>
           </div>
           <h1 className="text-3xl font-black text-slate-900 mb-2">
-            Eddy — Ihr KI-Immobilienberater 🦉
+            Eddy — Ihr KI-Immobilienberater
           </h1>
           <p className="text-slate-500 font-medium">
             Fragen zu Hausverwaltung, Mietrecht, Finanzierung &amp; Investment
@@ -138,8 +128,8 @@ const KIBerater: React.FC = () => {
               className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
             >
               {msg.role === 'assistant' && (
-                <div className="w-9 h-9 rounded-xl bg-indigo-600 flex items-center justify-center mr-3 flex-shrink-0 mt-1 overflow-hidden">
-                  <EddyOwl size={34} />
+                <div className="mr-3 flex-shrink-0 mt-1">
+                  <EddyAvatar size={36} />
                 </div>
               )}
               <div
@@ -156,8 +146,8 @@ const KIBerater: React.FC = () => {
 
           {loading && (
             <div className="flex justify-start">
-              <div className="w-9 h-9 rounded-xl bg-indigo-600 flex items-center justify-center mr-3 flex-shrink-0 overflow-hidden">
-                <EddyOwl size={34} />
+              <div className="mr-3 flex-shrink-0">
+                <EddyAvatar size={36} />
               </div>
               <div className="bg-white border border-slate-100 shadow-sm px-5 py-3 rounded-2xl rounded-tl-sm">
                 <div className="flex gap-1 items-center h-5">
@@ -199,7 +189,7 @@ const KIBerater: React.FC = () => {
             </button>
           </div>
           <p className="text-center text-[11px] text-slate-400 mt-2 font-medium">
-            Eddy ist eine KI 🦉 · Antworten sind allgemeine Informationen · Kein Rechtsrat
+            Eddy ist eine KI · Antworten sind allgemeine Informationen · Kein Rechtsrat
           </p>
         </div>
       </div>
