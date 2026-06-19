@@ -38,7 +38,9 @@ async function saveToFirestore(data: {
       status: { stringValue: 'neu' },
       source: { stringValue: 'express-matching' },
       companiesRequested: {
-        arrayValue: { values: data.companies.map(c => ({ stringValue: c.name })) }
+        arrayValue: {
+          values: data.companies.map(c => ({ stringValue: c.name }))
+        }
       },
     },
   };
@@ -53,12 +55,41 @@ async function saveToFirestore(data: {
   }
 }
 
-// Fetch registered managers matching the city using listDocuments (simpler than runQuery)
+async function getAnonFirebaseToken(): Promise<string | null> {
+  try {
+    const res = await fetch(
+      `https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=${FIREBASE_API_KEY}`,
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ returnSecureToken: true }),
+      }
+    );
+    if (!res.ok) {
+      console.error('Anonymous auth failed:', res.status, await res.text());
+      return null;
+    }
+    const data = await res.json();
+    console.log('Anonymous Firebase token obtained');
+    return data.idToken || null;
+  } catch (err) {
+    console.error('Anonymous auth error:', err);
+    return null;
+  }
+}
+
 async function getManagersInCity(city: string): Promise<{ name: string; email: string }[]> {
   if (!city) return [];
   try {
-    const url = `https://firestore.googleapis.com/v1/projects/${FIREBASE_PROJECT}/databases/(default)/documents/users?key=${FIREBASE_API_KEY}&pageSize=200`;
-    const res = await fetch(url);
+    const token = await getAnonFirebaseToken();
+    const headers: Record<string, string> = { 'Content-Type': 'application/json' };
+    if (token) {
+      headers['Authorization'] = `Bearer ${token}`;
+    }
+    const url = token
+      ? `https://firestore.googleapis.com/v1/projects/${FIREBASE_PROJECT}/databases/(default)/documents/users?pageSize=200`
+      : `https://firestore.googleapis.com/v1/projects/${FIREBASE_PROJECT}/databases/(default)/documents/users?key=${FIREBASE_API_KEY}&pageSize=200`;
+    const res = await fetch(url, { headers });
     if (!res.ok) {
       console.error('Firebase listDocuments error:', res.status, await res.text());
       return [];
@@ -66,13 +97,12 @@ async function getManagersInCity(city: string): Promise<{ name: string; email: s
     const data = await res.json();
     const docs = data.documents || [];
     console.log(`Firebase returned ${docs.length} user documents`);
-
     const cityLower = city.toLowerCase().trim();
     const managers = docs
       .map((doc: any) => {
         const f = doc.fields || {};
         return {
-          name: f.name?.stringValue || '',
+          name: f.name?.stringValue || f.displayName?.stringValue || '',
           email: f.email?.stringValue || '',
           role: f.role?.stringValue || '',
           city: (f.city?.stringValue || f.location?.stringValue || '').toLowerCase().trim(),
@@ -81,11 +111,10 @@ async function getManagersInCity(city: string): Promise<{ name: string; email: s
       .filter((m: any) => {
         if (m.role !== 'manager' || !m.email) return false;
         const match = m.city.includes(cityLower) || cityLower.includes(m.city);
-        console.log(`Manager ${m.name} (city: "${m.city}") vs inquiry city "${cityLower}": ${match ? 'MATCH' : 'no match'}`);
+        console.log(`Manager ${m.name} (city: "${m.city}") vs "${cityLower}": ${match ? 'MATCH' : 'no match'}`);
         return match;
       })
       .map((m: any) => ({ name: m.name, email: m.email }));
-
     console.log(`Found ${managers.length} matching managers in ${city}`);
     return managers;
   } catch (err) {
@@ -119,10 +148,6 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       ? companies.map((c: { name: string }) => c.name).join(', ')
       : 'Keine Unternehmen ausgewählt';
 
-  const einheiten = message?.match(/\d+/)?.[0]
-    ? message.match(/\d+/)![0] + ' Einheiten'
-    : 'eine WEG';
-
   // E-Mail 1: Admin-Benachrichtigung
   const adminResult = await sendEmail(apiKey, {
     from: FROM_EMAIL,
@@ -136,54 +161,49 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     return res.status(500).json({ error: 'Anfrage konnte nicht gesendet werden. Bitte versuchen Sie es erneut.' });
   }
 
-  // Firestore: Anfrage speichern (damit neue Verwalter sie nach Registrierung im Dashboard sehen)
-  saveToFirestore({
-    city,
-    senderName,
-    senderEmail,
-    senderPhone: senderPhone || '',
-    message: message || '',
-    companies: Array.isArray(companies) ? companies : [],
-  }).catch(err => console.error('Firestore save failed:', err));
+  // Firestore: Anfrage speichern (non-blocking)
+  saveToFirestore({ city, senderName, senderEmail, senderPhone: senderPhone || '', message: message || '', companies: Array.isArray(companies) ? companies : [] })
+    .catch(err => console.error('Firestore save failed:', err));
 
-  // E-Mail 2: Bestätigung an Eigentümer
+  // E-Mail 2: Bestätigung an Interessent
   await sendEmail(apiKey, {
     from: FROM_EMAIL,
     to: [senderEmail],
     subject: 'Ihre Anfrage bei HausMatch wurde empfangen',
-    text: `Hallo ${senderName},\n\nvielen Dank für Ihre Anfrage bei HausMatch.\n\nWir haben Ihre Anfrage für folgende Unternehmen in ${city || 'Ihrer Stadt'} erhalten:\n${companyList}\n\nDie Unternehmen werden sich in Kürze bei Ihnen melden.\n\nMit freundlichen Grüßen,\nIhr HausMatch-Team`,
+    text: `Hallo ${senderName},\n\nvielen Dank für Ihre Anfrage bei HausMatch.\n\nWir haben Ihre Anfrage für folgende Unternehmen in ${city || 'Ihrer Stadt'} erhalten: ${companyList}\n\nWir werden uns in Kürze bei Ihnen melden.\n\nMit freundlichen Grüßen,\nIhr HausMatch-Team`,
   });
 
-  // E-Mail 3: An registrierte Verwalter in der Stadt (aus Firebase)
-  const firebaseManagers = await getManagersInCity(city || '');
+  // E-Mail 3: Verwalter-Benachrichtigung
+  const einheiten = message?.match(/\d+/)?.[0]
+    ? message.match(/\d+/)![0] + ' Einheiten'
+    : 'eine WEG';
 
-  // Aus dem Formular: companies mit bekannter E-Mail
-  const formCompanies: { name: string; email: string }[] = Array.isArray(companies)
-    ? companies.filter((c: any) => !!c.email).map((c: any) => ({ name: c.name, email: c.email }))
+  // Registrierte Verwalter in der Stadt aus Firebase laden
+  const registeredManagers = await getManagersInCity(city || '');
+
+  // Unternehmen aus dem Formular mit E-Mail-Adresse
+  const formCompaniesWithEmail = Array.isArray(companies)
+    ? companies.filter((c: { email?: string }) => !!c.email)
     : [];
 
-  // Kombinieren und deduplizieren
-  const emailSet = new Set<string>();
+  // Alle Empfänger kombinieren (ohne Duplikate)
+  const seenEmails = new Set<string>();
   const allManagers: { name: string; email: string }[] = [];
-  for (const m of [...firebaseManagers, ...formCompanies]) {
-    const key = m.email.toLowerCase();
-    if (!emailSet.has(key)) {
-      emailSet.add(key);
-      allManagers.push(m);
+  for (const m of [...registeredManagers, ...formCompaniesWithEmail]) {
+    if (m.email && !seenEmails.has(m.email)) {
+      seenEmails.add(m.email);
+      allManagers.push({ name: m.name || '', email: m.email });
     }
   }
 
-  console.log(`Sending Verwalter email to ${allManagers.length} recipients in ${city}`);
-
-  const verwalterText = (name: string) =>
-    `Guten Tag${name ? ' ' + name : ''},\n\nein Eigentümer sucht eine WEG-Verwaltung in ${city || 'Ihrer Region'} für ${einheiten}.\n\nMelden Sie sich kostenlos an, um die Anfrage im Detail zu sehen und den Eigentümer zu kontaktieren:\n\nhttps://www.haus-match.de/#/register\n\nNach der Anmeldung finden Sie die Anfrage direkt in Ihrem Lead Center.\n\nMit freundlichen Grüßen,\nIhr HausMatch-Team`;
+  console.log(`Sending Verwalter emails to ${allManagers.length} managers (registered: ${registeredManagers.length}, form: ${formCompaniesWithEmail.length})`);
 
   for (const manager of allManagers) {
     await sendEmail(apiKey, {
       from: FROM_EMAIL,
       to: [manager.email],
       subject: `Neue WEG-Anfrage in ${city || 'Ihrer Region'} – ${einheiten}`,
-      text: verwalterText(manager.name),
+      text: `Guten Tag${manager.name ? ' ' + manager.name : ''},\n\nüber das HausMatch Express-Matching ist eine neue Anfrage für die WEG-Verwaltung eingegangen:\n\nStadt: ${city || 'nicht angegeben'}\nUmfang: ${einheiten}\n\nUm die Kontaktdaten des Interessenten zu erhalten, melden Sie sich bitte in Ihrem HausMatch-Account an:\n\nhttps://www.haus-match.de/#/register\n\nNach der Anmeldung finden Sie die Anfrage direkt in Ihrem Lead Center.\n\nMit freundlichen Grüßen,\nIhr HausMatch-Team`,
     });
   }
 
