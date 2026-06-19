@@ -1,6 +1,6 @@
 // ─── USER TYPES ───────────────────────────────────────────────────────────────
 
-export type UserRole = 'seeker' | 'manager';
+export type UserRole = 'seeker' | 'manager' | 'profi';
 
 export type UserType =
   | 'owner'          // Privater Eigentümer
