@@ -2,7 +2,7 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { AuthContext } from '../App';
 import { searchUsers, addFriend, removeFriend, sendMessage } from '../services/dataService';
-import { User } from '../types';
+import { User, USER_TYPE_LABELS } from '../types';
 import { useNavigate, useSearchParams, Link } from 'react-router-dom';
 
 const Network = () => {
@@ -104,8 +104,8 @@ const Network = () => {
                     </div>
                     <div className="flex-1">
                         <h3 className="text-2xl font-black text-slate-900 leading-tight group-hover/link:text-indigo-600 transition-colors">{u.name}</h3>
-                        <span className="text-[10px] font-black uppercase tracking-widest bg-slate-100 px-3 py-1 rounded-full text-slate-500 mt-2 inline-block border border-slate-200">
-                          {u.role === 'manager' ? 'Hausverwaltung' : 'Eigentümer'}
+                        <span className={`text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded-full mt-2 inline-block border ${u.role === 'profi' ? 'bg-purple-50 text-purple-600 border-purple-100' : 'bg-slate-100 text-slate-500 border-slate-200'}`}>
+                          {u.userType ? USER_TYPE_LABELS[u.userType] : u.role === 'manager' ? 'Hausverwaltung' : 'Eigentümer'}
                         </span>
                     </div>
                   </Link>

@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect, createContext, useContext, Suspense, lazy } from 'react';
 import { HashRouter, Routes, Route, Navigate, useLocation, Link, useNavigate } from 'react-router-dom';
-import { User, UserRole } from './types';
+import { User, UserRole, USER_TYPE_LABELS } from './types';
 import { auth, getUserProfile, logoutUser } from './services/dataService';
 import { onAuthStateChanged } from 'firebase/auth';
 
@@ -139,7 +139,9 @@ const Navbar = () => {
               <div className="flex items-center gap-3 ml-3 pl-3 border-l border-slate-100">
                 <Link to="/profile" className="flex flex-col items-end group">
                   <span className="text-xs font-black text-slate-900 group-hover:text-blue-600 transition-colors">{user.name}</span>
-                  <span className="text-[9px] uppercase font-black text-blue-600 tracking-tighter">{user.role === 'manager' ? 'Verwalter' : 'Eigentümer'}</span>
+                  <span className="text-[9px] uppercase font-black text-blue-600 tracking-tighter">
+                    {user.userType ? USER_TYPE_LABELS[user.userType] : user.role === 'manager' ? 'Hausverwaltung' : 'Eigentümer'}
+                  </span>
                 </Link>
                 <button onClick={logout} className="p-2 text-slate-400 hover:text-red-500 transition-colors" title="Abmelden">
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M17 16l4-4m0 0l-4-4m4 4H7" /></svg>
