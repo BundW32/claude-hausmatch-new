@@ -1,12 +1,13 @@
 
 import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
-import { 
-  getFirestore, 
-  collection, 
-  addDoc, 
-  serverTimestamp 
+import {
+  getFirestore,
+  collection,
+  addDoc,
+  serverTimestamp
 } from "firebase/firestore";
+import { getStorage } from "firebase/storage";
 import { getAnalytics, isSupported } from "firebase/analytics";
 
 const firebaseConfig = {
@@ -22,6 +23,7 @@ const firebaseConfig = {
 export const app = initializeApp(firebaseConfig);
 export const db = getFirestore(app);
 export const auth = getAuth(app);
+export const storage = getStorage(app);
 
 // Analytics initialization (optional/async)
 export const analytics = isSupported().then(yes => yes ? getAnalytics(app) : null);

@@ -233,6 +233,13 @@ export interface Review {
 
 // ─── MESSAGING ─────────────────────────────────────────────────────────────────
 
+export interface MessageAttachment {
+  name: string;
+  url: string;
+  type: string;
+  size: number;
+}
+
 export interface Message {
   id: string;
   senderId: string;
@@ -243,6 +250,7 @@ export interface Message {
   content: string;
   timestamp: FirebaseTimestamp;
   read: boolean;
+  attachments?: MessageAttachment[];
 }
 
 // ─── LEGACY / COMPATIBILITY ────────────────────────────────────────────────────

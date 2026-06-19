@@ -1,6 +1,7 @@
 
 import { User, UserRole, UserType, Inquiry, ForumThread, Message } from "../types";
-import { auth, db } from "./firebase";
+import { auth, db, storage } from "./firebase";
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { 
   signInWithEmailAndPassword, 
   createUserWithEmailAndPassword, 
@@ -320,4 +321,10 @@ export const sendMessage = async (messageData: Omit<Message, 'id' | 'timestamp' 
 
 export const markMessageRead = async (messageId: string) => {
   await updateDoc(doc(db, "messages", messageId), { read: true });
+};
+
+export const uploadFile = async (file: File, path: string): Promise<string> => {
+  const fileRef = ref(storage, path);
+  await uploadBytes(fileRef, file);
+  return getDownloadURL(fileRef);
 };
