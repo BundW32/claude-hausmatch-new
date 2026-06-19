@@ -39,6 +39,7 @@ const Kreditrechner = () => {
   const [laufzeit, setLaufzeit] = useState(30);
   const [bundesland, setBundesland] = useState('Bayern');
   const [mitMakler, setMitMakler] = useState(true);
+  const [maklerProvision, setMaklerProvision] = useState(3.57);
   const [jahresmiete, setJahresmiete] = useState(14400);
   const [verwaltungKosten, setVerwaltungKosten] = useState(1200);
   const [instandhaltung, setInstandhaltung] = useState(2400);
@@ -49,7 +50,7 @@ const Kreditrechner = () => {
     const grunderwerbsteuer = (kaufpreis * bl.gew) / 100;
     const notarkosten = kaufpreis * 0.015;
     const grundbuch = kaufpreis * 0.005;
-    const maklerkosten = mitMakler ? kaufpreis * 0.0357 : 0;
+    const maklerkosten = mitMakler ? kaufpreis * (maklerProvision / 100) : 0;
     const gesamtNebenkosten = grunderwerbsteuer + notarkosten + grundbuch + maklerkosten;
     const gesamtKaufpreis = kaufpreis + gesamtNebenkosten;
     const darlehen = Math.max(0, gesamtKaufpreis - eigenkapital);
@@ -94,7 +95,7 @@ const Kreditrechner = () => {
       tilgungsplan: plan,
       monatsZinsanteil, monatsTilgungsanteil
     };
-  }, [kaufpreis, eigenkapital, zins, tilgung, laufzeit, bl, mitMakler, jahresmiete, verwaltungKosten, instandhaltung]);
+  }, [kaufpreis, eigenkapital, zins, tilgung, laufzeit, bl, mitMakler, maklerProvision, jahresmiete, verwaltungKosten, instandhaltung]);
 
   const inputClass = "w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-slate-900 font-bold text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all";
   const labelClass = "block text-xs font-black text-slate-500 uppercase tracking-widest mb-1.5";
@@ -165,14 +166,69 @@ const Kreditrechner = () => {
                     ))}
                   </select>
                 </div>
-                <div className="flex items-center gap-3">
-                  <button
-                    onClick={() => setMitMakler(!mitMakler)}
-                    className={`w-10 h-6 rounded-full transition-colors relative ${mitMakler ? 'bg-blue-600' : 'bg-slate-200'}`}
-                  >
-                    <span className={`absolute top-1 w-4 h-4 bg-white rounded-full shadow transition-all ${mitMakler ? 'right-1' : 'left-1'}`} />
-                  </button>
-                  <span className="text-sm font-bold text-slate-700">Mit Makler (3,57 %)</span>
+                {/* Maklercourtage */}
+                <div>
+                  <div className="flex items-center gap-3 mb-3">
+                    <button
+                      onClick={() => setMitMakler(!mitMakler)}
+                      className={`w-10 h-6 rounded-full transition-colors relative shrink-0 ${mitMakler ? 'bg-blue-600' : 'bg-slate-200'}`}
+                    >
+                      <span className={`absolute top-1 w-4 h-4 bg-white rounded-full shadow transition-all ${mitMakler ? 'right-1' : 'left-1'}`} />
+                    </button>
+                    <span className="text-sm font-bold text-slate-700">
+                      Mit Maklercourtage{mitMakler ? ` (${maklerProvision.toFixed(2).replace('.', ',')} %)` : ''}
+                    </span>
+                  </div>
+
+                  {mitMakler && (
+                    <div className="pl-1">
+                      {/* Schnellauswahl */}
+                      <div className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Schnellauswahl</div>
+                      <div className="flex flex-wrap gap-2 mb-3">
+                        {[
+                          { v: 0,    label: '0 %',           hint: 'Ohne Makler' },
+                          { v: 1.19, label: '1,19 %',        hint: '⅓ geteilt' },
+                          { v: 2.38, label: '2,38 %',        hint: '⅔ Käufer' },
+                          { v: 3.57, label: '3,57 %',        hint: 'Standard' },
+                          { v: 5.95, label: '5,95 %',        hint: 'Alleinauftrag' },
+                        ].map(({ v, label, hint }) => (
+                          <button
+                            key={v}
+                            onClick={() => setMaklerProvision(v)}
+                            className={`px-3 py-1.5 rounded-xl text-xs font-black transition-all border ${
+                              maklerProvision === v
+                                ? 'bg-blue-600 text-white border-blue-600 shadow-sm'
+                                : 'bg-slate-50 text-slate-600 border-slate-200 hover:border-blue-300 hover:text-blue-600'
+                            }`}
+                          >
+                            {label}
+                            <span className={`block text-[9px] font-bold mt-0.5 ${maklerProvision === v ? 'text-blue-200' : 'text-slate-400'}`}>{hint}</span>
+                          </button>
+                        ))}
+                      </div>
+
+                      {/* Manuelle Eingabe */}
+                      <div className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5">Oder manuell eingeben</div>
+                      <div className="relative">
+                        <input
+                          type="number"
+                          className={inputClass}
+                          value={maklerProvision}
+                          onChange={e => {
+                            const val = Math.max(0, Math.min(10, parseFloat(e.target.value) || 0));
+                            setMaklerProvision(Math.round(val * 100) / 100);
+                          }}
+                          step={0.01}
+                          min={0}
+                          max={10}
+                        />
+                        <span className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 text-sm font-bold">%</span>
+                      </div>
+                      <div className="mt-1.5 text-xs text-slate-400 font-medium">
+                        = {formatEuro(kaufpreis * maklerProvision / 100)} Maklercourtage (Käuferanteil)
+                      </div>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
@@ -279,7 +335,7 @@ const Kreditrechner = () => {
                       { label: `Grunderwerbsteuer (${bl.gew} %)`, value: ergebnis.grunderwerbsteuer },
                       { label: 'Notarkosten (ca. 1,5 %)', value: ergebnis.notarkosten },
                       { label: 'Grundbucheintrag (ca. 0,5 %)', value: ergebnis.grundbuch },
-                      ...(mitMakler ? [{ label: 'Maklercourtage (3,57 %)', value: ergebnis.maklerkosten }] : [])
+                      ...(mitMakler && maklerProvision > 0 ? [{ label: `Maklercourtage (${maklerProvision.toFixed(2).replace('.', ',')} %)`, value: ergebnis.maklerkosten }] : [])
                     ].map(item => (
                       <div key={item.label} className="flex justify-between items-center">
                         <span className="text-sm text-slate-600 font-medium">{item.label}</span>
