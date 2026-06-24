@@ -11,7 +11,7 @@ const REGIONS = [
   { id: 'berlin', label: 'Berlin & Brandenburg', cities: ['berlin', 'potsdam', 'cottbus', 'brandenb', 'frankfurt (oder)', 'eberswalde'] },
   { id: 'nrw', label: 'NRW & West', cities: ['köln', 'düsseldorf', 'dortmund', 'essen', 'duisburg', 'bochum', 'wuppertal', 'bielefeld', 'bonn', 'münster', 'aachen', 'saarbrücken', 'trier', 'mainz', 'koblenz', 'saar', 'gelsenkirchen', 'mönchengladbach', 'krefeld'] },
   { id: 'mitte', label: 'Mitte & Ost', cities: ['frankfurt', 'wiesbaden', 'darmstadt', 'kassel', 'erfurt', 'jena', 'halle', 'magdeburg', 'leipzig', 'chemnitz', 'dresden', 'gera', 'zwickau', 'eisenach', 'weimar', 'dessau'] },
-  { id: 'sued', label: 'Bayern & Süd', cities: ['münchen', 'nürnberg', 'augsburg', 'regensburg', 'würzburg', 'ingolstadt', 'erlangen', 'bamberg', 'stuttgart', 'freiburg', 'ulm', 'karlsruhe', 'mannheim', 'heidelberg', 'reutlingen', 'konstanz', 'ravensburg', 'heilbronn'] },
+  { id: 'sued', label: 'Bayern & Süd', cities: ['münchen', 'nürnberg', 'augsburg', 'regensburg', 'würzburg, 'ingolstadt', 'erlangen', 'bamberg', 'stuttgart', 'freiburg', 'ulm', 'karlsruhe', 'mannheim', 'heidelberg', 'reutlingen', 'konstanz', 'ravensburg', 'heilbronn'] },
 ];
 
 const ACCEPT_TYPES = '.pdf,.doc,.docx,.jpg,.jpeg,.png,.webp';
@@ -177,7 +177,7 @@ const Network = () => {
 
                   <Link to={`/profile/${u.id}`} className="flex items-center gap-6 mb-8 relative z-10 group/link">
                     <div className="w-24 h-24 rounded-[2rem] bg-slate-100 flex items-center justify-center overflow-hidden border-4 border-white shadow-lg group-hover/link:scale-105 transition-transform">
-                      {u.avatar ? <img src={u.avatar} className="w-full h-full object-cover" alt="" /> : <span className="text-4xl font-black text-slate-300">{u.name[0]}</span>}
+                      {u.avatar ? <img src={u.avatar} className="w-full h-full object-cover" alt="" /> : <span className="text-4xl font-black text-slate-300">{(u?.name || '?')[0]}</span>}
                     </div>
                     <div className="flex-1 min-w-0">
                       <h3 className="text-2xl font-black text-slate-900 leading-tight group-hover/link:text-indigo-600 transition-colors truncate">{u.name}</h3>
@@ -242,7 +242,7 @@ const Network = () => {
           <div className="bg-white w-full max-w-2xl rounded-[4rem] p-12 shadow-2xl border border-white">
             <div className="flex items-center gap-6 mb-8">
               <div className="w-16 h-16 bg-indigo-600 text-white rounded-2xl flex items-center justify-center font-black text-2xl">
-                {selectedUser.name[0]}
+                {(selectedUser?.name || "?")[0]}
               </div>
               <div>
                 <h2 className="text-3xl font-black tracking-tighter text-slate-900">Nachricht an {selectedUser.name}</h2>
