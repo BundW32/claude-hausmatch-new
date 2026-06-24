@@ -279,7 +279,7 @@ const MatchingBoard = () => {
         if (
           city.includes(qLower) ||
           (data.name || '').toLowerCase().includes(qLower) ||
-          (data.specialization || '').toLowerCase().includes(qLower) ||
+          (Array.isArray(data.specialization) ? data.specialization.join(' ') : (data.specialization || '')).toLowerCase().includes(qLower) ||
           q.length < 3 // show all partners for very short queries
         ) {
           managers.push({
@@ -292,7 +292,7 @@ const MatchingBoard = () => {
             email: data.email || '',
             rating: data.rating || 0,
             reviews: data.reviews || 0,
-            specialization: data.specialization || 'Hausverwaltung',
+            specialization: Array.isArray(data.specialization) ? data.specialization.join(', ') : (data.specialization || 'Hausverwaltung'),
             isPartner: true,
             partnerProfile: { uid: doc.id, name: data.name || '', profileImage: data.profileImage }
           });
