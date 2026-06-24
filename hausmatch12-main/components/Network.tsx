@@ -11,7 +11,7 @@ const REGIONS = [
   { id: 'berlin', label: 'Berlin & Brandenburg', cities: ['berlin', 'potsdam', 'cottbus', 'brandenb', 'frankfurt (oder)', 'eberswalde'] },
   { id: 'nrw', label: 'NRW & West', cities: ['köln', 'düsseldorf', 'dortmund', 'essen', 'duisburg', 'bochum', 'wuppertal', 'bielefeld', 'bonn', 'münster', 'aachen', 'saarbrücken', 'trier', 'mainz', 'koblenz', 'saar', 'gelsenkirchen', 'mönchengladbach', 'krefeld'] },
   { id: 'mitte', label: 'Mitte & Ost', cities: ['frankfurt', 'wiesbaden', 'darmstadt', 'kassel', 'erfurt', 'jena', 'halle', 'magdeburg', 'leipzig', 'chemnitz', 'dresden', 'gera', 'zwickau', 'eisenach', 'weimar', 'dessau'] },
-  { id: 'sued', label: 'Bayern & Süd', cities: ['münchen', 'nürnberg', 'augsburg', 'regensburg', 'würzburg, 'ingolstadt', 'erlangen', 'bamberg', 'stuttgart', 'freiburg', 'ulm', 'karlsruhe', 'mannheim', 'heidelberg', 'reutlingen', 'konstanz', 'ravensburg', 'heilbronn'] },
+  { id: 'sued', label: 'Bayern & Süd', cities: ['münchen', 'nürnberg', 'augsburg', 'regensburg', 'würzburg', 'ingolstadt', 'erlangen', 'bamberg', 'stuttgart', 'freiburg', 'ulm', 'karlsruhe', 'mannheim', 'heidelberg', 'reutlingen', 'konstanz', 'ravensburg', 'heilbronn'] },
 ];
 
 const ACCEPT_TYPES = '.pdf,.doc,.docx,.jpg,.jpeg,.png,.webp';
