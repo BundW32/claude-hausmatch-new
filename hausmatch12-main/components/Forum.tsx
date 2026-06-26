@@ -135,33 +135,33 @@ const Forum = () => {
         {/* Thread Detail Modal */}
         {selectedThread && (
           <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/90 backdrop-blur-xl animate-fade-in">
-             <div className="bg-white w-full max-w-5xl max-h-[95vh] rounded-[4rem] shadow-2xl flex flex-col overflow-hidden animate-fade-in-up">
-                <div className="p-10 border-b border-slate-50 flex justify-between items-center bg-slate-50/50">
-                   <div className="flex items-center gap-6">
-                     <div className="w-16 h-16 rounded-3xl bg-indigo-600 flex items-center justify-center text-white font-black text-2xl">
+             <div className="bg-white w-full max-w-3xl max-h-[90vh] rounded-xl sm:rounded-[2.5rem] md:rounded-[4rem] shadow-2xl flex flex-col overflow-hidden animate-fade-in-up">
+                <div className="p-4 sm:p-6 md:p-10 border-b border-slate-50 flex justify-between items-start sm:items-center bg-slate-50/50 gap-3">
+                   <div className="flex items-center gap-3 sm:gap-6 flex-1 min-w-0">
+                     <div className="w-10 h-10 sm:w-16 sm:h-16 rounded-2xl sm:rounded-3xl bg-indigo-600 flex items-center justify-center text-white font-black text-lg sm:text-2xl flex-shrink-0">
                         {selectedThread.author[0]}
                      </div>
-                     <div>
+                     <div className="min-w-0">
                        <div className="flex items-center gap-3 mb-1">
                           <span className="text-[10px] font-black text-indigo-600 uppercase tracking-[0.2em] bg-indigo-50 px-3 py-1 rounded-full">
                             {selectedThread.category}
                           </span>
                        </div>
-                       <h2 className="text-3xl font-black text-slate-900 tracking-tighter">{selectedThread.title}</h2>
+                       <h2 className="text-lg sm:text-2xl md:text-3xl font-black text-slate-900 tracking-tighter line-clamp-2">{selectedThread.title}</h2>
                      </div>
                    </div>
-                   <button onClick={() => setSelectedThread(null)} className="w-14 h-14 flex items-center justify-center hover:bg-slate-200 rounded-full transition-all">
-                      <svg className="w-8 h-8 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M6 18L18 6M6 6l12 12" /></svg>
+                   <button onClick={() => setSelectedThread(null)} className="w-10 h-10 sm:w-14 sm:h-14 flex items-center justify-center hover:bg-slate-200 rounded-full transition-all flex-shrink-0">
+                      <svg className="w-6 h-6 sm:w-8 sm:h-8 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M6 18L18 6M6 6l12 12" /></svg>
                    </button>
                 </div>
 
-                <div className="flex-1 overflow-y-auto p-12 space-y-12 custom-scrollbar">
-                   <div className="bg-slate-50 p-10 rounded-[3rem] border border-slate-100/50 shadow-inner">
+                <div className="flex-1 overflow-y-auto p-4 sm:p-8 md:p-12 space-y-6 sm:space-y-12 custom-scrollbar">
+                   <div className="bg-slate-50 p-4 sm:p-6 md:p-10 rounded-[1.5rem] md:rounded-[3rem] border border-slate-100/50 shadow-inner">
                       <div className="flex justify-between items-center mb-6">
                          <span className="text-sm font-black text-slate-900">{selectedThread.author}</span>
                          <span className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">{selectedThread.date}</span>
                       </div>
-                      <p className="text-xl text-slate-700 leading-relaxed font-medium whitespace-pre-wrap" dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(selectedThread.content) }}></p>
+                      <p className="text-base sm:text-xl text-slate-700 leading-relaxed font-medium whitespace-pre-wrap" dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(selectedThread.content) }}></p>
                    </div>
 
                    <div className="relative py-4 flex items-center">
@@ -182,11 +182,11 @@ const Forum = () => {
                         <div className="text-center py-10 opacity-30 italic font-medium text-slate-400">Keine Antworten vorhanden.</div>
                       ) : (
                         replies.map(reply => (
-                          <div key={reply.id} className="flex gap-6 animate-fade-in group">
-                             <div className="w-12 h-12 rounded-2xl bg-slate-100 flex items-center justify-center text-slate-500 font-black shrink-0 border border-slate-200">
+                          <div key={reply.id} className="flex gap-3 sm:gap-6 animate-fade-in group">
+                             <div className="w-8 h-8 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-slate-100 flex items-center justify-center text-slate-500 font-black shrink-0 border border-slate-200">
                                {reply.author[0]}
                              </div>
-                             <div className="bg-white p-8 rounded-[2rem] border border-slate-100 shadow-sm flex-1 group-hover:shadow-md transition-all">
+                             <div className="bg-white p-3 sm:p-5 md:p-8 rounded-[1rem] sm:rounded-[2rem] border border-slate-100 shadow-sm flex-1 group-hover:shadow-md transition-all">
                                 <div className="flex justify-between mb-4">
                                    <span className="text-sm font-black text-slate-800">{reply.author}</span>
                                    <span className="text-[10px] font-bold text-slate-300 uppercase tracking-widest">
@@ -201,18 +201,18 @@ const Forum = () => {
                    </div>
                 </div>
 
-                <div className="p-10 border-t border-slate-50 bg-white">
-                   <div className="max-w-4xl mx-auto flex items-end gap-6">
+                <div className="p-4 sm:p-6 md:p-10 border-t border-slate-50 bg-white">
+                   <div className="max-w-4xl mx-auto flex flex-col sm:flex-row items-stretch sm:items-end gap-3 sm:gap-6">
                       <textarea
                         value={newReplyText}
                         onChange={(e) => setNewReplyText(e.target.value)}
                         placeholder="Antwort verfassen..."
-                        className="flex-1 bg-slate-50 border-0 rounded-[2rem] px-8 py-6 text-slate-900 ring-1 ring-slate-100 focus:ring-2 focus:ring-indigo-600 transition-all resize-none font-medium h-20 min-h-[80px] focus:h-40"
+                        className="flex-1 bg-slate-50 border-0 rounded-[1.5rem] sm:rounded-[2rem] px-4 sm:px-8 py-4 sm:py-6 text-slate-900 ring-1 ring-slate-100 focus:ring-2 focus:ring-indigo-600 transition-all resize-none font-medium h-20 min-h-[80px] focus:h-40"
                       />
                       <button
                         onClick={handlePostReply}
                         disabled={!newReplyText.trim() || repliesLoading}
-                        className="bg-slate-900 text-white px-10 h-20 rounded-[2rem] font-black uppercase text-xs tracking-[0.2em] shadow-2xl hover:bg-indigo-600 disabled:opacity-20 transition-all active:scale-95"
+                        className="bg-slate-900 text-white px-6 sm:px-10 h-14 sm:h-20 rounded-[1.5rem] sm:rounded-[2rem] font-black uppercase text-xs tracking-[0.2em] shadow-2xl hover:bg-indigo-600 disabled:opacity-20 transition-all active:scale-95 w-full sm:w-auto"
                       >
                         Senden
                       </button>
@@ -225,12 +225,12 @@ const Forum = () => {
         {/* Forum Feed UI */}
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-12 gap-6">
           <div>
-            <h1 className="text-5xl font-black text-slate-900 mb-3 tracking-tighter">Community Hub</h1>
+            <h1 className="text-3xl sm:text-4xl md:text-5xl font-black text-slate-900 mb-3 tracking-tighter">Community Hub</h1>
             <p className="text-slate-400 font-bold uppercase tracking-widest text-xs">Exklusiver Austausch fÃ¼r Immobilienprofis</p>
           </div>
           <button
             onClick={() => setIsCreateModalOpen(true)}
-            className="bg-indigo-600 text-white px-10 py-5 rounded-3xl font-black shadow-2xl hover:bg-indigo-700 transition-all active:scale-95 flex items-center gap-3 uppercase text-xs tracking-[0.2em]"
+            className="bg-indigo-600 text-white px-5 sm:px-10 py-3 sm:py-5 rounded-2xl sm:rounded-3xl font-black shadow-2xl hover:bg-indigo-700 transition-all active:scale-95 flex items-center gap-3 uppercase text-xs tracking-[0.2em]"
           >
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M12 4v16m8-8H4" /></svg>
             Neuer Thread
@@ -264,10 +264,10 @@ const Forum = () => {
                   {search || selectedCategory !== 'Alle' ? 'Keine passenden BeitrÃ¤ge gefunden.' : 'Noch keine BeitrÃ¤ge vorhanden. Starten Sie die erste Diskussion!'}
                 </div>
               ) : filteredThreads.map(thread => (
-                <div key={thread.id} onClick={() => setSelectedThread(thread)} className="group bg-white p-10 rounded-[3rem] border border-slate-100 hover:border-indigo-200 transition-all cursor-pointer shadow-sm hover:shadow-2xl hover:-translate-y-1 relative overflow-hidden">
+                <div key={thread.id} onClick={() => setSelectedThread(thread)} className="group bg-white p-5 sm:p-8 md:p-10 rounded-[1.5rem] sm:rounded-[2.5rem] md:rounded-[3rem] border border-slate-100 hover:border-indigo-200 transition-all cursor-pointer shadow-sm hover:shadow-2xl hover:-translate-y-1 relative overflow-hidden">
                   <div className="absolute top-0 right-0 w-2 h-full bg-slate-50 group-hover:bg-indigo-600 transition-colors"></div>
-                  <div className="flex justify-between items-start gap-8">
-                    <div className="flex-1">
+                  <div className="flex flex-col sm:flex-row justify-between items-start gap-4 sm:gap-8">
+                    <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-4 mb-4">
                         <span className="bg-indigo-50 text-indigo-600 text-[10px] font-black px-4 py-1.5 rounded-full uppercase tracking-widest">{thread.category}</span>
                         <span className="text-[10px] text-slate-300 font-black uppercase tracking-widest">{thread.date}</span>
@@ -278,12 +278,12 @@ const Forum = () => {
                         <span className="text-xs font-black text-slate-400">Gepostet von {thread.author}</span>
                       </div>
                     </div>
-                    <div className="flex gap-6 text-center">
-                      <div className="px-6 py-3 bg-slate-50 rounded-2xl border border-slate-100 group-hover:bg-indigo-50 group-hover:border-indigo-100 transition-all">
+                    <div className="flex gap-3 sm:gap-6 text-center flex-shrink-0">
+                      <div className="px-4 sm:px-6 py-3 bg-slate-50 rounded-2xl border border-slate-100 group-hover:bg-indigo-50 group-hover:border-indigo-100 transition-all">
                         <p className="text-xl font-black text-slate-900 group-hover:text-indigo-600">{thread.replies}</p>
                         <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Replies</p>
                       </div>
-                      <div className="px-6 py-3 bg-slate-50 rounded-2xl border border-slate-100">
+                      <div className="px-4 sm:px-6 py-3 bg-slate-50 rounded-2xl border border-slate-100">
                         <p className="text-xl font-black text-slate-900">{thread.views}</p>
                         <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Views</p>
                       </div>
@@ -298,9 +298,9 @@ const Forum = () => {
 
       {isCreateModalOpen && (
         <div className="fixed inset-0 z-[200] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-md animate-fade-in">
-           <div className="bg-white w-full max-w-3xl rounded-[4rem] p-12 md:p-16 shadow-2xl animate-fade-in-up border border-white/20">
-              <div className="flex justify-between items-center mb-10">
-                <h2 className="text-4xl font-black tracking-tighter text-slate-900">Neuer Beitrag</h2>
+           <div className="bg-white w-full max-w-3xl rounded-xl sm:rounded-[2.5rem] md:rounded-[4rem] p-5 sm:p-8 md:p-12 shadow-2xl animate-fade-in-up border border-white/20">
+              <div className="flex justify-between items-center mb-8 md:mb-10">
+                <h2 className="text-2xl sm:text-3xl md:text-4xl font-black tracking-tighter text-slate-900">Neuer Beitrag</h2>
                 <button onClick={() => setIsCreateModalOpen(false)} className="w-12 h-12 flex items-center justify-center hover:bg-slate-100 rounded-full transition-all">
                   <svg className="w-6 h-6 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M6 18L18 6M6 6l12 12" /></svg>
                 </button>

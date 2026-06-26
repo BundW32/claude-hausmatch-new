@@ -44,7 +44,7 @@ const LandingHome = () => {
                   Deutschlands Immobilien-Community
                 </span>
               </div>
-              <h1 className="text-5xl sm:text-7xl md:text-8xl font-black text-slate-900 leading-[0.95] mb-6 md:mb-10 tracking-tighter">
+              <h1 className="text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-black text-slate-900 leading-tight sm:leading-[0.95] mb-6 md:mb-10 tracking-tighter">
                 Vernetzt.<br className="hidden sm:block" />
                 <span className="text-transparent bg-clip-text bg-gradient-to-br from-blue-600 via-blue-500 to-indigo-600">
                   Gemeinsam stärker.

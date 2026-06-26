@@ -111,13 +111,13 @@ const ChatBot = () => {
       </button>
 
       {!open && (
-        <div className="fixed bottom-[5.5rem] right-6 z-50 bg-white text-indigo-700 text-xs font-black px-2 py-0.5 rounded-full shadow-md border border-indigo-100 pointer-events-none select-none">
+        <div className="hidden sm:block fixed bottom-[5.5rem] right-6 z-50 bg-white text-indigo-700 text-xs font-black px-2 py-0.5 rounded-full shadow-md border border-indigo-100 pointer-events-none select-none">
           Eddy 🦉
         </div>
       )}
 
       {open && (
-        <div className="fixed bottom-28 right-4 sm:right-6 z-50 w-[calc(100vw-2rem)] sm:w-96 max-h-[80vh] flex flex-col bg-white rounded-2xl shadow-2xl border border-slate-100 overflow-hidden">
+        <div className="fixed bottom-24 left-2 right-2 sm:left-auto sm:right-6 sm:w-96 z-50 max-h-[75vh] sm:max-h-[80vh] flex flex-col bg-white rounded-2xl shadow-2xl border border-slate-100 overflow-hidden">
           <div className="bg-indigo-600 px-4 py-3 flex items-center gap-3">
             <EddyAvatar size={40} />
             <div>

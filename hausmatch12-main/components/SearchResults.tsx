@@ -51,7 +51,7 @@ const CompanyCard = ({ company, selected, onToggle }: { company: SearchCompany; 
   const [showContact, setShowContact] = useState(false);
   return (
     <div className={`bg-white rounded-3xl border-2 shadow-sm hover:shadow-md transition-all overflow-hidden ${selected ? 'border-indigo-400 ring-2 ring-indigo-100' : 'border-slate-100'}`}>
-      <div className="p-8">
+      <div className="p-4 sm:p-6 md:p-8">
         <div className="flex items-start gap-3 mb-4">
           <Checkbox checked={selected} onToggle={onToggle} />
           <div className="flex-1 min-w-0">
@@ -129,11 +129,11 @@ const NetworkManagerCard = ({ manager, selected, onToggle }: { manager: User; se
       <div className="absolute top-4 right-4">
         <span className="bg-indigo-600 text-white text-[9px] font-black px-2.5 py-1 rounded-full uppercase tracking-widest">HausMatch Netzwerk</span>
       </div>
-      <div className="p-8 pt-10">
+      <div className="p-4 pt-8 sm:p-6 sm:pt-10 md:p-8 md:pt-12">
         <div className="flex items-start gap-3 mb-4">
           <Checkbox checked={selected} onToggle={onToggle} />
           <div className="min-w-0 flex-1">
-            <h3 className="text-xl font-black text-slate-900 pr-32 truncate">{displayName}</h3>
+            <h3 className="text-xl font-black text-slate-900 pr-24 sm:pr-32 truncate">{displayName}</h3>
             {location && <p className="text-slate-500 text-sm font-medium mt-0.5">{location}</p>}
           </div>
         </div>
@@ -238,7 +238,7 @@ const ExpressModal = ({ selected, city, onClose }: { selected: SelectableEntry[]
           </button>
         </div>
 
-        <div className="overflow-y-auto flex-1 p-8">
+        <div className="overflow-y-auto flex-1 p-4 sm:p-8">
           {done ? (
             <div className="text-center py-8">
               <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
@@ -378,9 +378,9 @@ const SearchResults = () => {
   return (
     <div className="bg-slate-50 min-h-screen pt-12 pb-32 font-sans">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center gap-3 mb-12">
+        <div className="flex flex-wrap items-center gap-3 mb-6 md:mb-12">
           <span className="bg-indigo-600 text-white text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-widest shadow-lg shadow-indigo-100">Live Matching</span>
-          <h1 className="text-4xl font-black text-slate-900 tracking-tight">Empfohlene Partner in {city}</h1>
+          <h1 className="text-2xl sm:text-3xl md:text-4xl font-black text-slate-900 tracking-tight">Empfohlene Partner in {city}</h1>
         </div>
 
         <div className="grid lg:grid-cols-3 gap-10">
@@ -459,7 +459,7 @@ const SearchResults = () => {
           </div>
 
           <div className="space-y-8">
-            <div className="bg-gradient-to-br from-indigo-600 to-purple-700 p-10 rounded-[3rem] text-white sticky top-24 shadow-2xl shadow-indigo-200/50">
+            <div className="bg-gradient-to-br from-indigo-600 to-purple-700 p-5 sm:p-8 md:p-10 rounded-[2rem] md:rounded-[3rem] text-white sticky top-24 shadow-2xl shadow-indigo-200/50">
               <div className="flex items-center gap-4 mb-6">
                 <div className="w-16 h-16 rounded-[1rem] overflow-hidden flex-shrink-0" style={{ background: '#2563FF' }}>
                   <img src={EDDY_URL} alt="Eddy" width={64} height={64} style={{ display: 'block', objectFit: 'cover' }} />

@@ -117,7 +117,7 @@ const Kreditrechner = () => {
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 md:py-8">
         {/* Tab Nav */}
-        <div className="flex gap-2 mb-6 bg-white rounded-2xl p-1.5 border border-slate-100 shadow-sm w-fit">
+        <div className="flex gap-1 sm:gap-2 mb-6 bg-white rounded-2xl p-1 sm:p-1.5 border border-slate-100 shadow-sm w-full sm:w-fit overflow-x-auto">
           {([
             { id: 'kredit', label: 'Kredit & Kosten' },
             { id: 'rendite', label: 'Rendite' },
@@ -126,7 +126,7 @@ const Kreditrechner = () => {
             <button
               key={t.id}
               onClick={() => setTab(t.id)}
-              className={`px-4 py-2.5 rounded-xl text-xs font-black uppercase tracking-widest transition-all ${
+              className={`px-3 sm:px-4 py-2 sm:py-2.5 rounded-xl text-xs font-black uppercase tracking-widest transition-all whitespace-nowrap ${
                 tab === t.id ? 'bg-blue-600 text-white shadow-md' : 'text-slate-500 hover:text-slate-900'
               }`}
             >
@@ -293,9 +293,10 @@ const Kreditrechner = () => {
                 {/* Monatsrate highlight */}
                 <div className="bg-blue-600 text-white rounded-2xl p-6 shadow-xl shadow-blue-200">
                   <div className="text-xs font-black uppercase tracking-widest text-blue-200 mb-1">Monatliche Rate</div>
-                  <div className="text-5xl font-black tracking-tighter">{formatEuro(ergebnis.monatsrate)}</div>
-                  <div className="mt-2 text-blue-200 text-sm font-medium">
-                    Davon Zinsen: {formatEuro(ergebnis.monatsZinsanteil)} · Tilgung: {formatEuro(ergebnis.monatsTilgungsanteil)}
+                  <div className="text-3xl sm:text-4xl md:text-5xl font-black tracking-tighter">{formatEuro(ergebnis.monatsrate)}</div>
+                  <div className="mt-2 text-blue-200 text-xs sm:text-sm font-medium flex flex-wrap gap-x-2">
+                    <span>Davon Zinsen: {formatEuro(ergebnis.monatsZinsanteil)}</span>
+                    <span>· Tilgung: {formatEuro(ergebnis.monatsTilgungsanteil)}</span>
                   </div>
                 </div>
 

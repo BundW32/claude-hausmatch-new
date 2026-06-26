@@ -56,11 +56,11 @@ const Dashboard = () => {
   };
 
   return (
-    <div className="h-[calc(100vh-4rem)] flex overflow-hidden p-6 gap-6 bg-slate-50">
-      
+    <div className="min-h-[calc(100vh-4rem)] flex flex-col md:flex-row p-3 md:p-6 gap-3 md:gap-6 bg-slate-50">
+
       {/* Lead Liste */}
-      <div className="w-1/3 min-w-[380px] bg-white rounded-[2.5rem] flex flex-col shadow-xl border border-slate-200 overflow-hidden">
-        <div className="p-8 border-b border-slate-100 bg-white/50 backdrop-blur-md sticky top-0 z-10">
+      <div className={`${selectedId ? 'hidden md:flex' : 'flex'} w-full md:w-1/3 md:min-w-[320px] bg-white rounded-[2rem] md:rounded-[2.5rem] flex-col shadow-xl border border-slate-200 overflow-hidden`}>
+        <div className="p-4 sm:p-6 md:p-8 border-b border-slate-100 bg-white/50 backdrop-blur-md sticky top-0 z-10">
           <h2 className="text-3xl font-black text-slate-900 tracking-tighter">LEAD CENTER</h2>
           <div className="mt-4 flex gap-2">
             <span className="bg-indigo-600 text-white text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-widest shadow-lg shadow-indigo-200">
@@ -158,21 +158,29 @@ const Dashboard = () => {
       </div>
 
       {/* Detail Ansicht */}
-      <div className="flex-1 bg-white rounded-[2.5rem] shadow-xl border border-slate-200 overflow-hidden flex flex-col">
+      <div className={`${!selectedId ? 'hidden md:flex' : 'flex'} flex-1 bg-white rounded-[2rem] md:rounded-[2.5rem] shadow-xl border border-slate-200 overflow-hidden flex-col`}>
         {selectedInquiry ? (
-          <div className="flex-1 overflow-y-auto p-12 custom-scrollbar">
+          <div className="flex-1 overflow-y-auto p-4 sm:p-6 md:p-12 custom-scrollbar">
+            {/* Zurück-Button – nur auf Mobile */}
+            <button
+              onClick={() => setSelectedId(null)}
+              className="md:hidden flex items-center gap-2 mb-4 text-slate-500 font-black text-xs uppercase tracking-widest"
+            >
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M15 19l-7-7 7-7" /></svg>
+              Zurück
+            </button>
             <div className="max-w-4xl mx-auto">
-              <div className="flex justify-between items-center mb-12">
+              <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 md:mb-12 gap-4">
                 <div>
-                  <div className="flex items-center gap-3 mb-2">
+                  <div className="flex flex-wrap items-center gap-3 mb-2">
                     <span className={`text-[10px] font-black uppercase tracking-widest px-2 py-0.5 rounded ${selectedInquiry.status === 'neu' ? 'bg-indigo-600 text-white' : 'bg-slate-200 text-slate-600'}`}>
                       Status: {selectedInquiry.status}
                     </span>
-                    <h1 className="text-4xl font-black text-slate-900 tracking-tighter">Projekt #{selectedInquiry.id.substring(0,6)}</h1>
+                    <h1 className="text-2xl sm:text-3xl md:text-4xl font-black text-slate-900 tracking-tighter">Projekt #{selectedInquiry.id.substring(0,6)}</h1>
                   </div>
                   <p className="text-slate-500 font-medium">Eingegangen am {new Date(selectedInquiry.createdAt?.seconds * 1000 || Date.now()).toLocaleDateString()}</p>
                 </div>
-                <div className="flex gap-4">
+                <div className="flex gap-2 sm:gap-4 flex-shrink-0">
                    <button 
                     onClick={() => handleStatusUpdate(selectedInquiry.id, 'archiviert')} 
                     className="px-6 py-3 rounded-xl border border-slate-200 text-slate-500 font-black text-xs uppercase tracking-widest hover:bg-slate-50 transition-all"
@@ -190,7 +198,7 @@ const Dashboard = () => {
 
               {/* AI Analyse Sektion */}
               {selectedInquiry.aiAnalysis && (
-                <div className="bg-slate-900 rounded-[2.5rem] p-10 text-white shadow-2xl mb-12 relative overflow-hidden">
+                <div className="bg-slate-900 rounded-[2rem] md:rounded-[2.5rem] p-5 sm:p-8 md:p-10 text-white shadow-2xl mb-6 md:mb-12 relative overflow-hidden">
                   <div className="absolute top-0 right-0 w-64 h-64 bg-indigo-500/20 blur-[100px] -mr-20 -mt-20"></div>
                   <div className="relative z-10">
                     <div className="flex items-center gap-4 mb-8">
@@ -225,18 +233,18 @@ const Dashboard = () => {
               )}
 
               {/* Stammdaten */}
-              <div className="grid md:grid-cols-3 gap-8 mb-12">
-                <div className="p-8 bg-slate-50 rounded-[2rem] border border-slate-100">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 md:gap-8 mb-6 md:mb-12">
+                <div className="p-4 sm:p-6 md:p-8 bg-slate-50 rounded-[1.5rem] md:rounded-[2rem] border border-slate-100">
                   <div className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-4">Objekt</div>
                   <div className="text-2xl font-black text-slate-900 mb-1">{selectedInquiry.city}</div>
                   <div className="text-xs text-slate-500 font-bold uppercase">{selectedInquiry.propertyType}</div>
                 </div>
-                <div className="p-8 bg-slate-50 rounded-[2rem] border border-slate-100">
+                <div className="p-4 sm:p-6 md:p-8 bg-slate-50 rounded-[1.5rem] md:rounded-[2rem] border border-slate-100">
                   <div className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-4">Einheiten</div>
                   <div className="text-2xl font-black text-slate-900 mb-1">{selectedInquiry.units} WE</div>
                   <div className="text-xs text-slate-500 font-bold uppercase">Skalierung: {selectedInquiry.units > 20 ? 'Groß' : 'Mittel'}</div>
                 </div>
-                <div className="p-8 bg-slate-50 rounded-[2rem] border border-slate-100">
+                <div className="p-4 sm:p-6 md:p-8 bg-slate-50 rounded-[1.5rem] md:rounded-[2rem] border border-slate-100">
                   <div className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-4">Eigentümer</div>
                   <div className="text-2xl font-black text-slate-900 mb-1">{selectedInquiry.ownerName}</div>
                   <div className="text-xs text-slate-500 font-bold uppercase truncate">{selectedInquiry.ownerEmail}</div>
@@ -244,9 +252,9 @@ const Dashboard = () => {
               </div>
 
               {/* Beschreibung */}
-              <div className="mb-12">
+              <div className="mb-6 md:mb-12">
                 <h3 className="text-sm font-black text-slate-900 uppercase tracking-widest mb-6">Objektbeschreibung des Eigentümers</h3>
-                <div className="p-8 bg-white border border-slate-100 rounded-[2rem] shadow-sm text-slate-700 leading-relaxed font-light">
+                <div className="p-4 sm:p-6 md:p-8 bg-white border border-slate-100 rounded-[1.5rem] md:rounded-[2rem] shadow-sm text-slate-700 leading-relaxed font-light">
                   {selectedInquiry.description || "Keine zusätzliche Beschreibung vorhanden."}
                 </div>
               </div>
@@ -263,23 +271,23 @@ const Dashboard = () => {
         {/* Modal: Antwort Senden */}
         {showReply && (
           <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-md animate-fade-in">
-             <div className="bg-white w-full max-w-3xl rounded-[3rem] shadow-2xl overflow-hidden border border-white animate-fade-in-up">
-                <div className="p-10 bg-slate-900 text-white flex justify-between items-center">
-                   <h3 className="text-2xl font-black uppercase tracking-tighter">Angebot erstellen</h3>
+             <div className="bg-white w-full max-w-3xl rounded-[2rem] md:rounded-[3rem] shadow-2xl overflow-hidden border border-white animate-fade-in-up">
+                <div className="p-4 sm:p-6 md:p-10 bg-slate-900 text-white flex justify-between items-center">
+                   <h3 className="text-xl sm:text-2xl font-black uppercase tracking-tighter">Angebot erstellen</h3>
                    <button onClick={() => setShowReply(false)} className="text-white/40 hover:text-white transition-colors">Schließen</button>
                 </div>
-                <div className="p-10">
+                <div className="p-4 sm:p-6 md:p-10">
                    <p className="text-slate-500 mb-6 font-medium">An: <span className="text-slate-900 font-bold">{selectedInquiry?.ownerName}</span></p>
-                   <textarea 
+                   <textarea
                      value={replyText}
                      onChange={(e) => setReplyText(e.target.value)}
                      rows={8}
-                     className="w-full bg-slate-50 border-0 rounded-[2rem] p-8 text-slate-900 ring-1 ring-slate-200 focus:ring-2 focus:ring-indigo-500 transition-all mb-8"
+                     className="w-full bg-slate-50 border-0 rounded-[1.5rem] md:rounded-[2rem] p-4 sm:p-6 md:p-8 text-slate-900 ring-1 ring-slate-200 focus:ring-2 focus:ring-indigo-500 transition-all mb-4 sm:mb-6 md:mb-8"
                      placeholder="Schreiben Sie Ihre Nachricht oder nutzen Sie einen KI-Vorschlag..."
                    />
-                   <div className="flex gap-4">
-                      <button onClick={handleSendResponse} className="flex-1 bg-slate-900 text-white py-5 rounded-[1.5rem] font-black uppercase text-xs tracking-widest shadow-xl shadow-slate-900/20 hover:scale-[1.02] transition-all">Nachricht Senden</button>
-                      <button onClick={() => setReplyText(`Sehr geehrte Damen und Herren,\n\nvielen Dank für Ihre Anfrage bezüglich Ihres Objekts in ${selectedInquiry?.city}. Gerne übernehmen wir die Verwaltung der ${selectedInquiry?.units} Einheiten...`)} className="px-8 bg-indigo-50 text-indigo-600 py-5 rounded-[1.5rem] font-black uppercase text-xs tracking-widest hover:bg-indigo-100 transition-all">KI Entwurf</button>
+                   <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
+                      <button onClick={handleSendResponse} className="flex-1 bg-slate-900 text-white py-4 sm:py-5 rounded-[1.5rem] font-black uppercase text-xs tracking-widest shadow-xl shadow-slate-900/20 hover:scale-[1.02] transition-all">Nachricht Senden</button>
+                      <button onClick={() => setReplyText(`Sehr geehrte Damen und Herren,\n\nvielen Dank für Ihre Anfrage bezüglich Ihres Objekts in ${selectedInquiry?.city}. Gerne übernehmen wir die Verwaltung der ${selectedInquiry?.units} Einheiten...`)} className="sm:px-8 bg-indigo-50 text-indigo-600 py-4 sm:py-5 rounded-[1.5rem] font-black uppercase text-xs tracking-widest hover:bg-indigo-100 transition-all">KI Entwurf</button>
                    </div>
                 </div>
              </div>

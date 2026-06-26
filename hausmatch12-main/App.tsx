@@ -205,10 +205,10 @@ const Navbar = () => {
 
 const Footer = () => {
   return (
-    <footer className="bg-white border-t border-slate-100 py-12">
-      <div className="max-w-7xl mx-auto px-4 grid grid-cols-2 md:grid-cols-4 gap-8">
+    <footer className="bg-white border-t border-slate-100 py-8 md:py-12">
+      <div className="max-w-7xl mx-auto px-4 grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8">
         <div>
-          <h4 className="font-black text-slate-900 uppercase text-xs tracking-widest mb-4">HausMatch</h4>
+          <h4 className="font-black text-slate-900 uppercase text-xs tracking-widest mb-3 md:mb-4">HausMatch</h4>
           <ul className="space-y-2 text-sm text-slate-500 font-medium">
             <li><Link to="/about" className="hover:text-blue-600">Über uns</Link></li>
             <li><Link to="/blog" className="hover:text-blue-600">Blog</Link></li>
@@ -216,7 +216,7 @@ const Footer = () => {
           </ul>
         </div>
         <div>
-          <h4 className="font-black text-slate-900 uppercase text-xs tracking-widest mb-4">Tools</h4>
+          <h4 className="font-black text-slate-900 uppercase text-xs tracking-widest mb-3 md:mb-4">Tools</h4>
           <ul className="space-y-2 text-sm text-slate-500 font-medium">
             <li><Link to="/kreditrechner" className="hover:text-blue-600">Kreditrechner</Link></li>
             <li><Link to="/ki-berater" className="hover:text-blue-600">KI-Berater Eddy</Link></li>
@@ -225,7 +225,7 @@ const Footer = () => {
           </ul>
         </div>
         <div>
-          <h4 className="font-black text-slate-900 uppercase text-xs tracking-widest mb-4">Rechtliches</h4>
+          <h4 className="font-black text-slate-900 uppercase text-xs tracking-widest mb-3 md:mb-4">Rechtliches</h4>
           <ul className="space-y-2 text-sm text-slate-500 font-medium">
             <li><Link to="/legal/impressum" className="hover:text-blue-600">Impressum</Link></li>
             <li><Link to="/legal/privacy" className="hover:text-blue-600">Datenschutz</Link></li>
