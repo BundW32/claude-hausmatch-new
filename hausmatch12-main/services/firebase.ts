@@ -36,6 +36,7 @@ export const COLLECTIONS = {
   MESSAGES: 'messages',
   AUFGABEN: 'aufgaben',
   BEWERBUNGEN: 'bewerbungen',
+  SCHWARZES_BRETT: 'schwarzes_brett',
 };
 
 export const addDocument = async (collectionName: string, data: any) => {

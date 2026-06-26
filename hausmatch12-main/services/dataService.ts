@@ -1,5 +1,5 @@
 
-import { User, UserRole, UserType, Inquiry, ForumThread, Message, MatchRequest, MatchApplication, AufgabenCategory } from "../types";
+import { User, UserRole, UserType, Inquiry, ForumThread, Message, MatchRequest, MatchApplication, AufgabenCategory, SchwarztesBrettPost } from "../types";
 import { auth, db, storage, COLLECTIONS, addDocument } from "./firebase";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { 
@@ -413,6 +413,42 @@ export const createBewerbung = async (
     });
   } catch (err: any) {
     console.warn('createBewerbung error (simulating):', err.message);
+  }
+};
+
+// ─── SCHWARZES BRETT ─────────────────────────────────────────────────────────────
+
+export const subscribeToSchwarztesBrett = (
+  callback: (posts: SchwarztesBrettPost[]) => void,
+  onError?: (e: Error) => void
+): (() => void) => {
+  const q = query(collection(db, COLLECTIONS.SCHWARZES_BRETT));
+  return onSnapshot(q, snapshot => {
+    const posts = snapshot.docs
+      .map(d => ({ id: d.id, ...d.data() } as SchwarztesBrettPost))
+      .sort((a, b) => (b.createdAt?.seconds ?? 0) - (a.createdAt?.seconds ?? 0));
+    callback(posts);
+  }, onError ?? console.error);
+};
+
+export const createSchwarztesBrettPost = async (
+  data: Omit<SchwarztesBrettPost, 'id' | 'createdAt'>
+): Promise<string> => {
+  try {
+    const ref = await addDocument(COLLECTIONS.SCHWARZES_BRETT, data);
+    return ref.id;
+  } catch (err: any) {
+    console.warn('createSchwarztesBrettPost error (simulating):', err.message);
+    return 'mock-post-' + Date.now();
+  }
+};
+
+export const deleteSchwarztesBrettPost = async (postId: string): Promise<void> => {
+  try {
+    const { deleteDoc } = await import('firebase/firestore');
+    await deleteDoc(doc(db, COLLECTIONS.SCHWARZES_BRETT, postId));
+  } catch (err: any) {
+    console.warn('deleteSchwarztesBrettPost error:', err.message);
   }
 };
 
