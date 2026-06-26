@@ -20,6 +20,8 @@ const Ratgeber = lazy(() => import('./components/Ratgeber'));
 const Kreditrechner = lazy(() => import('./components/Kreditrechner'));
 const MatchingBoard = lazy(() => import('./components/MatchingBoard'));
 const KIBerater = lazy(() => import('./components/KIBerater'));
+const AufgabenBoard = lazy(() => import('./components/AufgabenBoard'));
+const SchwarztesBrett = lazy(() => import('./components/SchwarztesBrett'));
 import { AboutPage, BlogPage, ContactPage, LegalPage } from './components/StaticPages';
 import ChatBot from './components/ChatBot';
 
@@ -101,6 +103,8 @@ const Navbar = () => {
   const navLinks = [
     { to: '/', label: 'Start' },
     { to: '/vermittlung', label: 'Verwalter finden' },
+    { to: '/aufgaben', label: 'Aufgaben' },
+    { to: '/schwarzes-brett', label: 'Brett' },
     { to: '/network', label: 'Netzwerk' },
     { to: '/ratgeber', label: 'Ratgeber' },
     { to: '/kreditrechner', label: 'Rechner' },
@@ -205,10 +209,10 @@ const Navbar = () => {
 
 const Footer = () => {
   return (
-    <footer className="bg-white border-t border-slate-100 py-12">
-      <div className="max-w-7xl mx-auto px-4 grid grid-cols-2 md:grid-cols-4 gap-8">
+    <footer className="bg-white border-t border-slate-100 py-8 md:py-12">
+      <div className="max-w-7xl mx-auto px-4 grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8">
         <div>
-          <h4 className="font-black text-slate-900 uppercase text-xs tracking-widest mb-4">HausMatch</h4>
+          <h4 className="font-black text-slate-900 uppercase text-xs tracking-widest mb-3 md:mb-4">HausMatch</h4>
           <ul className="space-y-2 text-sm text-slate-500 font-medium">
             <li><Link to="/about" className="hover:text-blue-600">Über uns</Link></li>
             <li><Link to="/blog" className="hover:text-blue-600">Blog</Link></li>
@@ -216,16 +220,18 @@ const Footer = () => {
           </ul>
         </div>
         <div>
-          <h4 className="font-black text-slate-900 uppercase text-xs tracking-widest mb-4">Tools</h4>
+          <h4 className="font-black text-slate-900 uppercase text-xs tracking-widest mb-3 md:mb-4">Tools</h4>
           <ul className="space-y-2 text-sm text-slate-500 font-medium">
             <li><Link to="/kreditrechner" className="hover:text-blue-600">Kreditrechner</Link></li>
             <li><Link to="/ki-berater" className="hover:text-blue-600">KI-Berater Eddy</Link></li>
+            <li><Link to="/aufgaben" className="hover:text-blue-600">Aufgaben Board</Link></li>
+            <li><Link to="/schwarzes-brett" className="hover:text-blue-600">Schwarzes Brett</Link></li>
             <li><Link to="/network" className="hover:text-blue-600">Netzwerk</Link></li>
             <li><Link to="/forum" className="hover:text-blue-600">Forum</Link></li>
           </ul>
         </div>
         <div>
-          <h4 className="font-black text-slate-900 uppercase text-xs tracking-widest mb-4">Rechtliches</h4>
+          <h4 className="font-black text-slate-900 uppercase text-xs tracking-widest mb-3 md:mb-4">Rechtliches</h4>
           <ul className="space-y-2 text-sm text-slate-500 font-medium">
             <li><Link to="/legal/impressum" className="hover:text-blue-600">Impressum</Link></li>
             <li><Link to="/legal/privacy" className="hover:text-blue-600">Datenschutz</Link></li>
@@ -265,6 +271,8 @@ const AppRoutes = () => {
         <Route path="/ratgeber" element={<Ratgeber />} />
         <Route path="/kreditrechner" element={<Kreditrechner />} />
         <Route path="/vermittlung" element={<MatchingBoard />} />
+        <Route path="/aufgaben" element={<AufgabenBoard />} />
+        <Route path="/schwarzes-brett" element={<SchwarztesBrett />} />
         <Route path="/ki-berater" element={
           <ProtectedRoute>
             <KIBerater />

@@ -1,13 +1,13 @@
 
-import { User, UserRole, UserType, Inquiry, ForumThread, Message } from "../types";
-import { auth, db, storage } from "./firebase";
+import { User, UserRole, UserType, Inquiry, ForumThread, Message, MatchRequest, MatchApplication, AufgabenCategory, SchwarztesBrettPost } from "../types";
+import { auth, db, storage, COLLECTIONS, addDocument } from "./firebase";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { 
   signInWithEmailAndPassword, 
   createUserWithEmailAndPassword, 
   signOut,
 } from "firebase/auth";
-import { 
+import {
   collection,
   doc,
   getDoc,
@@ -22,7 +22,9 @@ import {
   limit,
   serverTimestamp,
   arrayUnion,
-  arrayRemove
+  arrayRemove,
+  onSnapshot,
+  increment,
 } from "firebase/firestore";
 
 export { auth, db };
@@ -327,4 +329,150 @@ export const uploadFile = async (file: File, path: string): Promise<string> => {
   const fileRef = ref(storage, path);
   await uploadBytes(fileRef, file);
   return getDownloadURL(fileRef);
+};
+
+// ─── AUFGABEN BOARD ─────────────────────────────────────────────────────────────
+
+export const subscribeToAufgaben = (
+  callback: (tasks: MatchRequest[]) => void,
+  onError?: (e: Error) => void
+): (() => void) => {
+  const q = query(
+    collection(db, COLLECTIONS.AUFGABEN),
+    where('status', '==', 'offen')
+  );
+  return onSnapshot(q, snapshot => {
+    const tasks = snapshot.docs
+      .map(d => ({ id: d.id, ...d.data() } as MatchRequest))
+      .sort((a, b) => (b.createdAt?.seconds ?? 0) - (a.createdAt?.seconds ?? 0));
+    callback(tasks);
+  }, onError ?? console.error);
+};
+
+export const subscribeToOwnerAufgaben = (
+  ownerId: string,
+  callback: (tasks: MatchRequest[]) => void
+): (() => void) => {
+  const q = query(
+    collection(db, COLLECTIONS.AUFGABEN),
+    where('ownerId', '==', ownerId)
+  );
+  return onSnapshot(q, snapshot => {
+    const tasks = snapshot.docs
+      .map(d => ({ id: d.id, ...d.data() } as MatchRequest))
+      .sort((a, b) => (b.createdAt?.seconds ?? 0) - (a.createdAt?.seconds ?? 0));
+    callback(tasks);
+  }, console.error);
+};
+
+export const createAufgabe = async (
+  data: Omit<MatchRequest, 'id' | 'createdAt' | 'status' | 'applicationCount'>
+): Promise<string> => {
+  try {
+    const ref = await addDocument(COLLECTIONS.AUFGABEN, {
+      ...data,
+      status: 'offen',
+      applicationCount: 0,
+    });
+    return ref.id;
+  } catch (err: any) {
+    console.warn('createAufgabe error (simulating):', err.message);
+    return 'mock-aufgabe-' + Date.now();
+  }
+};
+
+export const getBewerbungenForAufgabe = async (
+  aufgabeId: string
+): Promise<MatchApplication[]> => {
+  try {
+    const q = query(
+      collection(db, COLLECTIONS.BEWERBUNGEN),
+      where('requestId', '==', aufgabeId)
+    );
+    const snap = await getDocs(q);
+    return snap.docs
+      .map(d => ({ id: d.id, ...d.data() } as MatchApplication))
+      .sort((a, b) => (a.createdAt?.seconds ?? 0) - (b.createdAt?.seconds ?? 0));
+  } catch (err: any) {
+    console.warn('getBewerbungenForAufgabe error:', err.message);
+    return [];
+  }
+};
+
+export const createBewerbung = async (
+  data: Omit<MatchApplication, 'id' | 'createdAt' | 'status'>
+): Promise<void> => {
+  try {
+    await addDocument(COLLECTIONS.BEWERBUNGEN, {
+      ...data,
+      status: 'ausstehend',
+    });
+    await updateDoc(doc(db, COLLECTIONS.AUFGABEN, data.requestId), {
+      applicationCount: increment(1),
+      status: 'inBearbeitung',
+    });
+  } catch (err: any) {
+    console.warn('createBewerbung error (simulating):', err.message);
+  }
+};
+
+// ─── SCHWARZES BRETT ─────────────────────────────────────────────────────────────
+
+export const subscribeToSchwarztesBrett = (
+  callback: (posts: SchwarztesBrettPost[]) => void,
+  onError?: (e: Error) => void
+): (() => void) => {
+  const q = query(collection(db, COLLECTIONS.SCHWARZES_BRETT));
+  return onSnapshot(q, snapshot => {
+    const posts = snapshot.docs
+      .map(d => ({ id: d.id, ...d.data() } as SchwarztesBrettPost))
+      .sort((a, b) => (b.createdAt?.seconds ?? 0) - (a.createdAt?.seconds ?? 0));
+    callback(posts);
+  }, onError ?? console.error);
+};
+
+export const createSchwarztesBrettPost = async (
+  data: Omit<SchwarztesBrettPost, 'id' | 'createdAt'>
+): Promise<string> => {
+  try {
+    const ref = await addDocument(COLLECTIONS.SCHWARZES_BRETT, data);
+    return ref.id;
+  } catch (err: any) {
+    console.warn('createSchwarztesBrettPost error (simulating):', err.message);
+    return 'mock-post-' + Date.now();
+  }
+};
+
+export const deleteSchwarztesBrettPost = async (postId: string): Promise<void> => {
+  try {
+    const { deleteDoc } = await import('firebase/firestore');
+    await deleteDoc(doc(db, COLLECTIONS.SCHWARZES_BRETT, postId));
+  } catch (err: any) {
+    console.warn('deleteSchwarztesBrettPost error:', err.message);
+  }
+};
+
+export const acceptBewerbung = async (
+  aufgabeId: string,
+  bewerbungId: string,
+  managerId: string
+): Promise<void> => {
+  try {
+    await updateDoc(doc(db, COLLECTIONS.AUFGABEN, aufgabeId), {
+      status: 'vergeben',
+      selectedManagerId: managerId,
+    });
+    await updateDoc(doc(db, COLLECTIONS.BEWERBUNGEN, bewerbungId), {
+      status: 'angenommen',
+    });
+    const others = await getDocs(
+      query(collection(db, COLLECTIONS.BEWERBUNGEN), where('requestId', '==', aufgabeId))
+    );
+    const rejectPromises = others.docs
+      .filter(d => d.id !== bewerbungId)
+      .map(d => updateDoc(d.ref, { status: 'abgelehnt' }));
+    await Promise.all(rejectPromises);
+  } catch (err: any) {
+    console.warn('acceptBewerbung error:', err.message);
+  }
 };

@@ -135,6 +135,49 @@ export interface User {
   propertyTypes?: string[];
 }
 
+// ─── SCHWARZES BRETT ───────────────────────────────────────────────────────────
+
+export const SCHWARZES_BRETT_CATEGORIES = [
+  'Auftrag',
+  'Gesuch',
+  'Angebot',
+  'Handwerker',
+  'Empfehlung',
+  'Ankündigung',
+  'Sonstiges',
+] as const;
+
+export type SchwarztesBrettCategory = typeof SCHWARZES_BRETT_CATEGORIES[number];
+
+export interface SchwarztesBrettPost {
+  id: string;
+  title: string;
+  content: string;
+  category: SchwarztesBrettCategory;
+  authorId: string;
+  authorName: string;
+  authorType?: UserType;
+  city?: string;
+  budget?: string;
+  contactInfo?: string;
+  createdAt: FirebaseTimestamp;
+}
+
+// ─── AUFGABEN BOARD ────────────────────────────────────────────────────────────
+
+export const AUFGABEN_CATEGORIES = [
+  'Hausverwaltung',
+  'Reparatur & Handwerk',
+  'Energieberatung',
+  'Rechtsberatung',
+  'Gutachten & Bewertung',
+  'Makler',
+  'Sanierung & Umbau',
+  'Sonstiges',
+] as const;
+
+export type AufgabenCategory = typeof AUFGABEN_CATEGORIES[number];
+
 // ─── MATCHING / REQUESTS ──────────────────────────────────────────────────────
 
 export type MatchRequestStatus =
@@ -159,6 +202,9 @@ export interface MatchRequest {
   servicesNeeded: string[];
   description: string;
   budget?: string; // z.B. "bis 30€ pro Einheit"
+  title?: string;
+  category?: AufgabenCategory;
+  applicationCount?: number;
   // Meta
   status: MatchRequestStatus;
   createdAt: FirebaseTimestamp;
