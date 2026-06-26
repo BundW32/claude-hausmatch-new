@@ -135,6 +135,21 @@ export interface User {
   propertyTypes?: string[];
 }
 
+// ─── AUFGABEN BOARD ────────────────────────────────────────────────────────────
+
+export const AUFGABEN_CATEGORIES = [
+  'Hausverwaltung',
+  'Reparatur & Handwerk',
+  'Energieberatung',
+  'Rechtsberatung',
+  'Gutachten & Bewertung',
+  'Makler',
+  'Sanierung & Umbau',
+  'Sonstiges',
+] as const;
+
+export type AufgabenCategory = typeof AUFGABEN_CATEGORIES[number];
+
 // ─── MATCHING / REQUESTS ──────────────────────────────────────────────────────
 
 export type MatchRequestStatus =
@@ -159,6 +174,9 @@ export interface MatchRequest {
   servicesNeeded: string[];
   description: string;
   budget?: string; // z.B. "bis 30€ pro Einheit"
+  title?: string;
+  category?: AufgabenCategory;
+  applicationCount?: number;
   // Meta
   status: MatchRequestStatus;
   createdAt: FirebaseTimestamp;

@@ -33,7 +33,9 @@ export const COLLECTIONS = {
   INQUIRIES: 'inquiries',
   THREADS: 'forum_threads',
   REPLIES: 'forum_replies',
-  MESSAGES: 'messages'
+  MESSAGES: 'messages',
+  AUFGABEN: 'aufgaben',
+  BEWERBUNGEN: 'bewerbungen',
 };
 
 export const addDocument = async (collectionName: string, data: any) => {

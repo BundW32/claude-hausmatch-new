@@ -20,6 +20,7 @@ const Ratgeber = lazy(() => import('./components/Ratgeber'));
 const Kreditrechner = lazy(() => import('./components/Kreditrechner'));
 const MatchingBoard = lazy(() => import('./components/MatchingBoard'));
 const KIBerater = lazy(() => import('./components/KIBerater'));
+const AufgabenBoard = lazy(() => import('./components/AufgabenBoard'));
 import { AboutPage, BlogPage, ContactPage, LegalPage } from './components/StaticPages';
 import ChatBot from './components/ChatBot';
 
@@ -101,6 +102,7 @@ const Navbar = () => {
   const navLinks = [
     { to: '/', label: 'Start' },
     { to: '/vermittlung', label: 'Verwalter finden' },
+    { to: '/aufgaben', label: 'Aufgaben' },
     { to: '/network', label: 'Netzwerk' },
     { to: '/ratgeber', label: 'Ratgeber' },
     { to: '/kreditrechner', label: 'Rechner' },
@@ -265,6 +267,7 @@ const AppRoutes = () => {
         <Route path="/ratgeber" element={<Ratgeber />} />
         <Route path="/kreditrechner" element={<Kreditrechner />} />
         <Route path="/vermittlung" element={<MatchingBoard />} />
+        <Route path="/aufgaben" element={<AufgabenBoard />} />
         <Route path="/ki-berater" element={
           <ProtectedRoute>
             <KIBerater />
