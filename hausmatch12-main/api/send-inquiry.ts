@@ -4,6 +4,9 @@ const ADMIN_EMAIL = process.env.ADMIN_EMAIL || 'barth@bundwimmobilien.de';
 const FROM_EMAIL = process.env.RESEND_FROM_EMAIL || 'HausMatch <onboarding@resend.dev>';
 const FIREBASE_PROJECT = 'hausmatch-1';
 const FIREBASE_API_KEY = process.env.FIREBASE_API_KEY || 'AIzaSyC1o_LoqOxhmK4J0lhIzf8qcHABS7XNoY8';
+// Basis-URL der App (HashRouter -> Routen mit /#/...). Über Env überschreibbar,
+// sobald die Domain auf haus-match.de umzieht.
+const APP_URL = (process.env.APP_URL || 'https://claude-hausmatch-new.vercel.app').replace(/\/$/, '');
 
 async function sendEmail(apiKey: string, payload: object): Promise<{ ok: boolean; error?: string }> {
   // In Resend test mode, RESEND_TEST_EMAIL overrides all TO addresses
@@ -26,7 +29,9 @@ async function sendEmail(apiKey: string, payload: object): Promise<{ ok: boolean
 
 async function saveToFirestore(data: {
   city: string; senderName: string; senderEmail: string;
-  senderPhone: string; message: string; companies: { name: string; email?: string }[];
+  senderPhone: string; message: string;
+  companies: { name: string; email?: string }[];
+  managerEmails: string[];
 }): Promise<void> {
   const units = parseInt(data.message?.match(/\d+/)?.[0] || '0') || 0;
   const body = {
@@ -42,6 +47,11 @@ async function saveToFirestore(data: {
       source: { stringValue: 'express-matching' },
       companiesRequested: {
         arrayValue: { values: data.companies.map(c => ({ stringValue: c.name })) }
+      },
+      // Angeschriebene Verwalter-Emails (lowercase). Damit das Lead Center auch
+      // gezielt angeschriebene (nach Registrierung) Verwalter den Lead zeigen kann.
+      managerEmails: {
+        arrayValue: { values: data.managerEmails.map(e => ({ stringValue: e })) }
       },
     },
   };
@@ -68,41 +78,42 @@ async function getAnonFirebaseToken(): Promise<string | null> {
   }
 }
 
-async function getManagersInCity(city: string): Promise<{ name: string; email: string }[]> {
-  if (!city) return [];
+type UserRow = { name: string; email: string; role: string; city: string };
+
+// Lädt alle Nutzer einmal und liefert sie als normalisierte Liste zurück.
+async function listUsers(): Promise<UserRow[]> {
   try {
     const token = await getAnonFirebaseToken();
     const headers: Record<string, string> = { 'Content-Type': 'application/json' };
     if (token) headers['Authorization'] = `Bearer ${token}`;
     const url = token
-      ? `https://firestore.googleapis.com/v1/projects/${FIREBASE_PROJECT}/databases/(default)/documents/users?pageSize=200`
-      : `https://firestore.googleapis.com/v1/projects/${FIREBASE_PROJECT}/databases/(default)/documents/users?key=${FIREBASE_API_KEY}&pageSize=200`;
+      ? `https://firestore.googleapis.com/v1/projects/${FIREBASE_PROJECT}/databases/(default)/documents/users?pageSize=300`
+      : `https://firestore.googleapis.com/v1/projects/${FIREBASE_PROJECT}/databases/(default)/documents/users?key=${FIREBASE_API_KEY}&pageSize=300`;
     const res = await fetch(url, { headers });
     if (!res.ok) { console.error('Firebase listDocuments error:', res.status, await res.text()); return []; }
     const data = await res.json();
     const docs = data.documents || [];
-    const cityLower = city.toLowerCase().trim();
-    const managers = docs
-      .map((doc: any) => {
-        const f = doc.fields || {};
-        return {
-          name: f.name?.stringValue || f.displayName?.stringValue || '',
-          email: f.email?.stringValue || '',
-          role: f.role?.stringValue || '',
-          city: (f.city?.stringValue || f.location?.stringValue || '').toLowerCase().trim(),
-        };
-      })
-      .filter((m: any) => {
-        if (m.role !== 'manager' || !m.email) return false;
-        return m.city.includes(cityLower) || cityLower.includes(m.city);
-      })
-      .map((m: any) => ({ name: m.name, email: m.email }));
-    console.log(`Found ${managers.length} matching managers in ${city}`);
-    return managers;
+    return docs.map((doc: any) => {
+      const f = doc.fields || {};
+      return {
+        name: f.name?.stringValue || f.displayName?.stringValue || '',
+        email: (f.email?.stringValue || '').toLowerCase().trim(),
+        role: f.role?.stringValue || '',
+        city: (f.city?.stringValue || f.location?.stringValue || '').toLowerCase().trim(),
+      };
+    });
   } catch (err) {
-    console.error('getManagersInCity error:', err);
+    console.error('listUsers error:', err);
     return [];
   }
+}
+
+function managersInCity(users: UserRow[], city: string): { name: string; email: string }[] {
+  if (!city) return [];
+  const cityLower = city.toLowerCase().trim();
+  return users
+    .filter(m => m.role === 'manager' && m.email && (m.city.includes(cityLower) || cityLower.includes(m.city)))
+    .map(m => ({ name: m.name, email: m.email }));
 }
 
 // ─── HTML Email Templates ──────────────────────────────────────────────────────
@@ -147,12 +158,12 @@ const ownerHtml = (
   <div class="body">
     <span class="badge">Express-Matching</span>
     <h1>Ihre Anfrage ist eingegangen, ${name.split(' ')[0]}!</h1>
-    <p class="intro">Wir haben <strong>${companies.length} Hausverwaltung${companies.length !== 1 ? 'en' : ''}</strong> in <strong>${city}</strong> diskret um ein Angebot gebeten. Die Verwaltungen werden ihr Angebot direkt an <strong>${email}</strong> senden.</p>
+    <p class="intro">Wir haben <strong>${companies.length} Hausverwaltung${companies.length !== 1 ? 'en' : ''}</strong> in <strong>${city}</strong> diskret um ein Angebot gebeten. Sobald eine Verwaltung Ihr Projekt im HausMatch Lead Center annimmt, erhalten Sie das Angebot direkt über HausMatch an <strong>${email}</strong>.</p>
     <p class="lbl">Kontaktierte Hausverwaltungen</p>
     <div class="list">
       ${companies.map(c => `<div class="row"><div class="dot"></div><div><div class="rname">${c.name}</div>${c.address || c.phone ? `<div class="rmeta">${[c.address, c.phone].filter(Boolean).join(' · ')}</div>` : ''}</div></div>`).join('')}
     </div>
-    <div class="box"><p>💡 <strong>Wie geht es weiter?</strong><br>Sobald Sie Angebote erhalten haben, können Sie diese in Ruhe vergleichen und die passende Verwaltung für Ihr Objekt auswählen. Bei Fragen stehen wir jederzeit zur Verfügung.</p></div>
+    <div class="box"><p>💡 <strong>Wie geht es weiter?</strong><br>Die Verwaltungen sehen zunächst nur die groben Eckdaten Ihres Objekts. Erst wenn sie im Lead Center ein Angebot abgeben, werden Ihre Kontaktdaten benötigt — so bleiben Sie geschützt.</p></div>
   </div>
   <div class="ftr">
     <p class="fname">Ihr HausMatch-Team</p>
@@ -161,26 +172,29 @@ const ownerHtml = (
   </div>
 </div></body></html>`;
 
+// Manager-Email: NUR grobe Daten (Stadt, Einheiten, Objektart) + Link ins Lead Center.
+// Keine Eigentümer-Kontaktdaten, kein mailto. Der CTA unterscheidet registriert/eingeladen.
 const managerHtml = (
-  ownerName: string, ownerEmail: string, ownerPhone: string | undefined,
-  city: string, einheiten: string, note: string
+  city: string, einheiten: string, propertyType: string,
+  ctaUrl: string, ctaLabel: string, registered: boolean
 ) => `<!DOCTYPE html><html><head><meta charset="utf-8"><style>${css}</style></head><body>
 <div class="wrap">
   <div class="hdr"><div class="logo">Haus<span>Match</span></div></div>
   <div class="body">
     <span class="badge">Neue Angebotsanfrage</span>
     <h1>Ein Eigentümer sucht eine Hausverwaltung in ${city}</h1>
-    <p class="intro">Über <strong>HausMatch</strong> hat ein Immobilieneigentümer eine Angebotsanfrage für <strong>${einheiten}</strong> in <strong>${city}</strong> gestellt. Er vergleicht mehrere Angebote — bitte melden Sie sich zeitnah.</p>
-    <p class="lbl">Kontaktdaten des Eigentümers</p>
+    <p class="intro">Über <strong>HausMatch</strong> ist eine neue Anfrage für Sie eingegangen. Hier die groben Eckdaten — die vollständigen Details und die Möglichkeit, ein Angebot abzugeben, finden Sie im Lead Center.</p>
+    <p class="lbl">Eckdaten der Anfrage</p>
     <div class="list">
-      <div class="drow"><span class="dlbl">Name</span><span class="dval">${ownerName}</span></div>
-      <div class="drow"><span class="dlbl">E-Mail</span><span class="dval">${ownerEmail}</span></div>
-      <div class="drow"><span class="dlbl">Telefon</span><span class="dval">${ownerPhone || 'nicht angegeben'}</span></div>
       <div class="drow"><span class="dlbl">Region</span><span class="dval">${city}</span></div>
+      <div class="drow"><span class="dlbl">Einheiten</span><span class="dval">${einheiten}</span></div>
+      <div class="drow"><span class="dlbl">Objektart</span><span class="dval">${propertyType}</span></div>
     </div>
-    ${note ? `<div class="box"><p>📋 <strong>Objektbeschreibung:</strong><br>${note}</p></div>` : ''}
-    <a class="cta" href="mailto:${ownerEmail}">Angebot an ${ownerName} senden →</a>
-    <p style="font-size:13px;color:#94a3b8;text-align:center;margin:0">Senden Sie Ihr Angebot direkt an <strong>${ownerEmail}</strong></p>
+    <div class="box"><p>${registered
+      ? '🔒 <strong>Diskret & geschützt:</strong> Die Kontaktdaten des Eigentümers sehen Sie erst, wenn Sie im Lead Center ein Angebot abgeben.'
+      : '✨ <strong>Sie sind noch nicht registriert.</strong> Registrieren Sie sich kostenlos per Magic-Link — danach liegt diese Anfrage direkt in Ihrem Lead Center.'}</p></div>
+    <a class="cta" href="${ctaUrl}">${ctaLabel}</a>
+    <p style="font-size:13px;color:#94a3b8;text-align:center;margin:0">Angebote geben Sie ausschließlich über das HausMatch Lead Center ab.</p>
   </div>
   <div class="ftr">
     <p class="fname">HausMatch-Team</p>
@@ -215,6 +229,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     Array.isArray(companies) ? companies : [];
   const note = message?.trim() || '';
   const einheiten = note.match(/\d+/)?.[0] ? note.match(/\d+/)![0] + ' Einheiten' : 'eine WEG';
+  const propertyType = 'WEG';
   const companyNames = companyArr.length > 0 ? companyArr.map(c => c.name).join(', ') : 'Keine Unternehmen ausgewählt';
 
   // E-Mail 1: Admin-Benachrichtigung (plain text reicht für intern)
@@ -230,14 +245,33 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     return res.status(500).json({ error: 'Anfrage konnte nicht gesendet werden. Bitte versuchen Sie es erneut.' });
   }
 
-  // Firestore: Anfrage speichern (non-blocking)
-  saveToFirestore({ city, senderName, senderEmail, senderPhone: senderPhone || '', message: note, companies: companyArr })
-    .catch(err => console.error('Firestore save failed:', err));
+  // Empfänger bestimmen: registrierte Verwalter der Stadt + im Formular gewählte Firmen mit Email.
+  const users = await listUsers();
+  const registeredEmails = new Set(users.filter(u => u.email).map(u => u.email));
+  const registeredManagers = managersInCity(users, city || '');
+  const formCompaniesWithEmail = companyArr
+    .filter(c => !!c.email)
+    .map(c => ({ name: c.name || '', email: (c.email as string).toLowerCase().trim() }));
+
+  const seenEmails = new Set<string>();
+  const allManagers: { name: string; email: string }[] = [];
+  for (const m of [...registeredManagers, ...formCompaniesWithEmail]) {
+    if (m.email && !seenEmails.has(m.email)) {
+      seenEmails.add(m.email);
+      allManagers.push({ name: m.name || '', email: m.email });
+    }
+  }
+
+  // Firestore: Anfrage speichern inkl. angeschriebener Verwalter-Emails (non-blocking)
+  saveToFirestore({
+    city, senderName, senderEmail, senderPhone: senderPhone || '', message: note,
+    companies: companyArr, managerEmails: allManagers.map(m => m.email),
+  }).catch(err => console.error('Firestore save failed:', err));
 
   const isProduction = process.env.VERCEL_ENV === 'production';
   const isAllowed = (email: string) => isProduction || email.toLowerCase().endsWith('@bundwimmobilien.de');
 
-  // E-Mail 2: Bestätigung an Eigentümer (nur wenn @bundwimmobilien.de)
+  // E-Mail 2: Bestätigung an Eigentümer (nur wenn @bundwimmobilien.de in Test)
   if (isAllowed(senderEmail)) {
     await sendEmail(apiKey, {
       from: FROM_EMAIL,
@@ -249,29 +283,24 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     console.log(`Bestätigungs-Mail an ${senderEmail} übersprungen (kein @bundwimmobilien.de)`);
   }
 
-  // E-Mail 3: Angebotsanfrage an Verwalter (nur @bundwimmobilien.de Empfänger)
-  const registeredManagers = await getManagersInCity(city || '');
-  const formCompaniesWithEmail = companyArr.filter(c => !!c.email);
-
-  const seenEmails = new Set<string>();
-  const allManagers: { name: string; email: string }[] = [];
-  for (const m of [...registeredManagers, ...formCompaniesWithEmail]) {
-    if (m.email && !seenEmails.has(m.email)) {
-      seenEmails.add(m.email);
-      allManagers.push({ name: m.name || '', email: m.email });
-    }
-  }
-
+  // E-Mail 3: Angebotsanfrage an Verwalter — grobe Daten + Lead-Center-Link.
   const allowedManagers = allManagers.filter(m => isAllowed(m.email));
-  console.log(`Manager-Mails: ${allManagers.length} gesamt, ${allowedManagers.length} erlaubt (@bundwimmobilien.de)`);
+  console.log(`Manager-Mails: ${allManagers.length} gesamt, ${allowedManagers.length} erlaubt`);
 
+  const cityParam = encodeURIComponent(city || '');
   for (const manager of allowedManagers) {
+    const registered = registeredEmails.has(manager.email);
+    const ctaUrl = registered
+      ? `${APP_URL}/#/login`
+      : `${APP_URL}/#/einladung?email=${encodeURIComponent(manager.email)}&city=${cityParam}&company=${encodeURIComponent(manager.name || '')}`;
+    const ctaLabel = registered ? 'Im Lead Center ansehen →' : 'Jetzt registrieren & Anfrage ansehen →';
     await sendEmail(apiKey, {
       from: FROM_EMAIL,
       to: [manager.email],
-      reply_to: senderEmail,
-      subject: `Angebotsanfrage über HausMatch – ${city || 'Neue Anfrage'}`,
-      html: managerHtml(senderName, senderEmail, senderPhone, city || 'nicht angegeben', einheiten, note),
+      subject: registered
+        ? `Neue Anfrage in ${city || 'Ihrer Region'} – im Lead Center ansehen`
+        : `Neue Anfrage über HausMatch – ${city || 'Ihrer Region'}`,
+      html: managerHtml(city || 'nicht angegeben', einheiten, propertyType, ctaUrl, ctaLabel, registered),
     });
   }
 
