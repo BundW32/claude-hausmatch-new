@@ -2,7 +2,7 @@
 import React, { useState, useEffect, createContext, useContext, Suspense, lazy } from 'react';
 import { HashRouter, Routes, Route, Navigate, useLocation, Link, useNavigate } from 'react-router-dom';
 import { User, UserRole, USER_TYPE_LABELS } from './types';
-import { auth, getUserProfile, logoutUser } from './services/dataService';
+import { auth, getUserProfile, logoutUser, isInviteSignInLink, completeInviteSignIn } from './services/dataService';
 import { onAuthStateChanged } from 'firebase/auth';
 
 const Wizard = lazy(() => import('./components/Wizard'));
@@ -22,6 +22,7 @@ const MatchingBoard = lazy(() => import('./components/MatchingBoard'));
 const KIBerater = lazy(() => import('./components/KIBerater'));
 const AufgabenBoard = lazy(() => import('./components/AufgabenBoard'));
 const SchwarztesBrett = lazy(() => import('./components/SchwarztesBrett'));
+const Einladung = lazy(() => import('./components/Einladung'));
 import { AboutPage, BlogPage, ContactPage, LegalPage } from './components/StaticPages';
 import ChatBot from './components/ChatBot';
 
@@ -53,6 +54,24 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => 
       } as User);
     }
   };
+
+  // Magic-Link aus der Einladungs-Email abschließen. Wegen HashRouter hängt Firebase
+  // seine Parameter an die normale Query (?...) an – daher zentral hier behandeln.
+  useEffect(() => {
+    if (!isInviteSignInLink()) return;
+    (async () => {
+      try {
+        const ok = await completeInviteSignIn();
+        if (ok) {
+          window.history.replaceState({}, document.title, window.location.pathname);
+          window.location.hash = '#/dashboard';
+        }
+      } catch (e) {
+        console.error('Magic-Link Login fehlgeschlagen:', e);
+        window.location.hash = '#/login';
+      }
+    })();
+  }, []);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
@@ -287,6 +306,7 @@ const AppRoutes = () => {
 
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Login initialView="role_select" />} />
+        <Route path="/einladung" element={<Einladung />} />
         <Route path="/wizard" element={<Wizard />} />
         <Route path="/search-results" element={<SearchResults />} />
         <Route path="/network" element={<Network />} />
