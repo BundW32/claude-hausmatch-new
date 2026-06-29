@@ -241,8 +241,7 @@ const Footer = () => {
           <ul className="space-y-2 text-sm text-slate-500 font-medium">
             <li><Link to="/kreditrechner" className="hover:text-blue-600">Kreditrechner</Link></li>
             <li><Link to="/ki-berater" className="hover:text-blue-600">KI-Berater Eddy</Link></li>
-            <li><Link to="/aufgaben" className="hover:text-blue-600">Aufgaben Board</Link></li>
-            <li><Link to="/schwarzes-brett" className="hover:text-blue-600">Schwarzes Brett</Link></li>
+            <li><Link to="/marktplatz" className="hover:text-blue-600">Marktplatz</Link></li>
             <li><Link to="/network" className="hover:text-blue-600">Netzwerk</Link></li>
             <li><Link to="/forum" className="hover:text-blue-600">Forum</Link></li>
           </ul>
@@ -289,8 +288,9 @@ const AppRoutes = () => {
         <Route path="/kreditrechner" element={<Kreditrechner />} />
         <Route path="/vermittlung" element={<MatchingBoard />} />
         <Route path="/marktplatz" element={<Marktplatz />} />
-        <Route path="/aufgaben" element={<Marktplatz initialTab="auftraege" />} />
-        <Route path="/schwarzes-brett" element={<Marktplatz initialTab="pinnwand" />} />
+        {/* Vereinter Marktplatz: alte Einzel-Links bleiben gültig und leiten dorthin um */}
+        <Route path="/aufgaben" element={<Navigate to="/marktplatz" replace />} />
+        <Route path="/schwarzes-brett" element={<Navigate to="/marktplatz" replace />} />
         <Route path="/ki-berater" element={
           <ProtectedRoute>
             <KIBerater />
