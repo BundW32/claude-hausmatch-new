@@ -63,5 +63,31 @@ service cloud.firestore {
         request.auth.uid == resource.data.senderId
       );
     }
+
+    // Marktplatz (Schwarzes Brett)
+    // Der vereinte Marktplatz liest aus dieser Collection. Beiträge sind öffentlich
+    // lesbar (auch für Gäste); Kontaktdaten werden erst nach Login im Client gezeigt.
+    // Erstellen/Löschen nur durch den eingeloggten Autor selbst.
+    match /schwarzes_brett/{postId} {
+      allow read: if true;
+      allow create: if isSignedIn() && request.auth.uid == request.resource.data.authorId;
+      allow update: if isSignedIn() && request.auth.uid == resource.data.authorId;
+      allow delete: if isSignedIn() && request.auth.uid == resource.data.authorId;
+    }
+
+    // Aufgaben (Legacy – formales Auftrags-Board, vom UI nicht mehr genutzt).
+    // Regeln bleiben, damit vorhandene Daten zugänglich bleiben und nichts still bricht.
+    match /aufgaben/{aufgabeId} {
+      allow read: if true;
+      allow create: if isSignedIn() && request.auth.uid == request.resource.data.ownerId;
+      allow update: if isSignedIn();
+    }
+
+    // Bewerbungen (Legacy – Bewerbungen auf Aufgaben).
+    match /bewerbungen/{bewerbungId} {
+      allow read: if isSignedIn();
+      allow create: if isSignedIn() && request.auth.uid == request.resource.data.managerId;
+      allow update: if isSignedIn();
+    }
   }
 }
