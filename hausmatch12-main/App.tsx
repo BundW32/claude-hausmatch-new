@@ -20,9 +20,8 @@ const Ratgeber = lazy(() => import('./components/Ratgeber'));
 const Kreditrechner = lazy(() => import('./components/Kreditrechner'));
 const MatchingBoard = lazy(() => import('./components/MatchingBoard'));
 const KIBerater = lazy(() => import('./components/KIBerater'));
-const AufgabenBoard = lazy(() => import('./components/AufgabenBoard'));
-const SchwarztesBrett = lazy(() => import('./components/SchwarztesBrett'));
 const Einladung = lazy(() => import('./components/Einladung'));
+const Marktplatz = lazy(() => import('./components/Marktplatz'));
 import { AboutPage, BlogPage, ContactPage, LegalPage } from './components/StaticPages';
 import ChatBot from './components/ChatBot';
 
@@ -122,8 +121,7 @@ const Navbar = () => {
   const navLinks = [
     { to: '/', label: 'Start' },
     { to: '/vermittlung', label: 'Verwalter finden' },
-    { to: '/aufgaben', label: 'Aufgaben' },
-    { to: '/schwarzes-brett', label: 'Brett' },
+    { to: '/marktplatz', label: 'Marktplatz' },
     { to: '/network', label: 'Netzwerk' },
     { to: '/ratgeber', label: 'Ratgeber' },
     { to: '/kreditrechner', label: 'Rechner' },
@@ -290,8 +288,9 @@ const AppRoutes = () => {
         <Route path="/ratgeber" element={<Ratgeber />} />
         <Route path="/kreditrechner" element={<Kreditrechner />} />
         <Route path="/vermittlung" element={<MatchingBoard />} />
-        <Route path="/aufgaben" element={<AufgabenBoard />} />
-        <Route path="/schwarzes-brett" element={<SchwarztesBrett />} />
+        <Route path="/marktplatz" element={<Marktplatz />} />
+        <Route path="/aufgaben" element={<Marktplatz initialTab="auftraege" />} />
+        <Route path="/schwarzes-brett" element={<Marktplatz initialTab="pinnwand" />} />
         <Route path="/ki-berater" element={
           <ProtectedRoute>
             <KIBerater />
