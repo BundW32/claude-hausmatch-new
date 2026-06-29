@@ -2,10 +2,13 @@
 import { User, UserRole, UserType, Inquiry, ForumThread, Message, MatchRequest, MatchApplication, AufgabenCategory, SchwarztesBrettPost } from "../types";
 import { auth, db, storage, COLLECTIONS, addDocument } from "./firebase";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
-import { 
-  signInWithEmailAndPassword, 
-  createUserWithEmailAndPassword, 
+import {
+  signInWithEmailAndPassword,
+  createUserWithEmailAndPassword,
   signOut,
+  sendSignInLinkToEmail,
+  isSignInWithEmailLink,
+  signInWithEmailLink,
 } from "firebase/auth";
 import {
   collection,
@@ -102,6 +105,77 @@ export const registerUser = async (email: string, password: string, name: string
     console.error("Registration error details:", error.code, error.message);
     throw error;
   }
+};
+
+// ─── EINLADUNG / MAGIC-LINK (nur für eingeladene Verwalter) ──────────────────────
+
+const INVITE_EMAIL_KEY = 'hm_invite_email';
+const INVITE_CITY_KEY = 'hm_invite_city';
+const INVITE_COMPANY_KEY = 'hm_invite_company';
+
+// Schickt einem (noch nicht registrierten) Verwalter einen passwortlosen Login-Link.
+// Voraussetzung in der Firebase Console:
+//   Authentication -> Sign-in method -> Email/Password -> "Email link (passwordless sign-in)" aktiviert
+//   Authentication -> Settings -> Authorized domains -> App-Domain eingetragen
+export const sendInviteSignInLink = async (email: string, city?: string, company?: string): Promise<void> => {
+  const cleanEmail = email.trim().toLowerCase();
+  const continueUrl = `${window.location.origin}/?finishInvite=1&inviteEmail=${encodeURIComponent(cleanEmail)}`;
+  await sendSignInLinkToEmail(auth, cleanEmail, { url: continueUrl, handleCodeInApp: true });
+  try {
+    window.localStorage.setItem(INVITE_EMAIL_KEY, cleanEmail);
+    if (city) window.localStorage.setItem(INVITE_CITY_KEY, city);
+    if (company) window.localStorage.setItem(INVITE_COMPANY_KEY, company);
+  } catch (_) { /* localStorage evtl. nicht verfügbar */ }
+};
+
+// Prüft, ob die aktuelle URL ein Firebase-Magic-Link ist.
+export const isInviteSignInLink = (): boolean => {
+  try { return isSignInWithEmailLink(auth, window.location.href); } catch { return false; }
+};
+
+// Schließt den Magic-Link-Login ab und legt – falls nötig – das Verwalter-Profil an.
+// Gibt true zurück, wenn ein Sign-in stattgefunden hat.
+export const completeInviteSignIn = async (): Promise<boolean> => {
+  if (!isInviteSignInLink()) return false;
+  const params = new URLSearchParams(window.location.search);
+  let email = '';
+  try { email = window.localStorage.getItem(INVITE_EMAIL_KEY) || ''; } catch (_) {}
+  if (!email) email = params.get('inviteEmail') || '';
+  if (!email) throw new Error('Für den Login wird die eingeladene E-Mail benötigt.');
+
+  const cred = await signInWithEmailLink(auth, email, window.location.href);
+  const uid = cred.user.uid;
+
+  const existing = await getDoc(doc(db, 'users', uid));
+  if (!existing.exists()) {
+    let city = ''; let company = '';
+    try {
+      city = window.localStorage.getItem(INVITE_CITY_KEY) || '';
+      company = window.localStorage.getItem(INVITE_COMPANY_KEY) || '';
+    } catch (_) {}
+    const newUser: User = {
+      id: uid,
+      email,
+      name: company || email.split('@')[0],
+      role: 'manager',
+      userType: 'hausverwaltung',
+      avatar: '',
+      bio: '',
+      friends: [],
+      pendingFriends: [],
+      city,
+      location: city,
+      companyName: company,
+      specialization: [],
+    };
+    await setDoc(doc(db, 'users', uid), newUser);
+  }
+  try {
+    window.localStorage.removeItem(INVITE_EMAIL_KEY);
+    window.localStorage.removeItem(INVITE_CITY_KEY);
+    window.localStorage.removeItem(INVITE_COMPANY_KEY);
+  } catch (_) {}
+  return true;
 };
 
 // --- USER & NETWORKING ---
