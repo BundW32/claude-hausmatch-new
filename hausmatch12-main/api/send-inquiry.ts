@@ -4,9 +4,9 @@ const ADMIN_EMAIL = process.env.ADMIN_EMAIL || 'barth@bundwimmobilien.de';
 const FROM_EMAIL = process.env.RESEND_FROM_EMAIL || 'HausMatch <onboarding@resend.dev>';
 const FIREBASE_PROJECT = 'hausmatch-1';
 const FIREBASE_API_KEY = process.env.FIREBASE_API_KEY || 'AIzaSyC1o_LoqOxhmK4J0lhIzf8qcHABS7XNoY8';
-// Basis-URL der App (HashRouter -> Routen mit /#/...). Über Env überschreibbar,
-// sobald die Domain auf haus-match.de umzieht.
-const APP_URL = (process.env.APP_URL || 'https://claude-hausmatch-new.vercel.app').replace(/\/$/, '');
+// Basis-URL der App (HashRouter -> Routen mit /#/...). haus-match.de ist die offizielle Domain.
+// Per Env (APP_URL) überschreibbar.
+const APP_URL = (process.env.APP_URL || 'https://haus-match.de').replace(/\/$/, '');
 
 async function sendEmail(apiKey: string, payload: object): Promise<{ ok: boolean; error?: string }> {
   // In Resend test mode, RESEND_TEST_EMAIL overrides all TO addresses
@@ -268,8 +268,13 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     companies: companyArr, managerEmails: allManagers.map(m => m.email),
   }).catch(err => console.error('Firestore save failed:', err));
 
-  const isProduction = process.env.VERCEL_ENV === 'production';
-  const isAllowed = (email: string) => isProduction || email.toLowerCase().endsWith('@bundwimmobilien.de');
+  // ─── LAUNCH-SCHALTER (bewusst hartkodiert) ───────────────────────────────────
+  // false  = E-Mails gehen NUR an @bundwimmobilien.de (sicherer Vor-Launch-/Testbetrieb).
+  // true   = E-Mails gehen an ALLE Empfänger (externe Verwalter etc.).
+  // Erst auf true setzen, wenn die Resend-Domain haus-match.de verifiziert UND
+  // RESEND_FROM_EMAIL auf z.B. "HausMatch <noreply@haus-match.de>" gesetzt ist.
+  const ALLOW_EXTERNAL_EMAILS = false;
+  const isAllowed = (email: string) => ALLOW_EXTERNAL_EMAILS || email.toLowerCase().endsWith('@bundwimmobilien.de');
 
   // E-Mail 2: Bestätigung an Eigentümer (nur wenn @bundwimmobilien.de in Test)
   if (isAllowed(senderEmail)) {
