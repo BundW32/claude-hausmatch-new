@@ -15,12 +15,18 @@ const Dashboard = () => {
     if (!user) return;
     setLoading(true);
     getInquiries().then(data => {
-      // Filtere nach Manager-Stadt wenn vorhanden
-      const filtered = (user.role === 'manager' && user.city)
+      // Manager sehen einen Lead, wenn sie gezielt angeschrieben wurden (Email in
+      // managerEmails) ODER die Stadt zu ihrem Profil passt.
+      const filtered = (user.role === 'manager')
         ? data.filter(i => {
+            const myEmail = (user.email || '').toLowerCase().trim();
+            const emailMatch = !!myEmail && (i.managerEmails || [])
+              .map(e => (e || '').toLowerCase().trim())
+              .includes(myEmail);
             const iCity = (i.city || '').toLowerCase().trim();
             const uCity = (user.city || '').toLowerCase().trim();
-            return iCity.includes(uCity) || uCity.includes(iCity);
+            const cityMatch = !!uCity && !!iCity && (iCity.includes(uCity) || uCity.includes(iCity));
+            return emailMatch || cityMatch;
           })
         : data;
       setInquiries(filtered);
