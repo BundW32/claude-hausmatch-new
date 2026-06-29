@@ -1,4 +1,4 @@
-// ─── USER TYPES ───────────────────────────────────────────────────────────────
+// ─── USER TYPES ────────────────────────────────────────────────────────────────
 
 export type UserRole = 'seeker' | 'manager' | 'profi';
 
@@ -299,7 +299,7 @@ export interface Message {
   attachments?: MessageAttachment[];
 }
 
-// ─── LEGACY / COMPATIBILITY ────────────────────────────────────────────────────
+// ─── LEGACY / COMPATIBILITY ────────────────────────────────────────────────
 
 export interface Inquiry {
   id: string;
@@ -314,6 +314,9 @@ export interface Inquiry {
   condition: string;
   description: string;
   status: 'neu' | 'kontaktiert' | 'archiviert' | 'offen' | 'claimed' | 'closed';
+  // Angeschriebene Verwalter-Emails (lowercase). Das Lead Center zeigt einen Lead,
+  // wenn die Email des eingeloggten Verwalters hier enthalten ist (zusätzlich zum Stadt-Match).
+  managerEmails?: string[];
   createdAt: FirebaseTimestamp;
   aiAnalysis?: InquiryAnalysis;
 }
