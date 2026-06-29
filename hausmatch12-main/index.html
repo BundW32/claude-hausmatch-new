@@ -1,18 +1,112 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="de">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>HausMatch</title>
-    
+
+    <!-- Primary SEO -->
+    <title>HausMatch – Hausverwaltung finden & vergleichen in Deutschland</title>
+    <meta name="description" content="HausMatch verbindet Immobilieneigentümer mit geprüften Hausverwaltungen in ganz Deutschland. Kostenlos Angebote von Verwaltern erhalten, vergleichen und die passende Hausverwaltung für WEG, Mietshaus oder Gewerbe finden." />
+    <meta name="keywords" content="Hausverwaltung, Hausverwaltung finden, Hausverwaltung vergleichen, WEG-Verwaltung, Mietverwaltung, Immobilienverwaltung, Verwalter finden, Immobilien Community, Eigentümer, HausMatch" />
+    <meta name="robots" content="index, follow, max-image-preview:large" />
+    <meta name="author" content="B&W Immobilien Management UG" />
+    <link rel="canonical" href="https://haus-match.de/" />
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="HausMatch" />
+    <meta property="og:locale" content="de_DE" />
+    <meta property="og:title" content="HausMatch – Hausverwaltung finden & vergleichen in Deutschland" />
+    <meta property="og:description" content="Geprüfte Hausverwaltungen finden, Angebote vergleichen und sich mit Immobilienprofis vernetzen – kostenlos auf HausMatch." />
+    <meta property="og:url" content="https://haus-match.de/" />
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="HausMatch – Hausverwaltung finden & vergleichen" />
+    <meta name="twitter:description" content="Geprüfte Hausverwaltungen finden, Angebote vergleichen und sich mit Immobilienprofis vernetzen – kostenlos auf HausMatch." />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    
+
+    <!-- Structured data: Organization + WebSite -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "name": "HausMatch",
+      "url": "https://haus-match.de/",
+      "description": "Plattform zur Vermittlung geprüfter Hausverwaltungen und Community für Immobilienprofis und Eigentümer in Deutschland.",
+      "areaServed": "DE",
+      "parentOrganization": {
+        "@type": "Organization",
+        "name": "B&W Immobilien Management UG (haftungsbeschränkt)"
+      }
+    }
+    </script>
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "name": "HausMatch",
+      "url": "https://haus-match.de/",
+      "inLanguage": "de-DE"
+    }
+    </script>
+
     <style>
       body { background-color: #f1f5f9; font-family: 'Inter', sans-serif; }
+      /* Fallback-/Ladeansicht: für Nutzer kurz sichtbar, von React ersetzt.
+         Liefert Suchmaschinen ohne JavaScript echten deutschen Inhalt. */
+      #seo-fallback { max-width: 880px; margin: 0 auto; padding: 64px 24px; color: #0f172a; }
+      #seo-fallback h1 { font-size: 28px; font-weight: 800; letter-spacing: -.02em; margin: 0 0 12px; }
+      #seo-fallback h2 { font-size: 18px; font-weight: 700; margin: 28px 0 8px; color: #1e293b; }
+      #seo-fallback p { font-size: 15px; line-height: 1.7; color: #475569; margin: 0 0 12px; }
+      #seo-fallback nav a { color: #2563eb; font-weight: 600; text-decoration: none; margin-right: 16px; }
     </style>
   </head>
   <body>
-    <div id="root"></div>
+    <div id="root">
+      <!-- Wird beim Laden der App durch React ersetzt. -->
+      <div id="seo-fallback">
+        <h1>HausMatch – Hausverwaltung finden &amp; vergleichen in Deutschland</h1>
+        <p>
+          HausMatch ist Deutschlands Community für Immobilienprofis und Eigentümer. Eigentümer von
+          Wohnungseigentümergemeinschaften (WEG), Mietshäusern und Gewerbeimmobilien finden hier
+          schnell und kostenlos eine passende <strong>Hausverwaltung</strong>: Anfrage stellen,
+          unverbindliche Angebote von geprüften Verwaltern erhalten und in Ruhe vergleichen.
+        </p>
+        <h2>Hausverwaltung finden und Angebote vergleichen</h2>
+        <p>
+          Beschreiben Sie Ihr Objekt – Stadt, Anzahl der Einheiten und Ihre Anforderungen – und
+          erhalten Sie Angebote von Hausverwaltungen in Ihrer Region. So vergleichen Sie Leistungen
+          und Konditionen für WEG-Verwaltung, Mietverwaltung und Sondereigentumsverwaltung an einem Ort.
+        </p>
+        <h2>Netzwerk, Marktplatz &amp; Ratgeber für Immobilien</h2>
+        <p>
+          Über die reine Vermittlung hinaus bietet HausMatch ein Experten-Netzwerk, einen Marktplatz
+          für Aufträge und Gesuche, einen Kreditrechner sowie praxisnahe Ratgeber zu Mietrecht,
+          Verwaltung und Immobilieninvestment. Vernetzen Sie sich mit Maklern, Anwälten, Energieberatern,
+          Gutachtern und Handwerkern in ganz Deutschland.
+        </p>
+        <nav>
+          <a href="/#/vermittlung">Hausverwaltung finden</a>
+          <a href="/#/marktplatz">Marktplatz</a>
+          <a href="/#/ratgeber">Ratgeber</a>
+          <a href="/#/kreditrechner">Kreditrechner</a>
+          <a href="/#/network">Netzwerk</a>
+        </nav>
+        <p style="margin-top:24px;color:#94a3b8;">HausMatch wird geladen …</p>
+      </div>
+    </div>
+    <noscript>
+      <div style="max-width:880px;margin:0 auto;padding:64px 24px;font-family:'Inter',sans-serif;color:#0f172a;">
+        <h1>HausMatch – Hausverwaltung finden &amp; vergleichen in Deutschland</h1>
+        <p>HausMatch verbindet Immobilieneigentümer mit geprüften Hausverwaltungen in ganz Deutschland.
+        Stellen Sie kostenlos eine Anfrage und vergleichen Sie Angebote für WEG-Verwaltung, Mietverwaltung
+        und Gewerbeimmobilien. Bitte aktivieren Sie JavaScript, um alle Funktionen von HausMatch zu nutzen.</p>
+      </div>
+    </noscript>
     <script type="module" src="/index.tsx"></script>
   </body>
 </html>
