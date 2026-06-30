@@ -43,6 +43,10 @@ service cloud.firestore {
     match /forum_replies/{replyId} {
       allow read: if true;
       allow create: if isSignedIn();
+      // Likes: jeder eingeloggte Nutzer darf liken/entliken – aber ausschließlich
+      // die Like-Felder ändern (Inhalt/Autor bleiben unangetastet).
+      allow update: if isSignedIn() &&
+        request.resource.data.diff(resource.data).affectedKeys().hasOnly(['likes', 'likedBy']);
       allow delete: if isSignedIn() && (isOwner(resource.data.authorId) || hasRole('manager'));
     }
 

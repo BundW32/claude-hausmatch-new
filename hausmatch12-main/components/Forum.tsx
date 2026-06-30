@@ -2,7 +2,7 @@ import React, { useState, useEffect, useContext, useMemo } from 'react';
 import DOMPurify from 'dompurify';
 import { AuthContext } from '../App';
 import { db, COLLECTIONS, addDocument } from '../services/firebase';
-import { collection, onSnapshot, query, orderBy, where, doc, updateDoc, increment } from 'firebase/firestore';
+import { collection, onSnapshot, query, orderBy, where, doc, updateDoc, increment, arrayUnion, arrayRemove } from 'firebase/firestore';
 import { ForumThread, ForumReply } from '../types';
 
 const CATEGORIES = ['Recht & Urteile', 'Software & Tech', 'Best Practice', 'Handwerker & Services', 'Feedback', 'Off-Topic'];
@@ -23,6 +23,7 @@ const Forum = () => {
   const [replies, setReplies] = useState<ForumReply[]>([]);
   const [repliesLoading, setRepliesLoading] = useState(false);
   const [newReplyText, setNewReplyText] = useState('');
+  const [replySort, setReplySort] = useState<'neueste' | 'beliebt'>('neueste');
 
   const [selectedCategory, setSelectedCategory] = useState('Alle');
   const [search, setSearch] = useState('');
@@ -126,7 +127,9 @@ const Forum = () => {
         threadId: selectedThread.id,
         author: user.name,
         authorId: user.id,
-        content: newReplyText
+        content: newReplyText,
+        likes: 0,
+        likedBy: []
       });
       await updateDoc(doc(db, COLLECTIONS.THREADS, selectedThread.id), {
         replies: increment(1),
@@ -135,6 +138,31 @@ const Forum = () => {
       setNewReplyText('');
     } catch (err) { console.error(err); }
   };
+
+  // Antwort liken / Like zurücknehmen. Aktualisiert nur die Like-Felder des
+  // Reply-Dokuments; der onSnapshot-Listener übernimmt die neue Zahl in Echtzeit.
+  const handleToggleLike = async (reply: ForumReply) => {
+    if (!user || reply.authorId === user.id) return; // kein Self-Like
+    const hasLiked = (reply.likedBy || []).includes(user.id);
+    try {
+      await updateDoc(doc(db, COLLECTIONS.REPLIES, reply.id), {
+        likes: increment(hasLiked ? -1 : 1),
+        likedBy: hasLiked ? arrayRemove(user.id) : arrayUnion(user.id),
+      });
+    } catch (err) { console.error('Like fehlgeschlagen:', err); }
+  };
+
+  // Anzeige-Sortierung der Antworten: Standard "Neueste", umschaltbar auf "Meistgeliked".
+  const sortedReplies = useMemo(() => {
+    const list = [...replies];
+    if (replySort === 'beliebt') {
+      return list.sort((a, b) => {
+        const diff = (b.likes || 0) - (a.likes || 0);
+        return diff !== 0 ? diff : (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0);
+      });
+    }
+    return list.sort((a, b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
+  }, [replies, replySort]);
 
   const filteredThreads = useMemo(() => {
     const searchLower = search.toLowerCase();
@@ -199,13 +227,27 @@ const Forum = () => {
                       <div className="text-[15px] sm:text-base text-slate-700 leading-relaxed whitespace-pre-wrap break-words" dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(selectedThread.content) }}></div>
                    </article>
 
-                   {/* Trenner */}
-                   <div className="flex items-center gap-4 pt-1">
-                      <div className="flex-grow border-t border-slate-200"></div>
+                   {/* Trenner + Sortier-Umschalter */}
+                   <div className="flex items-center gap-3 pt-1">
                       <span className="text-[11px] font-black text-slate-400 uppercase tracking-widest flex-shrink-0">
                         {repliesLoading ? 'Lade Antworten…' : replies.length === 0 ? 'Noch keine Antworten' : `${replies.length} Antwort${replies.length === 1 ? '' : 'en'}`}
                       </span>
                       <div className="flex-grow border-t border-slate-200"></div>
+                      {!repliesLoading && replies.length > 1 && (
+                        <div className="inline-flex bg-slate-100 rounded-xl p-0.5 flex-shrink-0">
+                          {([['neueste', 'Neueste'], ['beliebt', 'Meistgeliked']] as const).map(([key, label]) => (
+                            <button
+                              key={key}
+                              onClick={() => setReplySort(key)}
+                              className={`px-3 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all ${
+                                replySort === key ? 'bg-white text-indigo-700 shadow' : 'text-slate-500 hover:text-slate-700'
+                              }`}
+                            >
+                              {label}
+                            </button>
+                          ))}
+                        </div>
+                      )}
                    </div>
 
                    {/* Antworten – kompakt & gleichmäßig für gute Lesbarkeit bei vielen Nachrichten */}
@@ -220,8 +262,10 @@ const Forum = () => {
                      </div>
                    ) : (
                      <div className="space-y-3">
-                        {replies.map(reply => {
+                        {sortedReplies.map(reply => {
                           const isMe = reply.authorId === user?.id;
+                          const hasLiked = !!user && (reply.likedBy || []).includes(user.id);
+                          const likeCount = reply.likes || 0;
                           return (
                             <div key={reply.id} className="flex gap-3">
                                <div className={`w-9 h-9 rounded-xl flex items-center justify-center font-black text-sm flex-shrink-0 border ${isMe ? 'bg-indigo-100 text-indigo-700 border-indigo-200' : 'bg-slate-100 text-slate-500 border-slate-200'}`}>
@@ -237,6 +281,19 @@ const Forum = () => {
                                      </span>
                                   </div>
                                   <div className="text-[15px] text-slate-600 leading-relaxed whitespace-pre-wrap break-words" dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(reply.content) }}></div>
+                                  <div className="flex items-center mt-3 pt-2 border-t border-slate-50">
+                                     <button
+                                       onClick={() => handleToggleLike(reply)}
+                                       disabled={isMe}
+                                       title={isMe ? 'Eigene Antwort' : hasLiked ? 'Like zurücknehmen' : 'Gefällt mir'}
+                                       className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-black transition-all ${hasLiked ? 'bg-rose-50 text-rose-600' : 'text-slate-400 hover:bg-slate-50 hover:text-slate-600'} ${isMe ? 'cursor-default opacity-60' : 'active:scale-95'}`}
+                                     >
+                                       <svg className="w-4 h-4" fill={hasLiked ? 'currentColor' : 'none'} stroke="currentColor" viewBox="0 0 24 24">
+                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                                       </svg>
+                                       <span>{likeCount > 0 ? likeCount : 'Like'}</span>
+                                     </button>
+                                  </div>
                                </div>
                             </div>
                           );
