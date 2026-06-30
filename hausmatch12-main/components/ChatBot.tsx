@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 
 interface Message {
   role: 'user' | 'assistant';
@@ -14,6 +15,7 @@ const EddyAvatar = ({ size = 40 }: { size?: number }) => (
 );
 
 const ChatBot = () => {
+  const location = useLocation();
   const [open, setOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([
     {
@@ -93,6 +95,9 @@ const ChatBot = () => {
       return <span key={i} style={{ display: 'block' }}>{line}</span>;
     });
   };
+
+  // Im Postfach ausblenden – sonst überdeckt Eddys Button den Sende-Button.
+  if (location.pathname === '/messages') return null;
 
   return (
     <>

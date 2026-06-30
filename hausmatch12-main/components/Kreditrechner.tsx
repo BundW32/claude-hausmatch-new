@@ -144,14 +144,14 @@ const Kreditrechner = () => {
                 <div>
                   <label className={labelClass}>Kaufpreis</label>
                   <div className="relative">
-                    <input type="number" className={inputClass} value={kaufpreis} onChange={e => setKaufpreis(+e.target.value)} step={10000} />
+                    <input type="number" className={inputClass} value={kaufpreis || ''} onChange={e => setKaufpreis(e.target.value === '' ? 0 : +e.target.value)} step={10000} placeholder="z.B. 400000" />
                     <span className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 text-sm font-bold">€</span>
                   </div>
                 </div>
                 <div>
                   <label className={labelClass}>Eigenkapital</label>
                   <div className="relative">
-                    <input type="number" className={inputClass} value={eigenkapital} onChange={e => setEigenkapital(+e.target.value)} step={5000} />
+                    <input type="number" className={inputClass} value={eigenkapital || ''} onChange={e => setEigenkapital(e.target.value === '' ? 0 : +e.target.value)} step={5000} placeholder="z.B. 100000" />
                     <span className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 text-sm font-bold">€</span>
                   </div>
                   <div className="mt-1 text-xs text-slate-400 font-medium">
@@ -213,7 +213,7 @@ const Kreditrechner = () => {
                         <input
                           type="number"
                           className={inputClass}
-                          value={maklerProvision}
+                          value={maklerProvision || ''}
                           onChange={e => {
                             const val = Math.max(0, Math.min(10, parseFloat(e.target.value) || 0));
                             setMaklerProvision(Math.round(val * 100) / 100);
@@ -221,6 +221,7 @@ const Kreditrechner = () => {
                           step={0.01}
                           min={0}
                           max={10}
+                          placeholder="z.B. 3.57"
                         />
                         <span className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 text-sm font-bold">%</span>
                       </div>
@@ -239,20 +240,20 @@ const Kreditrechner = () => {
                 <div>
                   <label className={labelClass}>Zinssatz p.a.</label>
                   <div className="relative">
-                    <input type="number" className={inputClass} value={zins} onChange={e => setZins(+e.target.value)} step={0.1} min={0.1} max={15} />
+                    <input type="number" className={inputClass} value={zins || ''} onChange={e => setZins(e.target.value === '' ? 0 : +e.target.value)} step={0.1} min={0.1} max={15} placeholder="z.B. 3.8" />
                     <span className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 text-sm font-bold">%</span>
                   </div>
                 </div>
                 <div>
                   <label className={labelClass}>Anfangstilgung p.a.</label>
                   <div className="relative">
-                    <input type="number" className={inputClass} value={tilgung} onChange={e => setTilgung(+e.target.value)} step={0.1} min={0.5} max={10} />
+                    <input type="number" className={inputClass} value={tilgung || ''} onChange={e => setTilgung(e.target.value === '' ? 0 : +e.target.value)} step={0.1} min={0.5} max={10} placeholder="z.B. 2.0" />
                     <span className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 text-sm font-bold">%</span>
                   </div>
                 </div>
                 <div>
                   <label className={labelClass}>Laufzeit (Jahre)</label>
-                  <input type="number" className={inputClass} value={laufzeit} onChange={e => setLaufzeit(+e.target.value)} step={1} min={5} max={40} />
+                  <input type="number" className={inputClass} value={laufzeit || ''} onChange={e => setLaufzeit(e.target.value === '' ? 0 : +e.target.value)} step={1} min={5} max={40} placeholder="z.B. 30" />
                 </div>
               </div>
             </div>
@@ -263,7 +264,7 @@ const Kreditrechner = () => {
                 <div>
                   <label className={labelClass}>Jahresmiete (kalt)</label>
                   <div className="relative">
-                    <input type="number" className={inputClass} value={jahresmiete} onChange={e => setJahresmiete(+e.target.value)} step={600} />
+                    <input type="number" className={inputClass} value={jahresmiete || ''} onChange={e => setJahresmiete(e.target.value === '' ? 0 : +e.target.value)} step={600} placeholder="z.B. 14400" />
                     <span className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 text-sm font-bold">€</span>
                   </div>
                   <div className="mt-1 text-xs text-slate-400 font-medium">= {formatEuro(jahresmiete / 12)} / Monat</div>
@@ -271,14 +272,14 @@ const Kreditrechner = () => {
                 <div>
                   <label className={labelClass}>Verwaltungskosten / Jahr</label>
                   <div className="relative">
-                    <input type="number" className={inputClass} value={verwaltungKosten} onChange={e => setVerwaltungKosten(+e.target.value)} step={100} />
+                    <input type="number" className={inputClass} value={verwaltungKosten || ''} onChange={e => setVerwaltungKosten(e.target.value === '' ? 0 : +e.target.value)} step={100} placeholder="z.B. 1200" />
                     <span className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 text-sm font-bold">€</span>
                   </div>
                 </div>
                 <div>
                   <label className={labelClass}>Instandhaltung / Jahr</label>
                   <div className="relative">
-                    <input type="number" className={inputClass} value={instandhaltung} onChange={e => setInstandhaltung(+e.target.value)} step={100} />
+                    <input type="number" className={inputClass} value={instandhaltung || ''} onChange={e => setInstandhaltung(e.target.value === '' ? 0 : +e.target.value)} step={100} placeholder="z.B. 2400" />
                     <span className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 text-sm font-bold">€</span>
                   </div>
                 </div>

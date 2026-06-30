@@ -15,6 +15,22 @@ const DAYS = [
   { key: 'sun', label: 'Sonntag' }
 ];
 
+// Echter "Expertise-Score" = Profil-Vollständigkeit (Anteil ausgefüllter Kernfelder).
+// Ersetzt den früheren festen Platzhalter "100 %", der für jeden gleich war.
+const computeProfileScore = (u: User): number => {
+  const checks = [
+    !!u.avatar,
+    !!(u.bio && u.bio.trim()),
+    !!(u.location || u.city),
+    !!u.phone,
+    !!u.website,
+    !!(u.specialization && u.specialization.length > 0),
+    !!u.experienceYears,
+  ];
+  const filled = checks.filter(Boolean).length;
+  return Math.round((filled / checks.length) * 100);
+};
+
 const Profile = () => {
   const { uid } = useParams();
   const navigate = useNavigate();
@@ -371,8 +387,8 @@ const Profile = () => {
                          <div className="p-10 bg-slate-50 rounded-[3.5rem] border border-slate-100 group hover:bg-white hover:shadow-2xl transition-all duration-500">
                             <h4 className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-6">Expertise-Score</h4>
                             <div className="flex items-end gap-3">
-                               <div className="text-6xl font-black text-slate-900 tracking-tighter">100%</div>
-                               <span className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-2.5">HausMatch Plus</span>
+                               <div className="text-6xl font-black text-slate-900 tracking-tighter">{computeProfileScore(profileUser)}%</div>
+                               <span className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-2.5">Profil ausgefüllt</span>
                             </div>
                          </div>
                          <div className="p-10 bg-slate-50 rounded-[3.5rem] border border-slate-100 group hover:bg-white hover:shadow-2xl transition-all duration-500">
