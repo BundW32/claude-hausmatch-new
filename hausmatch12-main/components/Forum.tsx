@@ -52,7 +52,7 @@ const Forum = () => {
     return () => unsubscribe();
   }, []);
 
-  // Antworten fÃ¼r gewÃ¤hlten Thread laden
+  // Antworten für gewählten Thread laden
   useEffect(() => {
     if (!selectedThread) {
       setReplies([]);
@@ -86,7 +86,7 @@ const Forum = () => {
       setRepliesLoading(false);
     });
 
-    // View Counter erhÃ¶hen
+    // View Counter erhöhen
     updateDoc(doc(db, COLLECTIONS.THREADS, selectedThread.id), {
       views: increment(1)
     });
@@ -332,7 +332,7 @@ const Forum = () => {
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-12 gap-6">
           <div>
             <h1 className="text-3xl sm:text-4xl md:text-5xl font-black text-slate-900 mb-3 tracking-tighter">Community Hub</h1>
-            <p className="text-slate-400 font-bold uppercase tracking-widest text-xs">Exklusiver Austausch fÃ¼r Immobilienprofis</p>
+            <p className="text-slate-400 font-bold uppercase tracking-widest text-xs">Exklusiver Austausch für Immobilienprofis</p>
           </div>
           <button
             onClick={() => setIsCreateModalOpen(true)}
@@ -360,14 +360,14 @@ const Forum = () => {
             <div className="bg-white p-3 rounded-[2.5rem] border border-slate-100 shadow-sm flex items-center gap-4">
                 <div className="flex-1 flex items-center px-6 gap-4">
                     <svg className="w-6 h-6 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
-                    <input type="text" placeholder="BeitrÃ¤ge durchsuchen..." className="w-full bg-transparent border-none focus:ring-0 text-lg font-bold placeholder-slate-300" value={search} onChange={(e) => setSearch(e.target.value)} />
+                    <input type="text" placeholder="Beiträge durchsuchen..." className="w-full bg-transparent border-none focus:ring-0 text-lg font-bold placeholder-slate-300" value={search} onChange={(e) => setSearch(e.target.value)} />
                 </div>
             </div>
 
             <div className="grid gap-6">
               {filteredThreads.length === 0 ? (
                 <div className="text-center py-20 opacity-30 font-black uppercase tracking-[0.2em] text-slate-400">
-                  {search || selectedCategory !== 'Alle' ? 'Keine passenden BeitrÃ¤ge gefunden.' : 'Noch keine BeitrÃ¤ge vorhanden. Starten Sie die erste Diskussion!'}
+                  {search || selectedCategory !== 'Alle' ? 'Keine passenden Beiträge gefunden.' : 'Noch keine Beiträge vorhanden. Starten Sie die erste Diskussion!'}
                 </div>
               ) : filteredThreads.map(thread => (
                 <div key={thread.id} onClick={() => setSelectedThread(thread)} className="group bg-white p-5 sm:p-8 md:p-10 rounded-[1.5rem] sm:rounded-[2.5rem] md:rounded-[3rem] border border-slate-100 hover:border-indigo-200 transition-all cursor-pointer shadow-sm hover:shadow-2xl hover:-translate-y-1 relative overflow-hidden">
@@ -414,7 +414,7 @@ const Forum = () => {
 
               <form onSubmit={handleCreateThread} className="space-y-8">
                 <div>
-                  <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-4 block ml-4">Kategorie wÃ¤hlen</label>
+                  <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-4 block ml-4">Kategorie wählen</label>
                   <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
                     {CATEGORIES.map(cat => (
                       <button
@@ -449,7 +449,7 @@ const Forum = () => {
 
                 <div className="flex gap-4 pt-4">
                    <button type="button" onClick={() => setIsCreateModalOpen(false)} className="flex-1 py-6 bg-slate-100 text-slate-500 rounded-[2rem] font-black uppercase tracking-widest text-xs hover:bg-slate-200 transition-all">Abbrechen</button>
-                   <button type="submit" className="flex-1 py-6 bg-slate-900 text-white rounded-[2rem] font-black uppercase tracking-widest text-xs shadow-2xl hover:bg-indigo-600 transition-all active:scale-95">Beitrag VerÃ¶ffentlichen</button>
+                   <button type="submit" className="flex-1 py-6 bg-slate-900 text-white rounded-[2rem] font-black uppercase tracking-widest text-xs shadow-2xl hover:bg-indigo-600 transition-all active:scale-95">Beitrag Veröffentlichen</button>
                 </div>
               </form>
            </div>

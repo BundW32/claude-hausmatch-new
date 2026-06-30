@@ -118,20 +118,24 @@ const Navbar = () => {
       ? 'text-blue-600 bg-blue-50 shadow-inner'
       : 'text-slate-600 hover:text-slate-900';
 
-  const navLinks = [
+  // Hauptlinks · gebündelte Hilfsmittel (KI-Berater, Rechner, Ratgeber) · eingeloggte Links
+  const mainLinks = [
     { to: '/', label: 'Start' },
     { to: '/vermittlung', label: 'Verwalter finden' },
     { to: '/marktplatz', label: 'Marktplatz' },
     { to: '/network', label: 'Netzwerk' },
-    { to: '/ratgeber', label: 'Ratgeber' },
-    { to: '/kreditrechner', label: 'Rechner' },
-    { to: '/ki-berater', label: 'KI-Berater' },
-    ...(user ? [
-      { to: '/forum', label: 'Forum' },
-      { to: '/messages', label: 'Postfach' },
-      ...(user.role === 'manager' ? [{ to: '/dashboard', label: 'Lead-Center' }] : [])
-    ] : [])
   ];
+  const toolLinks = [
+    { to: '/ki-berater', label: 'KI-Berater' },
+    { to: '/kreditrechner', label: 'Rechner' },
+    { to: '/ratgeber', label: 'Ratgeber' },
+  ];
+  const userLinks = user ? [
+    { to: '/forum', label: 'Forum' },
+    { to: '/messages', label: 'Postfach' },
+    ...(user.role === 'manager' ? [{ to: '/dashboard', label: 'Lead-Center' }] : [])
+  ] : [];
+  const toolsActive = toolLinks.some(l => l.to === location.pathname);
 
   return (
     <nav className="fixed top-0 w-full z-50 bg-white/90 backdrop-blur-xl border-b border-slate-100 shadow-sm h-16">
@@ -145,7 +149,34 @@ const Navbar = () => {
 
           {/* Desktop Nav */}
           <div className="hidden md:flex items-center space-x-1">
-            {navLinks.map(l => (
+            {mainLinks.map(l => (
+              <Link key={l.to} to={l.to} className={`px-3 py-1.5 rounded-full text-xs font-black uppercase tracking-widest transition-all ${isActive(l.to)}`}>
+                {l.label}
+              </Link>
+            ))}
+
+            {/* Hilfsmittel — Dropdown (öffnet bei Hover) */}
+            <div className="relative group">
+              <button
+                className={`flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-black uppercase tracking-widest transition-all ${
+                  toolsActive ? 'text-blue-600 bg-blue-50 shadow-inner' : 'text-slate-600 hover:text-slate-900'
+                }`}
+              >
+                Hilfsmittel
+                <svg className="w-3 h-3 transition-transform group-hover:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M19 9l-7 7-7-7" /></svg>
+              </button>
+              <div className="absolute left-0 top-full pt-2 hidden group-hover:block">
+                <div className="w-48 bg-white rounded-2xl shadow-xl border border-slate-100 p-2 flex flex-col">
+                  {toolLinks.map(l => (
+                    <Link key={l.to} to={l.to} className={`px-3 py-2 rounded-xl text-xs font-black uppercase tracking-widest transition-all ${isActive(l.to)}`}>
+                      {l.label}
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            {userLinks.map(l => (
               <Link key={l.to} to={l.to} className={`px-3 py-1.5 rounded-full text-xs font-black uppercase tracking-widest transition-all ${isActive(l.to)}`}>
                 {l.label}
               </Link>
@@ -189,7 +220,29 @@ const Navbar = () => {
       {/* Mobile Menu */}
       {mobileOpen && (
         <div className="md:hidden bg-white border-t border-slate-100 shadow-xl px-4 py-4 space-y-1">
-          {navLinks.map(l => (
+          {mainLinks.map(l => (
+            <Link
+              key={l.to}
+              to={l.to}
+              className={`block px-4 py-3 rounded-xl text-sm font-black uppercase tracking-widest transition-all ${isActive(l.to)}`}
+            >
+              {l.label}
+            </Link>
+          ))}
+
+          {/* Hilfsmittel-Gruppe */}
+          <p className="px-4 pt-3 pb-1 text-[10px] font-black text-slate-400 uppercase tracking-widest">Hilfsmittel</p>
+          {toolLinks.map(l => (
+            <Link
+              key={l.to}
+              to={l.to}
+              className={`block px-4 py-3 rounded-xl text-sm font-black uppercase tracking-widest transition-all ${isActive(l.to)}`}
+            >
+              {l.label}
+            </Link>
+          ))}
+
+          {userLinks.map(l => (
             <Link
               key={l.to}
               to={l.to}
