@@ -173,10 +173,10 @@ const Profile = () => {
 
   return (
     <div className="bg-slate-50 min-h-screen">
-      <div className="max-w-7xl mx-auto px-4 md:px-8 py-12 md:py-20">
+      <div className="max-w-7xl mx-auto px-4 md:px-6 py-8 md:py-12">
         
         {/* Profile Card Container */}
-        <div className="bg-white rounded-[3rem] md:rounded-[4.5rem] shadow-[0_40px_100px_-20px_rgba(0,0,0,0.06)] overflow-hidden border border-slate-100 flex flex-col">
+        <div className="bg-white rounded-[2rem] md:rounded-[3rem] shadow-[0_40px_100px_-20px_rgba(0,0,0,0.06)] overflow-hidden border border-slate-100 flex flex-col">
            
            {/* Visual Header / Cover */}
            <div className="bg-slate-900 h-40 md:h-72 relative overflow-hidden shrink-0">
@@ -185,7 +185,7 @@ const Profile = () => {
            </div>
 
            {/* Identity Row - Re-Engineered for perfect visibility */}
-           <div className="px-8 md:px-20 pb-12 relative flex flex-col md:flex-row items-center md:items-start gap-8 md:gap-14 -mt-20 md:-mt-28">
+           <div className="px-6 md:px-12 pb-10 relative flex flex-col md:flex-row items-center md:items-start gap-8 md:gap-12 -mt-20 md:-mt-28">
               
               {/* Logo / Avatar - High Definition */}
               <div className="relative shrink-0">
@@ -214,7 +214,7 @@ const Profile = () => {
               <div className="flex-1 flex flex-col md:pt-32 text-center md:text-left min-w-0 w-full">
                  <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 w-full">
                     <div className="min-w-0">
-                       <h1 className="text-4xl md:text-7xl font-black text-slate-900 tracking-tighter mb-4 leading-[1.05] break-words">
+                       <h1 className="text-4xl md:text-6xl font-black text-slate-900 tracking-tight mb-4 leading-[1.05]">
                          {currentDisplayName}
                        </h1>
                        <div className="flex flex-wrap justify-center md:justify-start gap-3">
@@ -263,7 +263,7 @@ const Profile = () => {
            </div>
 
            {/* Profile Body - Grid System */}
-           <div className="px-8 md:px-20 pb-24">
+           <div className="px-6 md:px-12 pb-12">
               {isEditing ? (
                 <div className="max-w-4xl mx-auto space-y-12 animate-fade-in-up">
                    <div className="grid md:grid-cols-2 gap-10">
@@ -348,10 +348,10 @@ const Profile = () => {
                    </div>
                 </div>
               ) : (
-                <div className="grid lg:grid-cols-12 gap-16 md:gap-24">
+                <div className="grid lg:grid-cols-12 gap-8 md:gap-12">
                    
                    {/* Left Column: Vision and Expertise */}
-                   <div className="lg:col-span-8 space-y-16">
+                   <div className="lg:col-span-8 space-y-10">
                       
                       {/* Detailed Bio - Only if set */}
                       {profileUser.bio ? (
@@ -365,7 +365,7 @@ const Profile = () => {
                       
                       {/* Operational Hours - Manager exclusive and only if set */}
                       {isManager && profileUser.openingHours && Object.values(profileUser.openingHours).some(v => v && v !== '') ? (
-                        <section className="bg-slate-50 p-12 md:p-16 rounded-[4rem] border border-slate-100 shadow-inner">
+                        <section className="bg-slate-50 p-8 md:p-10 rounded-[2.5rem] border border-slate-100 shadow-inner">
                            <h3 className="text-[11px] font-black text-slate-400 uppercase tracking-[0.3em] mb-12">Präsenzzeiten (Telefon & Büro)</h3>
                            <div className="grid grid-cols-2 md:grid-cols-4 gap-y-12 gap-x-8">
                               {DAYS.map(day => {
@@ -384,14 +384,14 @@ const Profile = () => {
 
                       {/* Stat Cards / Badges */}
                       <section className="grid sm:grid-cols-2 gap-8">
-                         <div className="p-10 bg-slate-50 rounded-[3.5rem] border border-slate-100 group hover:bg-white hover:shadow-2xl transition-all duration-500">
+                         <div className="p-8 bg-slate-50 rounded-[2.5rem] border border-slate-100 group hover:bg-white hover:shadow-2xl transition-all duration-500">
                             <h4 className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-6">Expertise-Score</h4>
                             <div className="flex items-end gap-3">
                                <div className="text-6xl font-black text-slate-900 tracking-tighter">{computeProfileScore(profileUser)}%</div>
                                <span className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-2.5">Profil ausgefüllt</span>
                             </div>
                          </div>
-                         <div className="p-10 bg-slate-50 rounded-[3.5rem] border border-slate-100 group hover:bg-white hover:shadow-2xl transition-all duration-500">
+                         <div className="p-8 bg-slate-50 rounded-[2.5rem] border border-slate-100 group hover:bg-white hover:shadow-2xl transition-all duration-500">
                             <h4 className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-6">Partner-Netzwerk</h4>
                             <div className="flex items-end gap-3">
                                <div className="text-6xl font-black text-slate-900 tracking-tighter">{profileUser.friends?.length || 0}</div>
@@ -402,11 +402,11 @@ const Profile = () => {
                    </div>
 
                    {/* Right Column: Contact Details & Stats */}
-                   <div className="lg:col-span-4 space-y-10 order-first lg:order-none">
-                      <div className="p-8 md:p-12 bg-white border border-slate-100 rounded-[4rem] shadow-2xl relative overflow-hidden group">
+                   <div className="lg:col-span-4 space-y-8 order-first lg:order-none">
+                      <div className="p-6 md:p-8 bg-white border border-slate-100 rounded-[2.5rem] shadow-2xl relative overflow-hidden group">
                          <div className="absolute top-0 right-0 w-32 h-32 bg-indigo-50 rounded-bl-[4rem] -mr-12 -mt-12 group-hover:bg-indigo-600 transition-all duration-500"></div>
                          
-                         <h4 className="text-[11px] font-black text-slate-900 uppercase tracking-[0.3em] mb-12 border-b border-slate-50 pb-6 relative z-10">Kontakt-Zentrale</h4>
+                         <h4 className="text-[11px] font-black text-slate-900 uppercase tracking-[0.3em] mb-8 border-b border-slate-50 pb-5 relative z-10">Kontakt-Zentrale</h4>
                          
                          <ul className="space-y-6 relative z-10">
                             {profileUser.location ? (
@@ -416,7 +416,7 @@ const Profile = () => {
                                  </div>
                                  <div className="flex flex-col min-w-0">
                                     <span className="text-[10px] font-black text-slate-300 uppercase tracking-widest">Region</span>
-                                    <span className="text-slate-900 font-black text-base break-words tracking-tight">{profileUser.location}</span>
+                                    <span className="text-slate-900 font-black text-base tracking-tight truncate">{profileUser.location}</span>
                                  </div>
                               </li>
                             ) : null}
@@ -428,7 +428,7 @@ const Profile = () => {
                                  </div>
                                  <div className="flex flex-col min-w-0">
                                     <span className="text-[10px] font-black text-slate-300 uppercase tracking-widest">Direktwahl</span>
-                                    <span className="text-slate-900 font-black text-base break-words tracking-tight">{profileUser.phone}</span>
+                                    <span className="text-slate-900 font-black text-base tracking-tight truncate">{profileUser.phone}</span>
                                  </div>
                               </li>
                             ) : null}
@@ -440,7 +440,7 @@ const Profile = () => {
                                 </div>
                                 <div className="flex flex-col min-w-0">
                                   <span className="text-[10px] font-black text-slate-300 uppercase tracking-widest">E-Mail</span>
-                                  <a href={`mailto:${profileUser.email}`} className="text-slate-900 font-black text-base break-all hover:text-indigo-600 transition-colors tracking-tight">{profileUser.email}</a>
+                                  <a href={`mailto:${profileUser.email}`} className="block text-slate-900 font-black text-base hover:text-indigo-600 transition-colors tracking-tight truncate">{profileUser.email}</a>
                                 </div>
                               </li>
                             ) : null}
@@ -452,7 +452,7 @@ const Profile = () => {
                                  </div>
                                  <div className="flex flex-col min-w-0">
                                     <span className="text-[10px] font-black text-slate-300 uppercase tracking-widest">Webseite</span>
-                                    <a href={profileUser.website.startsWith('http') ? profileUser.website : `https://${profileUser.website}`} target="_blank" rel="noreferrer" className="text-slate-900 font-black text-base break-all hover:text-indigo-600 transition-colors tracking-tight">
+                                    <a href={profileUser.website.startsWith('http') ? profileUser.website : `https://${profileUser.website}`} target="_blank" rel="noreferrer" className="block text-slate-900 font-black text-base hover:text-indigo-600 transition-colors tracking-tight truncate">
                                       {profileUser.website.replace(/(^\w+:|^)\/\//, '')}
                                     </a>
                                  </div>
@@ -462,7 +462,7 @@ const Profile = () => {
                          
                          {/* Firmendaten Info Boxes - Conditional Rendering */}
                          {(profileUser.teamSize || profileUser.foundedYear) ? (
-                           <div className="mt-14 grid grid-cols-2 gap-4 border-t border-slate-50 pt-10">
+                           <div className="mt-8 grid grid-cols-2 gap-4 border-t border-slate-50 pt-8">
                               {profileUser.teamSize ? (
                                 <div className="bg-slate-50 p-6 rounded-3xl">
                                    <span className="block text-[8px] font-black text-slate-400 uppercase tracking-[0.2em] mb-1">Personal</span>
