@@ -7,6 +7,15 @@ import { ForumThread, ForumReply } from '../types';
 
 const CATEGORIES = ['Recht & Urteile', 'Software & Tech', 'Best Practice', 'Handwerker & Services', 'Feedback', 'Off-Topic'];
 
+// Datum + Uhrzeit – bei vielen Antworten hilft die Uhrzeit, die Reihenfolge zu erkennen.
+const formatDateTime = (ts?: { seconds: number; toDate?: () => Date }): string => {
+  if (!ts) return '';
+  const d = ts.toDate ? ts.toDate() : new Date(ts.seconds * 1000);
+  return d.toLocaleString('de-DE', {
+    day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit',
+  });
+};
+
 const Forum = () => {
   const { user } = useContext(AuthContext);
   const [threads, setThreads] = useState<ForumThread[]>([]);
@@ -84,6 +93,14 @@ const Forum = () => {
     return () => unsubscribe();
   }, [selectedThread]);
 
+  // Vollbild-Ansicht: Hintergrund-Scroll sperren, solange ein Thread geöffnet ist.
+  useEffect(() => {
+    if (!selectedThread) return;
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    return () => { document.body.style.overflow = prev; };
+  }, [selectedThread]);
+
   const handleCreateThread = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!user) return;
@@ -134,89 +151,121 @@ const Forum = () => {
 
         {/* Thread Detail Modal */}
         {selectedThread && (
-          <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/90 backdrop-blur-xl animate-fade-in">
-             <div className="bg-white w-full max-w-3xl max-h-[90vh] rounded-xl sm:rounded-[2.5rem] md:rounded-[4rem] shadow-2xl flex flex-col overflow-hidden animate-fade-in-up">
-                <div className="p-4 sm:p-6 md:p-10 border-b border-slate-50 flex justify-between items-start sm:items-center bg-slate-50/50 gap-3">
-                   <div className="flex items-center gap-3 sm:gap-6 flex-1 min-w-0">
-                     <div className="w-10 h-10 sm:w-16 sm:h-16 rounded-2xl sm:rounded-3xl bg-indigo-600 flex items-center justify-center text-white font-black text-lg sm:text-2xl flex-shrink-0">
-                        {selectedThread.author[0]}
-                     </div>
-                     <div className="min-w-0">
-                       <div className="flex items-center gap-3 mb-1">
-                          <span className="text-[10px] font-black text-indigo-600 uppercase tracking-[0.2em] bg-indigo-50 px-3 py-1 rounded-full">
-                            {selectedThread.category}
-                          </span>
-                       </div>
-                       <h2 className="text-lg sm:text-2xl md:text-3xl font-black text-slate-900 tracking-tighter line-clamp-2">{selectedThread.title}</h2>
-                     </div>
+          <div className="fixed inset-0 z-[100] bg-slate-50 flex flex-col animate-fade-in">
+             {/* Sticky Kopfzeile – bleibt beim Scrollen sichtbar */}
+             <header className="flex-shrink-0 bg-white border-b border-slate-100">
+                <div className="max-w-3xl mx-auto w-full px-4 sm:px-6 py-3 flex items-center gap-3">
+                   <button
+                     onClick={() => setSelectedThread(null)}
+                     className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-slate-100 transition-colors flex-shrink-0"
+                     title="Zurück zur Übersicht"
+                   >
+                      <svg className="w-6 h-6 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M15 19l-7-7 7-7" /></svg>
+                   </button>
+                   <div className="min-w-0 flex-1">
+                      <div className="flex items-center gap-2 mb-0.5">
+                         <span className="text-[10px] font-black text-indigo-600 uppercase tracking-widest bg-indigo-50 px-2.5 py-0.5 rounded-full">{selectedThread.category}</span>
+                         <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest hidden sm:inline">
+                           {repliesLoading ? '…' : `${replies.length} Antwort${replies.length === 1 ? '' : 'en'}`}
+                         </span>
+                      </div>
+                      <h2 className="text-base sm:text-xl font-black text-slate-900 tracking-tight truncate">{selectedThread.title}</h2>
                    </div>
-                   <button onClick={() => setSelectedThread(null)} className="w-10 h-10 sm:w-14 sm:h-14 flex items-center justify-center hover:bg-slate-200 rounded-full transition-all flex-shrink-0">
-                      <svg className="w-6 h-6 sm:w-8 sm:h-8 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M6 18L18 6M6 6l12 12" /></svg>
+                   <button
+                     onClick={() => setSelectedThread(null)}
+                     className="w-10 h-10 hidden sm:flex items-center justify-center rounded-full hover:bg-slate-100 transition-colors flex-shrink-0"
+                     title="Schließen"
+                   >
+                      <svg className="w-6 h-6 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M6 18L18 6M6 6l12 12" /></svg>
                    </button>
                 </div>
+             </header>
 
-                <div className="flex-1 overflow-y-auto p-4 sm:p-8 md:p-12 space-y-6 sm:space-y-12 custom-scrollbar">
-                   <div className="bg-slate-50 p-4 sm:p-6 md:p-10 rounded-[1.5rem] md:rounded-[3rem] border border-slate-100/50 shadow-inner">
-                      <div className="flex justify-between items-center mb-6">
-                         <span className="text-sm font-black text-slate-900">{selectedThread.author}</span>
-                         <span className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">{selectedThread.date}</span>
+             {/* Scrollbarer Diskussionsbereich – Lesespalte zentriert für lesbare Zeilenlänge */}
+             <div className="flex-1 overflow-y-auto custom-scrollbar">
+                <div className="max-w-3xl mx-auto w-full px-4 sm:px-6 py-6 space-y-6">
+                   {/* Ursprungsbeitrag */}
+                   <article className="bg-white rounded-2xl border border-slate-200 shadow-sm p-5 sm:p-7">
+                      <div className="flex items-center gap-3 mb-4">
+                         <div className="w-11 h-11 rounded-2xl bg-indigo-600 flex items-center justify-center text-white font-black text-lg flex-shrink-0">
+                            {selectedThread.author[0]}
+                         </div>
+                         <div className="min-w-0">
+                            <p className="text-sm font-black text-slate-900 truncate">{selectedThread.author}</p>
+                            <p className="text-[11px] font-bold text-slate-400">{formatDateTime(selectedThread.createdAt) || selectedThread.date}</p>
+                         </div>
+                         <span className="ml-auto text-[10px] font-black text-indigo-500 uppercase tracking-widest bg-indigo-50 px-2.5 py-1 rounded-full flex-shrink-0">Thema</span>
                       </div>
-                      <p className="text-base sm:text-xl text-slate-700 leading-relaxed font-medium whitespace-pre-wrap" dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(selectedThread.content) }}></p>
-                   </div>
+                      <div className="text-[15px] sm:text-base text-slate-700 leading-relaxed whitespace-pre-wrap break-words" dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(selectedThread.content) }}></div>
+                   </article>
 
-                   <div className="relative py-4 flex items-center">
-                      <div className="flex-grow border-t border-slate-100"></div>
-                      <span className="flex-shrink mx-6 text-[11px] font-black text-slate-300 uppercase tracking-[0.3em]">
-                        {repliesLoading ? 'Lade Antworten...' : `${replies.length} Antworten`}
+                   {/* Trenner */}
+                   <div className="flex items-center gap-4 pt-1">
+                      <div className="flex-grow border-t border-slate-200"></div>
+                      <span className="text-[11px] font-black text-slate-400 uppercase tracking-widest flex-shrink-0">
+                        {repliesLoading ? 'Lade Antworten…' : replies.length === 0 ? 'Noch keine Antworten' : `${replies.length} Antwort${replies.length === 1 ? '' : 'en'}`}
                       </span>
-                      <div className="flex-grow border-t border-slate-100"></div>
+                      <div className="flex-grow border-t border-slate-200"></div>
                    </div>
 
-                   <div className="space-y-8">
-                      {repliesLoading ? (
-                        <div className="flex flex-col items-center py-10 gap-4">
-                           <div className="w-10 h-10 border-4 border-indigo-100 border-t-indigo-600 rounded-full animate-spin"></div>
-                           <span className="text-xs font-black text-slate-300 uppercase tracking-widest">Diskussion wird geladen</span>
-                        </div>
-                      ) : replies.length === 0 ? (
-                        <div className="text-center py-10 opacity-30 italic font-medium text-slate-400">Keine Antworten vorhanden.</div>
-                      ) : (
-                        replies.map(reply => (
-                          <div key={reply.id} className="flex gap-3 sm:gap-6 animate-fade-in group">
-                             <div className="w-8 h-8 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-slate-100 flex items-center justify-center text-slate-500 font-black shrink-0 border border-slate-200">
-                               {reply.author[0]}
-                             </div>
-                             <div className="bg-white p-3 sm:p-5 md:p-8 rounded-[1rem] sm:rounded-[2rem] border border-slate-100 shadow-sm flex-1 group-hover:shadow-md transition-all">
-                                <div className="flex justify-between mb-4">
-                                   <span className="text-sm font-black text-slate-800">{reply.author}</span>
-                                   <span className="text-[10px] font-bold text-slate-300 uppercase tracking-widest">
-                                     {reply.createdAt ? new Date(reply.createdAt.seconds * 1000).toLocaleDateString('de-DE') : 'Gerade jetzt'}
-                                   </span>
-                                </div>
-                                <p className="text-slate-600 text-lg leading-relaxed font-medium" dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(reply.content) }}></p>
-                             </div>
-                          </div>
-                        ))
-                      )}
-                   </div>
+                   {/* Antworten – kompakt & gleichmäßig für gute Lesbarkeit bei vielen Nachrichten */}
+                   {repliesLoading ? (
+                     <div className="flex flex-col items-center py-12 gap-3">
+                        <div className="w-9 h-9 border-4 border-indigo-100 border-t-indigo-600 rounded-full animate-spin"></div>
+                        <span className="text-xs font-black text-slate-300 uppercase tracking-widest">Diskussion wird geladen</span>
+                     </div>
+                   ) : replies.length === 0 ? (
+                     <div className="text-center py-12">
+                        <p className="text-sm font-bold text-slate-400">Sei der Erste, der antwortet 👇</p>
+                     </div>
+                   ) : (
+                     <div className="space-y-3">
+                        {replies.map(reply => {
+                          const isMe = reply.authorId === user?.id;
+                          return (
+                            <div key={reply.id} className="flex gap-3">
+                               <div className={`w-9 h-9 rounded-xl flex items-center justify-center font-black text-sm flex-shrink-0 border ${isMe ? 'bg-indigo-100 text-indigo-700 border-indigo-200' : 'bg-slate-100 text-slate-500 border-slate-200'}`}>
+                                 {reply.author[0]}
+                               </div>
+                               <div className="flex-1 min-w-0 bg-white rounded-2xl border border-slate-100 shadow-sm p-4 sm:p-5">
+                                  <div className="flex items-baseline justify-between gap-3 mb-1.5">
+                                     <span className="text-sm font-black text-slate-800 truncate">
+                                       {reply.author}{isMe && <span className="text-indigo-500"> · Du</span>}
+                                     </span>
+                                     <span className="text-[10px] font-bold text-slate-300 whitespace-nowrap flex-shrink-0">
+                                       {formatDateTime(reply.createdAt) || 'Gerade'}
+                                     </span>
+                                  </div>
+                                  <div className="text-[15px] text-slate-600 leading-relaxed whitespace-pre-wrap break-words" dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(reply.content) }}></div>
+                               </div>
+                            </div>
+                          );
+                        })}
+                     </div>
+                   )}
                 </div>
+             </div>
 
-                <div className="p-4 sm:p-6 md:p-10 border-t border-slate-50 bg-white">
-                   <div className="max-w-4xl mx-auto flex flex-col sm:flex-row items-stretch sm:items-end gap-3 sm:gap-6">
-                      <textarea
-                        value={newReplyText}
-                        onChange={(e) => setNewReplyText(e.target.value)}
-                        placeholder="Antwort verfassen..."
-                        className="flex-1 bg-slate-50 border-0 rounded-[1.5rem] sm:rounded-[2rem] px-4 sm:px-8 py-4 sm:py-6 text-slate-900 ring-1 ring-slate-100 focus:ring-2 focus:ring-indigo-600 transition-all resize-none font-medium h-20 min-h-[80px] focus:h-40"
-                      />
-                      <button
-                        onClick={handlePostReply}
-                        disabled={!newReplyText.trim() || repliesLoading}
-                        className="bg-slate-900 text-white px-6 sm:px-10 h-14 sm:h-20 rounded-[1.5rem] sm:rounded-[2rem] font-black uppercase text-xs tracking-[0.2em] shadow-2xl hover:bg-indigo-600 disabled:opacity-20 transition-all active:scale-95 w-full sm:w-auto"
-                      >
-                        Senden
-                      </button>
-                   </div>
+             {/* Sticky Eingabefeld unten */}
+             <div className="flex-shrink-0 bg-white border-t border-slate-100">
+                <div className="max-w-3xl mx-auto w-full px-4 sm:px-6 py-3 flex items-end gap-3">
+                   <textarea
+                     value={newReplyText}
+                     onChange={(e) => setNewReplyText(e.target.value)}
+                     onKeyDown={(e) => {
+                       if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) { e.preventDefault(); handlePostReply(); }
+                     }}
+                     placeholder="Antwort verfassen… (Strg/⌘ + Enter zum Senden)"
+                     rows={1}
+                     className="flex-1 bg-slate-50 rounded-2xl px-4 py-3 text-slate-900 ring-1 ring-slate-200 focus:ring-2 focus:ring-indigo-500 transition-all resize-none font-medium text-[15px] max-h-40 min-h-[48px]"
+                   />
+                   <button
+                     onClick={handlePostReply}
+                     disabled={!newReplyText.trim() || repliesLoading}
+                     className="bg-indigo-600 text-white px-5 sm:px-7 h-12 rounded-2xl font-black uppercase text-xs tracking-widest shadow-lg shadow-indigo-200 hover:bg-indigo-700 disabled:opacity-30 transition-all active:scale-95 flex-shrink-0"
+                   >
+                     Senden
+                   </button>
                 </div>
              </div>
           </div>
