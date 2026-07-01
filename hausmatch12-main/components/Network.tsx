@@ -3,6 +3,7 @@ import React, { useState, useEffect, useContext, useRef } from 'react';
 import { AuthContext } from '../App';
 import { searchUsers, addFriend, removeFriend, sendMessage, uploadFile } from '../services/dataService';
 import { User, USER_TYPE_LABELS, MessageAttachment } from '../types';
+import { DEMO_MANAGERS } from '../services/demoData';
 import { useNavigate, useSearchParams, Link } from 'react-router-dom';
 
 const REGIONS = [
@@ -56,7 +57,11 @@ const Network = () => {
     return () => clearTimeout(timer);
   }, [searchTerm, user?.id]);
 
-  const filteredUsers = users.filter(u => matchesRegion(u, activeRegion));
+  // Solange keine echten Mitglieder da sind (und nicht aktiv gesucht wird),
+  // Muster-Firmen zeigen, damit das Netzwerk belebt wirkt.
+  const showDemoUsers = !loading && users.length === 0 && !searchTerm.trim();
+  const sourceUsers = showDemoUsers ? DEMO_MANAGERS : users;
+  const filteredUsers = sourceUsers.filter(u => matchesRegion(u, activeRegion));
 
   const handleToggleFriend = async (targetUser: User) => {
     if (!user) { navigate('/login'); return; }
@@ -158,6 +163,13 @@ const Network = () => {
           <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-6">
             {filteredUsers.length} {filteredUsers.length === 1 ? 'Mitglied' : 'Mitglieder'} gefunden
           </p>
+        )}
+
+        {showDemoUsers && (
+          <div className="mb-6 flex items-center gap-3 bg-amber-50 border border-amber-200 rounded-2xl px-4 py-3">
+            <span className="text-[10px] font-black uppercase tracking-widest bg-amber-400 text-white px-2 py-1 rounded-full flex-shrink-0">Muster</span>
+            <p className="text-xs sm:text-sm font-medium text-amber-800">Beispiel-Firmen zur Veranschaulichung — erscheinen nur, solange noch keine echten Mitglieder vorhanden sind.</p>
+          </div>
         )}
 
         {/* Grid */}

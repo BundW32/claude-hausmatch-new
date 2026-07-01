@@ -4,6 +4,7 @@ import { AuthContext } from '../App';
 import { db, COLLECTIONS, addDocument } from '../services/firebase';
 import { collection, onSnapshot, query, orderBy, where, doc, updateDoc, increment, arrayUnion, arrayRemove } from 'firebase/firestore';
 import { ForumThread, ForumReply } from '../types';
+import { DEMO_THREADS } from '../services/demoData';
 
 const CATEGORIES = ['Recht & Urteile', 'Software & Tech', 'Best Practice', 'Handwerker & Services', 'Feedback', 'Off-Topic'];
 
@@ -164,9 +165,12 @@ const Forum = () => {
     return list.sort((a, b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
   }, [replies, replySort]);
 
+  // Solange keine echten Themen da sind, Muster-Daten zeigen (belebtes Forum).
+  const showingDemoThreads = threads.length === 0;
   const filteredThreads = useMemo(() => {
+    const src = threads.length ? threads : DEMO_THREADS;
     const searchLower = search.toLowerCase();
-    return threads.filter(t => {
+    return src.filter(t => {
       const matchesCategory = selectedCategory === 'Alle' || t.category === selectedCategory;
       const matchesSearch = t.title.toLowerCase().includes(searchLower);
       return matchesCategory && matchesSearch;
@@ -364,6 +368,12 @@ const Forum = () => {
                 </div>
             </div>
 
+            {showingDemoThreads && (
+              <div className="flex items-center gap-3 bg-amber-50 border border-amber-200 rounded-2xl px-4 py-3">
+                <span className="text-[10px] font-black uppercase tracking-widest bg-amber-400 text-white px-2 py-1 rounded-full flex-shrink-0">Muster</span>
+                <p className="text-xs sm:text-sm font-medium text-amber-800">Beispieldaten zur Veranschaulichung — erscheinen nur, solange noch keine echten Themen vorhanden sind.</p>
+              </div>
+            )}
             <div className="grid gap-6">
               {filteredThreads.length === 0 ? (
                 <div className="text-center py-20 opacity-30 font-black uppercase tracking-[0.2em] text-slate-400">
