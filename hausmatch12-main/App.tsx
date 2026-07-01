@@ -121,7 +121,6 @@ const Navbar = () => {
   // Hauptlinks · gebündelte Hilfsmittel (KI-Berater, Rechner, Ratgeber) · eingeloggte Links
   const mainLinks = [
     { to: '/', label: 'Start' },
-    { to: '/vermittlung', label: 'Verwalter finden' },
     { to: '/marktplatz', label: 'Marktplatz' },
     { to: '/network', label: 'Netzwerk' },
   ];

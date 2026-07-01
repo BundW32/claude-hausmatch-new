@@ -84,6 +84,13 @@ const LandingHome = () => {
               </div>
             </form>
 
+            <div className="mt-5 md:mt-6">
+              <Link to="/vermittlung" className="inline-flex items-center gap-2 text-sm md:text-base font-black text-blue-600 hover:text-blue-700 transition-colors uppercase tracking-widest">
+                Verwalter finden
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M9 5l7 7-7 7" /></svg>
+              </Link>
+            </div>
+
             <div className="mt-8 md:mt-10 flex flex-wrap justify-center items-center gap-x-6 gap-y-3 opacity-70">
               {['Community-Forum', 'Experten-Netzwerk', 'KI-Ratgeber', 'Kreditrechner'].map(feature => (
                 <div key={feature} className="flex items-center gap-2">
