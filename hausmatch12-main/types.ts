@@ -109,6 +109,7 @@ export interface User {
   bio?: string;
   location?: string;
   city?: string;
+  region?: string; // Backend-Kategorisierung der Stadt (Bundesland)
   specialization?: string[];
   experienceYears?: number;
   phone?: string;

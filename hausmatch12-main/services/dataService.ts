@@ -29,6 +29,7 @@ import {
   onSnapshot,
   increment,
 } from "firebase/firestore";
+import { categorizeRegion } from "./regions";
 
 export { auth, db };
 
@@ -97,6 +98,7 @@ export const registerUser = async (email: string, password: string, name: string
       pendingFriends: [],
       city: city || '',
       location: city || '',
+      region: categorizeRegion(city),
       specialization: []
     };
     await setDoc(doc(db, "users", uid), newUser);
@@ -165,6 +167,7 @@ export const completeInviteSignIn = async (): Promise<boolean> => {
       pendingFriends: [],
       city,
       location: city,
+      region: categorizeRegion(city),
       companyName: company,
       specialization: [],
     };
@@ -212,7 +215,12 @@ export const searchUsers = async (searchTerm: string): Promise<User[]> => {
 
 export const updateUserProfile = async (uid: string, data: Partial<User>) => {
   try {
-    await updateDoc(doc(db, "users", uid), data);
+    // Stadt/Standort geändert -> Region im Backend neu kategorisieren.
+    const payload: Partial<User> =
+      data.city !== undefined || data.location !== undefined
+        ? { ...data, region: categorizeRegion(data.city ?? data.location) }
+        : data;
+    await updateDoc(doc(db, "users", uid), payload);
   } catch (error: any) {
     console.error("Firestore updateUserProfile error:", error.message);
     throw error;

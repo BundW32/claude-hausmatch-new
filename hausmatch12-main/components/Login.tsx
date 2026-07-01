@@ -101,10 +101,14 @@ const Login: React.FC<LoginProps> = ({ initialView = 'login' }) => {
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!city.trim()) {
+      setError('Bitte geben Sie Ihre Stadt an.');
+      return;
+    }
     setLoading(true);
     setError('');
     try {
-      await registerUser(email, password, name, role, avatar, bio, city, userType);
+      await registerUser(email, password, name, role, avatar, bio, city.trim(), userType);
       if (role === 'manager') navigate('/dashboard');
       else if (role === 'profi') navigate('/profile');
       else navigate('/wizard');
