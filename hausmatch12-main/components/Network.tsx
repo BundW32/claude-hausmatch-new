@@ -165,13 +165,6 @@ const Network = () => {
           </p>
         )}
 
-        {showDemoUsers && (
-          <div className="mb-6 flex items-center gap-3 bg-amber-50 border border-amber-200 rounded-2xl px-4 py-3">
-            <span className="text-[10px] font-black uppercase tracking-widest bg-amber-400 text-white px-2 py-1 rounded-full flex-shrink-0">Muster</span>
-            <p className="text-xs sm:text-sm font-medium text-amber-800">Beispiel-Firmen zur Veranschaulichung — erscheinen nur, solange noch keine echten Mitglieder vorhanden sind.</p>
-          </div>
-        )}
-
         {/* Grid */}
         {loading ? (
           <div className="grid md:grid-cols-3 gap-10">

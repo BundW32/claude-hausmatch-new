@@ -362,8 +362,7 @@ const Marktplatz: React.FC = () => {
     return unsub;
   }, []);
 
-  // Solange keine echten Beiträge da sind, Muster-Daten zeigen (belebte Seite).
-  const showingDemo = posts.length === 0;
+  // Solange keine echten Beiträge da sind, Platzhalter-Beiträge zeigen (belebte Seite).
   const filtered = useMemo(() => {
     const src = posts.length ? posts : DEMO_POSTS;
     return src.filter(p => {
@@ -454,12 +453,6 @@ const Marktplatz: React.FC = () => {
 
       {/* Grid */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
-        {showingDemo && (
-          <div className="mb-6 flex items-center gap-3 bg-amber-50 border border-amber-200 rounded-2xl px-4 py-3">
-            <span className="text-[10px] font-black uppercase tracking-widest bg-amber-400 text-white px-2 py-1 rounded-full flex-shrink-0">Muster</span>
-            <p className="text-xs sm:text-sm font-medium text-amber-800">Beispieldaten zur Veranschaulichung — erscheinen nur, solange noch keine echten Beiträge vorhanden sind.</p>
-          </div>
-        )}
         {filtered.length === 0 ? (
           <div className="text-center py-20">
             <div className="w-16 h-16 bg-slate-100 rounded-3xl flex items-center justify-center mx-auto mb-4">
