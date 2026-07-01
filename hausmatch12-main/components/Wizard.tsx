@@ -4,6 +4,11 @@ import { AuthContext } from '../App';
 import { analyzePropertyRequirement } from '../services/geminiService';
 import { createInquiry } from '../services/dataService';
 
+const LEISTUNGEN = [
+  'WEG-Verwaltung', 'Mietverwaltung', 'Sondereigentum (SEV)', 'Buchhaltung & Abrechnung',
+  'Technische Betreuung', 'Instandhaltung & Sanierung', 'Rechtliche Beratung', 'Eigentümerversammlung',
+];
+
 const Wizard = () => {
   const { user } = useContext(AuthContext);
   const navigate = useNavigate();
@@ -20,6 +25,13 @@ const Wizard = () => {
     condition: '',
     description: '',
   });
+
+  const toggleService = (s: string) => setFormData(f => ({
+    ...f,
+    servicesNeeded: f.servicesNeeded.includes(s)
+      ? f.servicesNeeded.filter(x => x !== s)
+      : [...f.servicesNeeded, s],
+  }));
 
   const handleSubmit = async () => {
     if (!formData.city) {
@@ -152,6 +164,25 @@ const Wizard = () => {
         {step === 2 && (
           <div className="space-y-10">
             <h2 className="text-2xl font-black text-slate-800">Bedarfs-Analyse (KI-Input)</h2>
+            <div className="space-y-3">
+              <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-4">Benötigte Leistungen</label>
+              <div className="flex flex-wrap gap-2">
+                {LEISTUNGEN.map(s => (
+                  <button
+                    key={s}
+                    type="button"
+                    onClick={() => toggleService(s)}
+                    className={`px-4 py-2.5 rounded-full text-xs font-black uppercase tracking-wider transition-all ${
+                      formData.servicesNeeded.includes(s)
+                        ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-200'
+                        : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                    }`}
+                  >
+                    {s}
+                  </button>
+                ))}
+              </div>
+            </div>
             <div className="space-y-2">
               <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-4">Freitext-Beschreibung</label>
               <textarea 
