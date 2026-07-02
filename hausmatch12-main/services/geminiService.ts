@@ -83,7 +83,10 @@ export const getCurrentEditionDate = (): Date => {
   return d;
 };
 
-const EDITION_CACHE_PREFIX = 'hm_eddy_news_';
+const EDITION_CACHE_BASE = 'hm_eddy_news_';
+// v2: vollständige, strukturierte Berichte (Markdown + keyPoints) – alte
+// Kurzfassungs-Caches werden beim Schreiben mit aufgeräumt.
+const EDITION_CACHE_PREFIX = EDITION_CACHE_BASE + 'v2_';
 
 const readEditionCache = (key: string): BlogArticle[] | null => {
   try {
@@ -94,9 +97,9 @@ const readEditionCache = (key: string): BlogArticle[] | null => {
 
 const writeEditionCache = (key: string, articles: BlogArticle[]) => {
   try {
-    // Alte Ausgaben aufräumen, dann aktuelle speichern.
+    // Alte Ausgaben (auch alte Cache-Versionen) aufräumen, dann aktuelle speichern.
     Object.keys(window.localStorage)
-      .filter(k => k.startsWith(EDITION_CACHE_PREFIX) && k !== key)
+      .filter(k => k.startsWith(EDITION_CACHE_BASE) && k !== key)
       .forEach(k => window.localStorage.removeItem(k));
     window.localStorage.setItem(key, JSON.stringify(articles));
   } catch { /* localStorage evtl. voll/nicht verfügbar */ }
@@ -116,7 +119,8 @@ export const fetchLatestIndustryBlog = async (): Promise<BlogArticle[]> => {
         id: "1",
         title: "WEG-Sanierung: Beschlüsse werden einfacher (Beispiel)",
         summary: "Beispiel-Inhalt: Neue Regelungen zur energetischen Sanierung beschlossen.",
-        fullContent: "Beispiel-Inhalt, da kein KI-Zugang konfiguriert ist. Die Eigentümerversammlung kann nun einfacher über Sanierungen entscheiden...\n\nEddys Einordnung: Für WEGs lohnt sich jetzt ein Blick in die Beschlussfassung.",
+        fullContent: "Beispiel-Inhalt, da kein KI-Zugang konfiguriert ist.\n\n## Worum geht es?\nDie Eigentümerversammlung kann nun einfacher über Sanierungen entscheiden.\n\n## Was heißt das für Eigentümer und Verwalter?\n- Beschlussfassung prüfen\n- Fristen im Blick behalten\n\nEddys Einordnung: Für WEGs lohnt sich jetzt ein Blick in die Beschlussfassung.",
+        keyPoints: ["Beispiel-Artikel ohne KI-Zugang", "Beschlüsse zur Sanierung werden einfacher", "Fristen und Formvorgaben beachten"],
         category: "Recht",
         date: editionStr,
         isLatest: true,
@@ -126,7 +130,8 @@ export const fetchLatestIndustryBlog = async (): Promise<BlogArticle[]> => {
         id: "2",
         title: "Digitalisierung in der Hausverwaltung (Beispiel)",
         summary: "Beispiel-Inhalt: Warum Excel-Listen nicht mehr ausreichen.",
-        fullContent: "Beispiel-Inhalt, da kein KI-Zugang konfiguriert ist. Moderne Software-Lösungen sparen bis zu 30% Arbeitszeit...\n\nEddys Einordnung: Wer 2026 noch ohne Mieterportal arbeitet, verliert Zeit und Bewerber.",
+        fullContent: "Beispiel-Inhalt, da kein KI-Zugang konfiguriert ist.\n\n## Worum geht es?\nModerne Software-Lösungen sparen bis zu **30 % Arbeitszeit**.\n\n## Was heißt das für Eigentümer und Verwalter?\n- Mieterportale werden zum Standard\n- Abrechnungen lassen sich automatisieren\n\nEddys Einordnung: Wer 2026 noch ohne Mieterportal arbeitet, verliert Zeit und Bewerber.",
+        keyPoints: ["Beispiel-Artikel ohne KI-Zugang", "Software spart bis zu 30 % Arbeitszeit", "Mieterportale werden Standard"],
         category: "Management",
         date: editionStr,
         isLatest: false,
@@ -141,9 +146,13 @@ export const fetchLatestIndustryBlog = async (): Promise<BlogArticle[]> => {
       model: "gemini-2.5-flash",
       contents: `Du bist Eddy, der KI-Immobilienassistent von HausMatch. Erstelle "Eddys News der Woche" – Ausgabe vom ${editionStr}. ` +
         `Finde über die Google-Suche die 4 aktuellsten und wichtigsten Nachrichten der letzten 7 Tage für Immobilieneigentümer und Hausverwaltungen in Deutschland ` +
-        `(rechtliche Änderungen & Urteile, Markt & Mieten, Zinsen & Finanzierung, Energie & Technik). ` +
-        `Schreibe auf Deutsch. fullContent: 150–250 Wörter pro Artikel, sachlich und konkret; beende jeden Artikel mit einem Absatz "Eddys Einordnung:" mit einer kurzen, praktischen Einschätzung. ` +
-        `date ist jeweils "${editionStr}". Gib echte Quellen mit URLs an.`,
+        `(rechtliche Änderungen & Urteile, Markt & Mieten, Zinsen & Finanzierung, Energie & Technik). Schreibe auf Deutsch.\n\n` +
+        `Jeder Artikel ist ein VOLLSTÄNDIGER Bericht wie in einem professionellen Immobilien-Blog:\n` +
+        `- fullContent: 400–600 Wörter, gegliedert mit Markdown: "## " für 2–4 Zwischenüberschriften, "- " für Aufzählungen, **fett** für zentrale Begriffe und Zahlen.\n` +
+        `- Aufbau: prägnanter Einstieg (worum geht es, warum jetzt wichtig) → Hintergrund & Details mit konkreten Zahlen, Daten, Fristen und Namen → Abschnitt "## Was heißt das für Eigentümer und Verwalter?" mit praktischen Konsequenzen → letzter Absatz beginnt mit "Eddys Einordnung:" (kurze, ehrliche, praktische Einschätzung in Eddys Ton).\n` +
+        `- keyPoints: 3–5 prägnante Stichpunkte "Das Wichtigste in Kürze" (je max. 15 Wörter).\n` +
+        `- summary: 1–2 Sätze Teaser ohne Wiederholung des Titels.\n` +
+        `date ist jeweils "${editionStr}". Gib echte, seriöse Quellen mit URLs an.`,
       config: {
         tools: [{ googleSearch: {} }],
         responseMimeType: "application/json",
@@ -156,6 +165,7 @@ export const fetchLatestIndustryBlog = async (): Promise<BlogArticle[]> => {
               title: { type: Type.STRING },
               summary: { type: Type.STRING },
               fullContent: { type: Type.STRING },
+              keyPoints: { type: Type.ARRAY, items: { type: Type.STRING } },
               category: { type: Type.STRING, enum: ["Recht", "Technik", "Management", "News"] },
               date: { type: Type.STRING },
               sources: {
@@ -170,7 +180,7 @@ export const fetchLatestIndustryBlog = async (): Promise<BlogArticle[]> => {
                 }
               }
             },
-            required: ["id", "title", "summary", "fullContent", "category", "date", "sources"]
+            required: ["id", "title", "summary", "fullContent", "keyPoints", "category", "date", "sources"]
           }
         }
       }
