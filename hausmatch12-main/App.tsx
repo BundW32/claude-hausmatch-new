@@ -323,7 +323,7 @@ const Footer = () => {
               <li><Link to="/ki-berater" className="hover:text-white transition-colors">KI-Berater Eddy</Link></li>
               <li><Link to="/kreditrechner" className="hover:text-white transition-colors">Kreditrechner</Link></li>
               <li><Link to="/ratgeber" className="hover:text-white transition-colors">Ratgeber</Link></li>
-              <li><Link to="/blog" className="hover:text-white transition-colors">Blog</Link></li>
+              <li><Link to="/blog" className="hover:text-white transition-colors">Eddys News</Link></li>
             </ul>
           </div>
           <div className="md:col-span-3">

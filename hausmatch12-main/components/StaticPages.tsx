@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { fetchLatestIndustryBlog } from '../services/geminiService';
+import { fetchLatestIndustryBlog, getCurrentEditionDate } from '../services/geminiService';
 import { BlogArticle } from '../types';
 
 const SectionHeader = ({ title, subtitle }: { title: string; subtitle: string }) => (
@@ -78,17 +78,30 @@ export const BlogPage: React.FC = () => {
     loadBlog();
   }, []);
 
+  const editionStr = getCurrentEditionDate().toLocaleDateString('de-DE', {
+    weekday: 'long', day: '2-digit', month: 'long', year: 'numeric',
+  });
+
   return (
     <div className="max-w-7xl mx-auto px-4 py-20">
       <div className="flex flex-col items-center mb-20">
-        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-slate-900 text-white text-[10px] font-black uppercase tracking-widest mb-6 shadow-xl shadow-slate-200">
+        <EddyOwl size={88} />
+        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-slate-900 text-white text-[10px] font-black uppercase tracking-widest mt-6 mb-6 shadow-xl shadow-slate-200">
            <span className="w-2 h-2 rounded-full bg-green-400 animate-pulse"></span>
-           Live Update: Jeden Montag &amp; Freitag
+           Neue Ausgabe: Jeden Montag &amp; Donnerstag
         </div>
         <SectionHeader
-          title="Verwalter-Wissen"
-          subtitle="Die wichtigsten Updates zu Recht, Technik und Management – kuratiert von HausMatch KI."
+          title="Eddys News der Woche"
+          subtitle="Die wichtigsten Immobilien-News aus Deutschland – 2× pro Woche recherchiert, zusammengefasst und eingeordnet von Eddy, der HausMatch-KI. 🦉"
         />
+        <div className="-mt-10 flex flex-col items-center gap-2">
+          <span className="text-xs font-black uppercase tracking-widest text-indigo-600 bg-indigo-50 border border-indigo-100 px-4 py-1.5 rounded-full">
+            Ausgabe vom {editionStr}
+          </span>
+          <span className="text-[10px] font-medium text-slate-400">
+            KI-generierte Zusammenfassungen mit Quellenangaben — keine Rechtsberatung.
+          </span>
+        </div>
       </div>
 
       {loading ? (
@@ -109,9 +122,10 @@ export const BlogPage: React.FC = () => {
              <div className="absolute -inset-4 bg-indigo-50 rounded-[4rem] opacity-0 group-hover:opacity-100 transition-opacity"></div>
              <div className="relative bg-white p-12 md:p-16 rounded-[3.5rem] shadow-2xl shadow-slate-200/50 border border-slate-100 flex flex-col md:flex-row gap-12 items-center">
                 <div className="w-full md:w-1/3">
-                   <div className="w-full aspect-square bg-slate-900 rounded-[3rem] flex items-center justify-center text-white relative overflow-hidden">
-                      <div className="absolute inset-0 opacity-20 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')]"></div>
-                      <span className="text-5xl font-black italic relative z-10 text-indigo-400 uppercase tracking-tighter">Top</span>
+                   <div className="w-full aspect-square bg-gradient-to-br from-indigo-700 via-indigo-600 to-blue-600 rounded-[3rem] flex flex-col items-center justify-center gap-4 text-white relative overflow-hidden">
+                      <div className="absolute -top-10 -right-10 w-40 h-40 bg-white/10 rounded-full pointer-events-none"></div>
+                      <img src={EDDY_URL} alt="Eddy" width={120} height={120} style={{ display: 'block', objectFit: 'cover', borderRadius: '1.5rem' }} />
+                      <span className="text-xs font-black uppercase tracking-[0.25em] text-indigo-100 relative z-10">Eddys Top-Story</span>
                    </div>
                 </div>
                 <div className="flex-1">

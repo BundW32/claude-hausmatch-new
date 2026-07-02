@@ -71,26 +71,64 @@ export const analyzePropertyRequirement = async (formData: {
   }
 };
 
+// ─── Eddys News der Woche ───────────────────────────────────────────────────
+// Zwei Ausgaben pro Woche: Montag & Donnerstag. Die "aktuelle Ausgabe" ist der
+// letzte dieser beiden Tage; pro Ausgabe wird das Ergebnis im localStorage
+// gecacht, damit nicht jeder Seitenaufruf einen neuen KI-Abruf auslöst.
+
+export const getCurrentEditionDate = (): Date => {
+  const d = new Date();
+  d.setHours(0, 0, 0, 0);
+  while (d.getDay() !== 1 && d.getDay() !== 4) d.setDate(d.getDate() - 1); // Mo=1, Do=4
+  return d;
+};
+
+const EDITION_CACHE_PREFIX = 'hm_eddy_news_';
+
+const readEditionCache = (key: string): BlogArticle[] | null => {
+  try {
+    const raw = window.localStorage.getItem(key);
+    return raw ? (JSON.parse(raw) as BlogArticle[]) : null;
+  } catch { return null; }
+};
+
+const writeEditionCache = (key: string, articles: BlogArticle[]) => {
+  try {
+    // Alte Ausgaben aufräumen, dann aktuelle speichern.
+    Object.keys(window.localStorage)
+      .filter(k => k.startsWith(EDITION_CACHE_PREFIX) && k !== key)
+      .forEach(k => window.localStorage.removeItem(k));
+    window.localStorage.setItem(key, JSON.stringify(articles));
+  } catch { /* localStorage evtl. voll/nicht verfügbar */ }
+};
+
 export const fetchLatestIndustryBlog = async (): Promise<BlogArticle[]> => {
+  const edition = getCurrentEditionDate();
+  const editionStr = edition.toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year: 'numeric' });
+  const cacheKey = EDITION_CACHE_PREFIX + edition.toISOString().slice(0, 10);
+
+  const cached = readEditionCache(cacheKey);
+  if (cached && cached.length > 0) return cached;
+
   if (!API_KEY) {
     return [
       {
         id: "1",
-        title: "WEG-Reform Update 2025",
-        summary: "Neue Regelungen zur energetischen Sanierung beschlossen.",
-        fullContent: "Die Eigentümerversammlung kann nun einfacher über Sanierungen entscheiden...",
+        title: "WEG-Sanierung: Beschlüsse werden einfacher (Beispiel)",
+        summary: "Beispiel-Inhalt: Neue Regelungen zur energetischen Sanierung beschlossen.",
+        fullContent: "Beispiel-Inhalt, da kein KI-Zugang konfiguriert ist. Die Eigentümerversammlung kann nun einfacher über Sanierungen entscheiden...\n\nEddys Einordnung: Für WEGs lohnt sich jetzt ein Blick in die Beschlussfassung.",
         category: "Recht",
-        date: new Date().toLocaleDateString('de-DE'),
+        date: editionStr,
         isLatest: true,
         sources: [{ title: "Haufe Immobilien", url: "https://www.haufe.de/immobilien" }]
       },
       {
         id: "2",
-        title: "Digitalisierung in der Hausverwaltung",
-        summary: "Warum Excel-Listen nicht mehr ausreichen.",
-        fullContent: "Moderne Software-Lösungen sparen bis zu 30% Arbeitszeit...",
+        title: "Digitalisierung in der Hausverwaltung (Beispiel)",
+        summary: "Beispiel-Inhalt: Warum Excel-Listen nicht mehr ausreichen.",
+        fullContent: "Beispiel-Inhalt, da kein KI-Zugang konfiguriert ist. Moderne Software-Lösungen sparen bis zu 30% Arbeitszeit...\n\nEddys Einordnung: Wer 2026 noch ohne Mieterportal arbeitet, verliert Zeit und Bewerber.",
         category: "Management",
-        date: new Date().toLocaleDateString('de-DE'),
+        date: editionStr,
         isLatest: false,
         sources: [{ title: "Immobilien Zeitung", url: "https://www.iz.de" }]
       }
@@ -101,7 +139,11 @@ export const fetchLatestIndustryBlog = async (): Promise<BlogArticle[]> => {
     const ai = new GoogleGenAI({ apiKey: API_KEY });
     const response = await ai.models.generateContent({
       model: "gemini-2.5-flash",
-      contents: "Finde die 3 aktuellsten und wichtigsten Nachrichten für Hausverwaltungen und Immobilieneigentümer in Deutschland (März 2025). Berücksichtige rechtliche Änderungen, technische Innovationen und Markt-News.",
+      contents: `Du bist Eddy, der KI-Immobilienassistent von HausMatch. Erstelle "Eddys News der Woche" – Ausgabe vom ${editionStr}. ` +
+        `Finde über die Google-Suche die 4 aktuellsten und wichtigsten Nachrichten der letzten 7 Tage für Immobilieneigentümer und Hausverwaltungen in Deutschland ` +
+        `(rechtliche Änderungen & Urteile, Markt & Mieten, Zinsen & Finanzierung, Energie & Technik). ` +
+        `Schreibe auf Deutsch. fullContent: 150–250 Wörter pro Artikel, sachlich und konkret; beende jeden Artikel mit einem Absatz "Eddys Einordnung:" mit einer kurzen, praktischen Einschätzung. ` +
+        `date ist jeweils "${editionStr}". Gib echte Quellen mit URLs an.`,
       config: {
         tools: [{ googleSearch: {} }],
         responseMimeType: "application/json",
@@ -137,19 +179,20 @@ export const fetchLatestIndustryBlog = async (): Promise<BlogArticle[]> => {
     const text = response.text;
     if (!text) throw new Error("Keine Blog-Daten erhalten");
 
-    const articles = JSON.parse(text) as BlogArticle[];
-    return articles.map((a, i) => ({ ...a, isLatest: i === 0 }));
+    const articles = (JSON.parse(text) as BlogArticle[]).map((a, i) => ({ ...a, isLatest: i === 0 }));
+    if (articles.length > 0) writeEditionCache(cacheKey, articles);
+    return articles;
 
   } catch (error) {
     console.error("Blog-KI-Fehler:", error);
     return [
       {
         id: "err-1",
-        title: "Aktuelle Marktentwicklungen 2025",
-        summary: "Die Zinswende und ihre Auswirkungen auf die Mietverwaltung.",
-        fullContent: "Experten erwarten eine Stabilisierung der Mietpreise...",
+        title: "Eddys News sind gerade nicht erreichbar",
+        summary: "Die aktuelle Ausgabe konnte nicht geladen werden – bitte später erneut versuchen.",
+        fullContent: "Die KI-Recherche für diese Ausgabe ist momentan nicht erreichbar. Schauen Sie in Kürze wieder vorbei.\n\nEddys Einordnung: Manchmal braucht auch eine Eule eine kurze Pause. 🦉",
         category: "News",
-        date: "11.03.2025",
+        date: editionStr,
         isLatest: true,
         sources: [{ title: "Tagesschau Wirtschaft", url: "https://www.tagesschau.de/wirtschaft" }]
       }
