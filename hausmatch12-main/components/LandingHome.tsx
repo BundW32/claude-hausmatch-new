@@ -36,7 +36,7 @@ const LandingHome = () => {
         <div className="hidden sm:block absolute bottom-0 left-0 -ml-20 -mb-20 w-[40rem] h-[40rem] bg-indigo-50 rounded-full blur-[120px] opacity-40"></div>
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          <div className="text-center max-w-4xl mx-auto">
+          <div className="text-center max-w-4xl mx-auto hm-stagger">
             <header>
               <div className="inline-flex items-center gap-2 mb-6 md:mb-8 bg-blue-50 px-4 py-2 rounded-full border border-blue-100 shadow-sm">
                 <span className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></span>
@@ -148,7 +148,7 @@ const LandingHome = () => {
             <h2 className="text-3xl md:text-4xl font-black text-slate-900 tracking-tighter mb-3">Alles an einem Ort</h2>
             <p className="text-slate-500 font-medium max-w-xl mx-auto text-sm md:text-base">Von der Vernetzung bis zur Renditeanalyse — HausMatch ist Ihre zentrale Plattform.</p>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 hm-stagger">
             {[
               { icon: <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" /></svg>, title: 'Aufgaben Board', desc: 'Eigentümer posten Aufträge, Spezialisten bewerben sich — einfach und direkt.', link: '/aufgaben', linkText: 'Zum Aufgaben Board' },
               { icon: <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" /></svg>, title: 'Schwarzes Brett', desc: 'Community-Pinnwand für Aufträge, Gesuche, Angebote und Empfehlungen.', link: '/schwarzes-brett', linkText: 'Zum Schwarzen Brett' },
@@ -157,7 +157,7 @@ const LandingHome = () => {
               { icon: <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" /></svg>, title: 'Kreditrechner', desc: 'Berechnen Sie Rendite, monatliche Rate und Nebenkosten für Ihr Projekt.', link: '/kreditrechner', linkText: 'Zum Rechner' },
               { icon: <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" /></svg>, title: 'Ratgeber', desc: 'Expertenwissen zu Recht, Verwaltung und Investitionen — klar und praxisnah.', link: '/ratgeber', linkText: 'Zum Ratgeber' }
             ].map((item, i) => (
-              <div key={i} className="bg-white rounded-2xl p-6 border border-slate-100 shadow-sm hover:shadow-md transition-shadow group">
+              <div key={i} className="bg-white rounded-2xl p-6 border border-slate-100 shadow-sm hover:shadow-2xl hover:border-indigo-100 transition-all duration-300 group">
                 <div className="w-12 h-12 bg-blue-50 text-blue-600 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">{item.icon}</div>
                 <h3 className="text-lg font-black text-slate-900 mb-2">{item.title}</h3>
                 <p className="text-slate-500 text-sm font-medium mb-4 leading-relaxed">{item.desc}</p>
