@@ -2,7 +2,7 @@
 import React, { useState, useContext, useRef, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../App';
-import { updateUserProfile, getUserProfile, addFriend, removeFriend, sendMessage } from '../services/dataService';
+import { updateUserProfile, getUserProfile, addFriend, removeFriend, sendMessage, deleteAccount } from '../services/dataService';
 import { User, UserType, USER_TYPE_LABELS } from '../types';
 
 const DAYS = [
@@ -43,6 +43,10 @@ const Profile = () => {
   const [actionLoading, setActionLoading] = useState(false);
   const [showMsgModal, setShowMsgModal] = useState(false);
   const [msgText, setMsgText] = useState('');
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [deletePassword, setDeletePassword] = useState('');
+  const [deleteError, setDeleteError] = useState('');
+  const [deleteLoading, setDeleteLoading] = useState(false);
 
   const [formData, setFormData] = useState<Partial<User>>({});
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -131,6 +135,27 @@ const Profile = () => {
     setMsgText('');
     setShowMsgModal(false);
     navigate('/messages');
+  };
+
+  // DSGVO Art. 17: endgültige Löschung von Profil + Zugangsdaten.
+  const handleDeleteAccount = async () => {
+    setDeleteError('');
+    setDeleteLoading(true);
+    try {
+      await deleteAccount(deletePassword || undefined);
+      // onAuthStateChanged setzt den Nutzer automatisch auf null.
+      navigate('/');
+    } catch (err: any) {
+      if (err.code === 'auth/invalid-credential' || err.code === 'auth/wrong-password') {
+        setDeleteError('Das eingegebene Passwort ist nicht korrekt.');
+      } else if (err.code === 'auth/requires-recent-login') {
+        setDeleteError('Aus Sicherheitsgründen müssen Sie sich zunächst neu anmelden. Bitte loggen Sie sich aus, wieder ein und versuchen Sie es erneut.');
+      } else {
+        setDeleteError('Löschung fehlgeschlagen. Bitte versuchen Sie es erneut oder kontaktieren Sie uns unter info@bundwimmobilien.de.');
+      }
+    } finally {
+      setDeleteLoading(false);
+    }
   };
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -490,6 +515,64 @@ const Profile = () => {
            </div>
         </div>
       </div>
+
+      {/* Konto löschen (DSGVO Art. 17) — nur im eigenen Profil */}
+      {isOwnProfile && currentUser && (
+        <div className="max-w-7xl mx-auto px-4 md:px-6 pb-16">
+          <div className="bg-white rounded-[2rem] border border-red-100 p-8 md:p-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
+            <div>
+              <h3 className="text-lg font-black text-slate-900 tracking-tight mb-1">Konto löschen</h3>
+              <p className="text-sm text-slate-500 font-medium max-w-xl">
+                Löscht Ihr Profil und Ihre Zugangsdaten endgültig (Art. 17 DSGVO). Diese Aktion kann nicht rückgängig gemacht werden.
+              </p>
+            </div>
+            <button
+              onClick={() => { setDeleteError(''); setDeletePassword(''); setShowDeleteModal(true); }}
+              className="shrink-0 px-8 py-4 rounded-2xl border-2 border-red-200 text-red-600 font-black uppercase text-xs tracking-widest hover:bg-red-50 hover:border-red-400 transition-all"
+            >
+              Konto endgültig löschen
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Lösch-Bestätigung */}
+      {showDeleteModal && (
+        <div className="fixed inset-0 z-[200] flex items-center justify-center p-4 bg-slate-900/70 backdrop-blur-md animate-fade-in">
+          <div className="bg-white w-full max-w-lg rounded-[2.5rem] p-8 md:p-12 shadow-2xl animate-fade-in-up border border-white">
+            <h2 className="text-2xl md:text-3xl font-black tracking-tighter text-slate-900 mb-3">Konto wirklich löschen?</h2>
+            <p className="text-slate-500 font-medium text-sm leading-relaxed mb-6">
+              Ihr Profil, Ihre Zugangsdaten und Ihre Plattform-Daten werden endgültig gelöscht.
+              Zur Bestätigung geben Sie bitte Ihr Passwort ein.
+            </p>
+            <input
+              type="password"
+              value={deletePassword}
+              onChange={e => setDeletePassword(e.target.value)}
+              placeholder="Ihr Passwort"
+              className="w-full bg-slate-50 border-0 rounded-2xl px-5 py-4 text-slate-900 ring-1 ring-slate-200 focus:ring-2 focus:ring-red-500 transition-all font-medium mb-4"
+            />
+            {deleteError && (
+              <p className="text-red-600 text-sm font-bold bg-red-50 p-3 rounded-xl mb-4">{deleteError}</p>
+            )}
+            <div className="flex flex-col sm:flex-row gap-4">
+              <button
+                onClick={() => setShowDeleteModal(false)}
+                className="flex-1 py-4 bg-slate-100 text-slate-500 rounded-2xl font-black uppercase text-xs tracking-widest hover:bg-slate-200 transition-all"
+              >
+                Abbrechen
+              </button>
+              <button
+                onClick={handleDeleteAccount}
+                disabled={deleteLoading}
+                className="flex-1 py-4 bg-red-600 text-white rounded-2xl font-black uppercase text-xs tracking-widest hover:bg-red-700 transition-all disabled:opacity-60"
+              >
+                {deleteLoading ? 'Wird gelöscht…' : 'Endgültig löschen'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Messaging Modal */}
       {showMsgModal && (

@@ -62,7 +62,7 @@ const Wizard = () => {
       <div className="min-h-[80vh] flex flex-col items-center justify-center p-8">
         <div className="w-full max-w-sm text-center space-y-8">
           <div className="w-20 h-20 rounded-[1.5rem] overflow-hidden mx-auto shadow-xl shadow-indigo-200" style={{ background: '#2563FF' }}>
-            <img src="https://cdn.jsdelivr.net/gh/BundW32/claude-hausmatch-new@main/hf_20260616_092652_b3b38af5-a913-44c1-80ef-1ac5d9adedb4.png"
+            <img src="/eddy-eule.png"
               alt="Eddy" width={80} height={80} style={{ display: 'block', objectFit: 'cover' }} className="animate-pulse" />
           </div>
           <div>

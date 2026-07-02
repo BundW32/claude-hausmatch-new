@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { loginUser, registerUser } from '../services/dataService';
 import { UserRole, UserType, USER_TYPE_LABELS } from '../types';
 
@@ -66,6 +66,7 @@ const Login: React.FC<LoginProps> = ({ initialView = 'login' }) => {
   const [bio, setBio] = useState('');
   const [city, setCity] = useState('');
   const [avatar, setAvatar] = useState<string>('');
+  const [acceptedTerms, setAcceptedTerms] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
@@ -103,6 +104,10 @@ const Login: React.FC<LoginProps> = ({ initialView = 'login' }) => {
     e.preventDefault();
     if (!city.trim()) {
       setError('Bitte geben Sie Ihre Stadt an.');
+      return;
+    }
+    if (!acceptedTerms) {
+      setError('Bitte akzeptieren Sie die AGB und nehmen Sie die Datenschutzerklärung zur Kenntnis.');
       return;
     }
     setLoading(true);
@@ -349,6 +354,25 @@ const Login: React.FC<LoginProps> = ({ initialView = 'login' }) => {
               />
             </div>
           </div>
+
+          {!isLogin && (
+            <label className="flex items-start gap-3 cursor-pointer select-none bg-slate-50 rounded-2xl px-5 py-4 ring-1 ring-slate-200">
+              <input
+                type="checkbox"
+                required
+                checked={acceptedTerms}
+                onChange={e => setAcceptedTerms(e.target.checked)}
+                className="mt-0.5 w-5 h-5 rounded accent-indigo-600 shrink-0"
+              />
+              <span className="text-sm text-slate-600 font-medium leading-relaxed">
+                Ich akzeptiere die{' '}
+                <Link to="/legal/agb" target="_blank" className="text-indigo-600 underline font-bold">AGB</Link>
+                {' '}und habe die{' '}
+                <Link to="/legal/privacy" target="_blank" className="text-indigo-600 underline font-bold">Datenschutzerklärung</Link>
+                {' '}zur Kenntnis genommen. <span className="text-indigo-500">*</span>
+              </span>
+            </label>
+          )}
 
           <button
             type="submit" disabled={loading}

@@ -23,6 +23,8 @@ service cloud.firestore {
       allow read: if isSignedIn();
       allow create: if isSignedIn() && isOwner(userId);
       allow update: if isSignedIn() && isOwner(userId);
+      // DSGVO Art. 17: Nutzer dürfen ihr eigenes Profil löschen (Konto-Löschung).
+      allow delete: if isSignedIn() && isOwner(userId);
     }
 
     // Inquiries Collection
@@ -52,15 +54,20 @@ service cloud.firestore {
 
     // Messages
     // IMPORTANT: list (query) and get (single read) are separate operations.
-    // For onSnapshot queries (where senderId==uid or receiverId==uid) to work,
-    // list must be allowed for any signed-in user. Individual document access
-    // remains restricted to sender/receiver.
+    // list darf NICHT pauschal für alle eingeloggten Nutzer offen sein, sonst
+    // könnte jeder Nutzer per ungefilterter Query fremde Nachrichten auslesen
+    // (DSGVO Art. 32). Die Bedingung unten erlaubt Queries, deren Filter
+    // beweisbar nur eigene Nachrichten treffen (where senderId==uid bzw.
+    // where receiverId==uid) — genau die Queries, die die App verwendet.
     match /messages/{messageId} {
       allow get: if isSignedIn() && (
         request.auth.uid == resource.data.senderId ||
         request.auth.uid == resource.data.receiverId
       );
-      allow list: if isSignedIn();
+      allow list: if isSignedIn() && (
+        request.auth.uid == resource.data.senderId ||
+        request.auth.uid == resource.data.receiverId
+      );
       allow create: if isSignedIn() && request.auth.uid == request.resource.data.senderId;
       allow update: if isSignedIn() && (
         request.auth.uid == resource.data.receiverId ||

@@ -1,4 +1,5 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
+import { applyCors } from './_cors';
 
 // Kontaktdaten von Unternehmens-Website scrapen
 async function scrapeWebsite(url: string): Promise<{ email?: string; phone?: string }> {
@@ -36,9 +37,7 @@ async function scrapeWebsite(url: string): Promise<{ email?: string; phone?: str
 }
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  applyCors(req, res);
 
   if (req.method === 'OPTIONS') return res.status(200).end();
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
@@ -145,7 +144,8 @@ Felder die unbekannt sind als leeren String "" angeben, rating als 0 wenn unbeka
 
     // Gescrapte Daten zusammenfuehren
     companies = companies.map((c, i) => {
-      const scraped = scrapeResults[i].status === 'fulfilled' ? scrapeResults[i].value : {};
+      const result = scrapeResults[i];
+      const scraped: { email?: string; phone?: string } = result.status === 'fulfilled' ? result.value : {};
       return {
         ...c,
         email: c.email || scraped.email || '',
