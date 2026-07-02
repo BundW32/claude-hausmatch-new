@@ -330,9 +330,11 @@ const ProtectedRoute = ({ children, allowedRoles }: React.PropsWithChildren<{ al
 };
 
 const AppRoutes = () => {
+  const location = useLocation();
   return (
     <Suspense fallback={<div className="h-screen flex items-center justify-center font-black uppercase tracking-widest text-slate-300">Lädt...</div>}>
-      <Routes>
+      <div key={location.pathname} className="animate-fade-in">
+      <Routes location={location}>
         <Route path="/" element={<LandingHome />} />
         <Route path="/seekers" element={<ForSeekers />} />
         <Route path="/managers" element={<ForManagers />} />
@@ -385,6 +387,7 @@ const AppRoutes = () => {
         } />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
+      </div>
     </Suspense>
   );
 };
