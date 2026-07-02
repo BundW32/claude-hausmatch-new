@@ -4,6 +4,7 @@ import {
   subscribeToSchwarztesBrett,
   createSchwarztesBrettPost,
   deleteSchwarztesBrettPost,
+  sendMessage,
 } from '../services/dataService';
 import {
   SchwarztesBrettPost,
@@ -111,7 +112,36 @@ interface PostDetailModalProps {
   onDelete: () => void;
 }
 
-const PostDetailModal: React.FC<PostDetailModalProps> = ({ post, currentUserId, onClose, onDelete }) => (
+const PostDetailModal: React.FC<PostDetailModalProps> = ({ post, currentUserId, onClose, onDelete }) => {
+  const { user } = useContext(AuthContext);
+  const [showComposer, setShowComposer] = useState(false);
+  const [msgText, setMsgText] = useState('');
+  const [sending, setSending] = useState(false);
+  const [sent, setSent] = useState(false);
+  const isDemoPost = post.authorId === 'muster';
+
+  // Schickt eine echte Nachricht an den Beitrags-Autor – landet im Postfach beider.
+  const handleSendMessage = async () => {
+    if (!user || !msgText.trim() || sending) return;
+    setSending(true);
+    try {
+      await sendMessage({
+        senderId: user.id,
+        senderName: user.name,
+        receiverId: post.authorId,
+        receiverName: post.authorName,
+        subject: post.title,
+        content: `Zu Ihrem Beitrag "${post.title}":\n\n${msgText.trim()}`,
+      });
+      setSent(true);
+    } catch (err) {
+      console.error('[Marktplatz] Nachricht senden fehlgeschlagen:', err);
+    } finally {
+      setSending(false);
+    }
+  };
+
+  return (
   <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-md" onClick={onClose}>
     <div
       className="bg-white rounded-[2rem] sm:rounded-[3rem] w-full max-w-2xl max-h-[90vh] overflow-y-auto shadow-2xl"
@@ -169,14 +199,58 @@ const PostDetailModal: React.FC<PostDetailModalProps> = ({ post, currentUserId, 
           </div>
         ) : null}
 
+        {/* Nachricht an den Autor – erstellt eine echte Nachricht im Postfach */}
+        {currentUserId && currentUserId !== post.authorId && !isDemoPost && (
+          sent ? (
+            <div className="bg-green-50 border border-green-100 rounded-2xl p-4 mb-5 flex items-center justify-between gap-3">
+              <p className="text-sm font-black text-green-700">Nachricht gesendet ✓</p>
+              <a href="#/messages" className="text-xs font-black text-indigo-600 uppercase tracking-widest hover:underline flex-shrink-0">
+                Zum Postfach →
+              </a>
+            </div>
+          ) : showComposer ? (
+            <div className="bg-slate-50 border border-slate-100 rounded-2xl p-4 mb-5 space-y-3">
+              <textarea
+                autoFocus
+                value={msgText}
+                onChange={e => setMsgText(e.target.value)}
+                rows={3}
+                placeholder={`Ihre Nachricht an ${post.authorName}...`}
+                className="w-full bg-white ring-1 ring-slate-200 rounded-xl px-4 py-3 text-sm font-medium text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-400 resize-none"
+              />
+              <div className="flex gap-2">
+                <button
+                  onClick={() => setShowComposer(false)}
+                  className="px-4 py-2.5 border border-slate-200 text-slate-500 font-black text-xs uppercase tracking-widest rounded-xl hover:bg-white transition-colors"
+                >
+                  Abbrechen
+                </button>
+                <button
+                  onClick={handleSendMessage}
+                  disabled={!msgText.trim() || sending}
+                  className="flex-1 py-2.5 bg-indigo-600 text-white font-black text-xs uppercase tracking-widest rounded-xl hover:bg-indigo-700 transition-colors disabled:opacity-40"
+                >
+                  {sending ? 'Sendet…' : 'Senden'}
+                </button>
+              </div>
+            </div>
+          ) : null
+        )}
+
+        {isDemoPost && currentUserId && (
+          <div className="bg-amber-50 border border-amber-200 rounded-2xl p-4 mb-5">
+            <p className="text-xs font-medium text-amber-800">Dies ist ein Muster-Beitrag zur Veranschaulichung — Nachrichten sind hier nicht möglich.</p>
+          </div>
+        )}
+
         <div className="flex flex-col sm:flex-row gap-3">
-          {currentUserId && currentUserId !== post.authorId && (
-            <a
-              href={`#/messages`}
+          {currentUserId && currentUserId !== post.authorId && !isDemoPost && !showComposer && !sent && (
+            <button
+              onClick={() => setShowComposer(true)}
               className="flex-1 text-center py-3.5 bg-indigo-600 text-white font-black text-xs uppercase tracking-widest rounded-2xl hover:bg-indigo-700 transition-colors shadow-lg shadow-indigo-200"
             >
               Nachricht schicken
-            </a>
+            </button>
           )}
           {currentUserId === post.authorId && (
             <button
@@ -196,7 +270,8 @@ const PostDetailModal: React.FC<PostDetailModalProps> = ({ post, currentUserId, 
       </div>
     </div>
   </div>
-);
+  );
+};
 
 // ─── CreatePostModal ──────────────────────────────────────────────────────────
 
