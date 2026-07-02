@@ -51,6 +51,37 @@ body {
 .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #a5b4fc; }
 .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
 
+/* ─── Corporate-Premium-Utilities ─────────────────────────────────────────── */
+
+/* Markenhafte Text-Auswahl & Tastatur-Fokus */
+::selection { background: #c7d2fe; color: #1e1b4b; }
+:focus-visible { outline: 2px solid #6366f1; outline-offset: 2px; border-radius: 4px; }
+
+/* Glas-Oberfläche (Navbar, schwebende Panels) */
+.hm-glass {
+  background: rgba(255, 255, 255, .72);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  backdrop-filter: blur(20px) saturate(180%);
+}
+
+/* Feines technisches Raster als Hero-Hintergrund, zu den Rändern ausgeblendet */
+.hm-grid-bg {
+  background-image:
+    linear-gradient(to right, rgba(15, 23, 42, .045) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(15, 23, 42, .045) 1px, transparent 1px);
+  background-size: 44px 44px;
+  -webkit-mask-image: radial-gradient(ellipse 80% 60% at 50% 40%, black 35%, transparent 78%);
+  mask-image: radial-gradient(ellipse 80% 60% at 50% 40%, black 35%, transparent 78%);
+}
+
+/* Marken-Gradient für Display-Headlines */
+.hm-gradient-text {
+  background: linear-gradient(135deg, #2563eb 0%, #4f46e5 55%, #7c3aed 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
 /* Nutzer mit "reduzierte Bewegung" nicht mit Animationen belästigen */
 @media (prefers-reduced-motion: reduce) {
   .animate-fade-in,

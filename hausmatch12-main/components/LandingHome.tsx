@@ -32,13 +32,14 @@ const LandingHome = () => {
     <article className="bg-white">
       {/* Hero Section */}
       <section className="relative pt-12 pb-20 md:pt-24 md:pb-32 overflow-hidden">
-        <div className="hidden sm:block absolute top-0 right-0 -mr-20 -mt-20 w-[50rem] h-[50rem] bg-blue-50 rounded-full blur-[120px] opacity-40"></div>
-        <div className="hidden sm:block absolute bottom-0 left-0 -ml-20 -mb-20 w-[40rem] h-[40rem] bg-indigo-50 rounded-full blur-[120px] opacity-40"></div>
+        <div className="hidden sm:block absolute top-0 right-0 -mr-20 -mt-20 w-[50rem] h-[50rem] bg-blue-100 rounded-full blur-[120px] opacity-50"></div>
+        <div className="hidden sm:block absolute bottom-0 left-0 -ml-20 -mb-20 w-[40rem] h-[40rem] bg-indigo-100 rounded-full blur-[120px] opacity-50"></div>
+        <div className="absolute inset-0 hm-grid-bg pointer-events-none"></div>
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="text-center max-w-4xl mx-auto hm-stagger">
             <header>
-              <div className="inline-flex items-center gap-2 mb-6 md:mb-8 bg-blue-50 px-4 py-2 rounded-full border border-blue-100 shadow-sm">
+              <div className="inline-flex items-center gap-2 mb-6 md:mb-8 bg-white/80 backdrop-blur px-4 py-2 rounded-full border border-slate-200/80 shadow-sm">
                 <span className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></span>
                 <span className="text-[10px] font-black text-blue-700 uppercase tracking-widest">
                   Deutschlands Immobilien-Community
@@ -85,7 +86,7 @@ const LandingHome = () => {
             </form>
 
             <div className="mt-5 md:mt-6">
-              <Link to="/vermittlung" className="inline-flex items-center gap-2 text-sm md:text-base font-black text-blue-600 hover:text-blue-700 transition-colors uppercase tracking-widest">
+              <Link to="/vermittlung" className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-white/80 backdrop-blur border border-slate-200 text-xs md:text-sm font-black text-slate-700 hover:text-blue-700 hover:border-blue-300 hover:shadow-lg hover:shadow-blue-100 transition-all uppercase tracking-widest">
                 Verwalter finden
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M9 5l7 7-7 7" /></svg>
               </Link>
@@ -145,19 +146,19 @@ const LandingHome = () => {
       <section className="py-16 md:py-24 bg-slate-50 border-y border-slate-100">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
+            <span className="inline-block text-[10px] font-black uppercase tracking-[0.3em] text-indigo-600 bg-indigo-50 border border-indigo-100 px-4 py-1.5 rounded-full mb-4">Die Plattform</span>
             <h2 className="text-3xl md:text-4xl font-black text-slate-900 tracking-tighter mb-3">Alles an einem Ort</h2>
             <p className="text-slate-500 font-medium max-w-xl mx-auto text-sm md:text-base">Von der Vernetzung bis zur Renditeanalyse — HausMatch ist Ihre zentrale Plattform.</p>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 hm-stagger">
             {[
-              { icon: <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" /></svg>, title: 'Aufgaben Board', desc: 'Eigentümer posten Aufträge, Spezialisten bewerben sich — einfach und direkt.', link: '/aufgaben', linkText: 'Zum Aufgaben Board' },
-              { icon: <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" /></svg>, title: 'Schwarzes Brett', desc: 'Community-Pinnwand für Aufträge, Gesuche, Angebote und Empfehlungen.', link: '/schwarzes-brett', linkText: 'Zum Schwarzen Brett' },
+              { icon: <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" /></svg>, title: 'Marktplatz', desc: 'Aufträge, Gesuche, Angebote & Empfehlungen — alles an einem Ort.', link: '/marktplatz', linkText: 'Zum Marktplatz' },
               { icon: <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" /></svg>, title: 'Community', desc: 'Vernetzen Sie sich mit Eigentümern und Verwaltern in ganz Deutschland.', link: '/network', linkText: 'Zum Netzwerk' },
               { icon: <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" /></svg>, title: 'Forum & Austausch', desc: 'Stellen Sie Fragen, teilen Sie Erfahrungen und lernen Sie von der Community.', link: '/forum', linkText: 'Zum Forum' },
               { icon: <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" /></svg>, title: 'Kreditrechner', desc: 'Berechnen Sie Rendite, monatliche Rate und Nebenkosten für Ihr Projekt.', link: '/kreditrechner', linkText: 'Zum Rechner' },
               { icon: <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" /></svg>, title: 'Ratgeber', desc: 'Expertenwissen zu Recht, Verwaltung und Investitionen — klar und praxisnah.', link: '/ratgeber', linkText: 'Zum Ratgeber' }
             ].map((item, i) => (
-              <div key={i} className="bg-white rounded-2xl p-6 border border-slate-100 shadow-sm hover:shadow-2xl hover:border-indigo-100 transition-all duration-300 group">
+              <div key={i} className="bg-white rounded-2xl p-6 border border-slate-100 shadow-sm hover:shadow-2xl hover:border-indigo-100 hover:-translate-y-1.5 transition-all duration-300 group">
                 <div className="w-12 h-12 bg-blue-50 text-blue-600 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">{item.icon}</div>
                 <h3 className="text-lg font-black text-slate-900 mb-2">{item.title}</h3>
                 <p className="text-slate-500 text-sm font-medium mb-4 leading-relaxed">{item.desc}</p>
@@ -175,6 +176,7 @@ const LandingHome = () => {
       <section className="py-16 md:py-24 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
+            <span className="inline-block text-[10px] font-black uppercase tracking-[0.3em] text-blue-600 bg-blue-50 border border-blue-100 px-4 py-1.5 rounded-full mb-4">So einfach geht's</span>
             <h2 className="text-3xl md:text-4xl font-black text-slate-900 tracking-tighter mb-3">So funktioniert HausMatch</h2>
             <p className="text-slate-500 font-medium text-sm md:text-base">In drei Schritten zur perfekten Hausverwaltung</p>
           </div>
@@ -198,12 +200,14 @@ const LandingHome = () => {
       </section>
 
       {/* CTA */}
-      <section className="py-16 md:py-20 bg-slate-900">
-        <div className="max-w-3xl mx-auto px-4 text-center">
-          <h2 className="text-3xl md:text-4xl font-black text-white tracking-tighter mb-4">Werden Sie Teil der Community</h2>
+      <section className="relative py-16 md:py-24 bg-slate-900 overflow-hidden">
+        <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-indigo-500/60 to-transparent" />
+        <div className="absolute -bottom-32 left-1/2 -translate-x-1/2 w-[50rem] h-[25rem] bg-indigo-600/20 rounded-full blur-[110px] pointer-events-none" />
+        <div className="relative max-w-3xl mx-auto px-4 text-center">
+          <h2 className="text-3xl md:text-5xl font-black text-white tracking-tighter mb-4">Werden Sie Teil der Community</h2>
           <p className="text-slate-400 font-medium mb-8 text-sm md:text-base">Kostenlos registrieren und sofort mit Experten und Eigentümern vernetzen.</p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link to="/register" className="px-8 py-4 bg-blue-600 text-white rounded-2xl font-black uppercase tracking-widest text-sm hover:bg-blue-500 transition-all shadow-xl shadow-blue-900/40 active:scale-95">Kostenlos starten</Link>
+            <Link to="/register" className="px-8 py-4 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-2xl font-black uppercase tracking-widest text-sm hover:from-blue-500 hover:to-indigo-500 transition-all shadow-xl shadow-indigo-900/50 active:scale-95">Kostenlos starten</Link>
             <Link to="/ratgeber" className="px-8 py-4 bg-white/10 text-white rounded-2xl font-black uppercase tracking-widest text-sm hover:bg-white/20 transition-all border border-white/10 active:scale-95">Ratgeber lesen</Link>
           </div>
         </div>
