@@ -137,13 +137,16 @@ const Navbar = () => {
   const toolsActive = toolLinks.some(l => l.to === location.pathname);
 
   return (
-    <nav className="fixed top-0 w-full z-50 bg-white/90 backdrop-blur-xl border-b border-slate-100 shadow-sm h-16">
+    <nav className="fixed top-0 w-full z-50 hm-glass border-b border-slate-200/60 h-16">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-full">
         <div className="flex justify-between items-center h-full">
           {/* Logo */}
-          <Link to="/" className="flex items-center gap-2.5">
-            <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center text-white font-black text-sm">H</div>
-            <span className="text-xl font-black tracking-tighter text-slate-900">HausMatch</span>
+          <Link to="/" className="flex items-center gap-2.5 group">
+            <div className="w-9 h-9 bg-gradient-to-br from-blue-600 via-indigo-600 to-indigo-700 rounded-xl flex items-center justify-center text-white font-black text-sm shadow-lg shadow-indigo-200/60 group-hover:shadow-indigo-300/80 group-hover:scale-105 transition-all">H</div>
+            <div className="flex flex-col leading-none">
+              <span className="text-xl font-black tracking-tighter text-slate-900">HausMatch</span>
+              <span className="text-[8px] font-black uppercase tracking-[0.3em] text-slate-400 hidden sm:block">Immobilien-Community</span>
+            </div>
           </Link>
 
           {/* Desktop Nav */}
@@ -184,7 +187,7 @@ const Navbar = () => {
             {!user ? (
               <div className="flex items-center gap-2 ml-3">
                 <Link to="/login" className="px-5 py-2 rounded-full text-slate-900 text-xs font-black uppercase tracking-widest hover:bg-slate-100 transition-all">Login</Link>
-                <Link to="/register" className="px-5 py-2 rounded-full bg-blue-600 text-white text-xs font-black uppercase tracking-widest hover:bg-blue-700 transition-all shadow-lg shadow-blue-200">Registrieren</Link>
+                <Link to="/register" className="px-5 py-2 rounded-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white text-xs font-black uppercase tracking-widest hover:from-blue-700 hover:to-indigo-700 hover:shadow-indigo-300/60 transition-all shadow-lg shadow-indigo-200">Registrieren</Link>
               </div>
             ) : (
               <div className="flex items-center gap-3 ml-3 pl-3 border-l border-slate-100">
@@ -278,43 +281,73 @@ const Navbar = () => {
 
 const Footer = () => {
   return (
-    <footer className="bg-white border-t border-slate-100 py-8 md:py-12">
-      <div className="max-w-7xl mx-auto px-4 grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8">
-        <div>
-          <h4 className="font-black text-slate-900 uppercase text-xs tracking-widest mb-3 md:mb-4">HausMatch</h4>
-          <ul className="space-y-2 text-sm text-slate-500 font-medium">
-            <li><Link to="/about" className="hover:text-blue-600">Über uns</Link></li>
-            <li><Link to="/blog" className="hover:text-blue-600">Blog</Link></li>
-            <li><Link to="/ratgeber" className="hover:text-blue-600">Ratgeber</Link></li>
-          </ul>
-        </div>
-        <div>
-          <h4 className="font-black text-slate-900 uppercase text-xs tracking-widest mb-3 md:mb-4">Tools</h4>
-          <ul className="space-y-2 text-sm text-slate-500 font-medium">
-            <li><Link to="/kreditrechner" className="hover:text-blue-600">Kreditrechner</Link></li>
-            <li><Link to="/ki-berater" className="hover:text-blue-600">KI-Berater Eddy</Link></li>
-            <li><Link to="/marktplatz" className="hover:text-blue-600">Marktplatz</Link></li>
-            <li><Link to="/network" className="hover:text-blue-600">Netzwerk</Link></li>
-            <li><Link to="/forum" className="hover:text-blue-600">Forum</Link></li>
-          </ul>
-        </div>
-        <div>
-          <h4 className="font-black text-slate-900 uppercase text-xs tracking-widest mb-3 md:mb-4">Rechtliches</h4>
-          <ul className="space-y-2 text-sm text-slate-500 font-medium">
-            <li><Link to="/legal/impressum" className="hover:text-blue-600">Impressum</Link></li>
-            <li><Link to="/legal/privacy" className="hover:text-blue-600">Datenschutz</Link></li>
-            <li><Link to="/legal/agb" className="hover:text-blue-600">AGB</Link></li>
-          </ul>
-        </div>
-        <div className="col-span-2 md:col-span-1">
-          <div className="flex items-center gap-2 mb-3">
-            <div className="w-6 h-6 bg-blue-600 rounded-md flex items-center justify-center text-white font-black text-xs">H</div>
-            <span className="font-black text-slate-900 text-sm">HausMatch</span>
+    <footer className="relative bg-slate-950 text-slate-400 overflow-hidden">
+      {/* Feine Gradient-Linie als oberer Abschluss */}
+      <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-indigo-500/60 to-transparent" />
+      <div className="absolute -top-40 left-1/2 -translate-x-1/2 w-[60rem] h-[30rem] bg-indigo-600/10 rounded-full blur-[120px] pointer-events-none" />
+
+      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-14 md:pt-20 pb-10">
+        <div className="grid grid-cols-2 md:grid-cols-12 gap-10 md:gap-8 mb-12 md:mb-16">
+          {/* Brand */}
+          <div className="col-span-2 md:col-span-5 pr-0 md:pr-16">
+            <div className="flex items-center gap-3 mb-5">
+              <div className="w-10 h-10 bg-gradient-to-br from-blue-500 via-indigo-500 to-indigo-700 rounded-xl flex items-center justify-center text-white font-black shadow-lg shadow-indigo-900/40">H</div>
+              <div className="flex flex-col leading-none">
+                <span className="text-xl font-black tracking-tighter text-white">HausMatch</span>
+                <span className="text-[8px] font-black uppercase tracking-[0.3em] text-slate-500">Immobilien-Community</span>
+              </div>
+            </div>
+            <p className="text-sm font-medium leading-relaxed text-slate-400 max-w-sm mb-6">
+              Die Plattform für Immobilienprofis und Eigentümer in Deutschland —
+              Verwaltung finden, vernetzen, Wissen teilen.
+            </p>
+            <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-slate-500">
+              <span className="w-1.5 h-1.5 bg-emerald-400 rounded-full animate-pulse" />
+              Made in Germany · DSGVO-konform
+            </div>
           </div>
-          <p className="text-xs text-slate-400 font-medium leading-relaxed">
-            Die Community für Immobilienprofis und Eigentümer in Deutschland.
-            © 2026 B&W Immobilien Management UG (haftungsbeschränkt).
+
+          {/* Link-Spalten */}
+          <div className="md:col-span-2">
+            <h4 className="font-black text-white uppercase text-[10px] tracking-[0.25em] mb-4 md:mb-5">Plattform</h4>
+            <ul className="space-y-2.5 text-sm font-medium">
+              <li><Link to="/marktplatz" className="hover:text-white transition-colors">Marktplatz</Link></li>
+              <li><Link to="/network" className="hover:text-white transition-colors">Netzwerk</Link></li>
+              <li><Link to="/forum" className="hover:text-white transition-colors">Forum</Link></li>
+              <li><Link to="/vermittlung" className="hover:text-white transition-colors">Verwalter finden</Link></li>
+            </ul>
+          </div>
+          <div className="md:col-span-2">
+            <h4 className="font-black text-white uppercase text-[10px] tracking-[0.25em] mb-4 md:mb-5">Hilfsmittel</h4>
+            <ul className="space-y-2.5 text-sm font-medium">
+              <li><Link to="/ki-berater" className="hover:text-white transition-colors">KI-Berater Eddy</Link></li>
+              <li><Link to="/kreditrechner" className="hover:text-white transition-colors">Kreditrechner</Link></li>
+              <li><Link to="/ratgeber" className="hover:text-white transition-colors">Ratgeber</Link></li>
+              <li><Link to="/blog" className="hover:text-white transition-colors">Blog</Link></li>
+            </ul>
+          </div>
+          <div className="md:col-span-3">
+            <h4 className="font-black text-white uppercase text-[10px] tracking-[0.25em] mb-4 md:mb-5">Unternehmen</h4>
+            <ul className="space-y-2.5 text-sm font-medium">
+              <li><Link to="/about" className="hover:text-white transition-colors">Über uns</Link></li>
+              <li><Link to="/contact" className="hover:text-white transition-colors">Kontakt</Link></li>
+              <li><Link to="/legal/impressum" className="hover:text-white transition-colors">Impressum</Link></li>
+              <li><Link to="/legal/privacy" className="hover:text-white transition-colors">Datenschutz</Link></li>
+              <li><Link to="/legal/agb" className="hover:text-white transition-colors">AGB</Link></li>
+            </ul>
+          </div>
+        </div>
+
+        {/* Legal-Leiste */}
+        <div className="border-t border-white/10 pt-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+          <p className="text-xs font-medium text-slate-500">
+            © 2026 B&W Immobilien Management UG (haftungsbeschränkt). Alle Rechte vorbehalten.
           </p>
+          <div className="flex items-center gap-5 text-xs font-medium text-slate-500">
+            <Link to="/legal/impressum" className="hover:text-white transition-colors">Impressum</Link>
+            <Link to="/legal/privacy" className="hover:text-white transition-colors">Datenschutz</Link>
+            <Link to="/legal/agb" className="hover:text-white transition-colors">AGB</Link>
+          </div>
         </div>
       </div>
     </footer>
