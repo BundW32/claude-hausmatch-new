@@ -52,17 +52,18 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   }
 
   try {
-    const prompt = `Suche nach echten, aktiven deutschen Hausverwaltungsunternehmen fuer die Suchanfrage: "${query}".
+    const prompt = `Suche nach echten, aktiven deutschen Hausverwaltungsunternehmen für die Suchanfrage: "${query}".
 
 Nutze Google-Suchergebnisse um ECHTE Unternehmen mit echten Kontaktdaten zu finden.
-Gib exakt 8 Unternehmen zurueck, sortiert nach Google-Bewertung (hoechste zuerst).
+Gib exakt 8 Unternehmen zurück, sortiert nach Google-Bewertung (höchste zuerst).
+Verwende in allen Texten korrekte deutsche Umlaute (ä, ö, ü, ß) — z. B. "München", nicht "Muenchen".
 
-Antworte NUR mit einem JSON-Array (kein Markdown, kein erklaerende Text), in diesem Format:
+Antworte NUR mit einem JSON-Array (kein Markdown, kein erklärender Text), in diesem Format:
 [
   {
     "name": "Firmenname GmbH",
-    "address": "Musterstrasse 1, 80331 Muenchen",
-    "city": "Muenchen",
+    "address": "Musterstraße 1, 80331 München",
+    "city": "München",
     "phone": "+49 89 123456",
     "website": "https://example.de",
     "email": "info@example.de",
@@ -130,7 +131,7 @@ Felder die unbekannt sind als leeren String "" angeben, rating als 0 wenn unbeka
       isPartner: false
     }));
 
-    // Websites parallel scrapen fuer fehlende Kontaktdaten
+    // Websites parallel scrapen für fehlende Kontaktdaten
     const scrapeResults = await Promise.allSettled(
       companies.map((c) => {
         const needsEmail = !c.email;

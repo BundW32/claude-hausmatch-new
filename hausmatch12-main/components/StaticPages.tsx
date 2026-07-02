@@ -342,8 +342,8 @@ export const LegalPage: React.FC<{ type: 'impressum' | 'privacy' | 'agb' }> = ({
           <section>
             <h3 className="text-xl font-bold text-slate-900 mb-4">Vertreten durch:</h3>
             <p>
-              Franz-Josef Barth (GescN[¤ftsführer)<br />
-              Alexander Wachtel (stellvertretender Geschäftsføhrer)
+              Franz-Josef Barth (Geschäftsführer)<br />
+              Alexander Wachtel (stellvertretender Geschäftsführer)
             </p>
           </section>
           <section>
@@ -412,13 +412,13 @@ export const LegalPage: React.FC<{ type: 'impressum' | 'privacy' | 'agb' }> = ({
             <h3 className="text-xl font-bold text-slate-900 mb-4">3. Eingesetzte Dienste und Drittanbieter</h3>
 
             <h4 className="font-bold text-slate-800 mb-2">3.1 Google Firebase (Authentifizierung &amp; Datenbank)</h4>
-            <p>Wir nutzen Google Firebase (Google LLC, 1600 Amphitheatre Parkway, Mountain View, CA 94043, USA) før Nutzeranmeldung und Datenspeicherung. Daten können auf Servern in den USA verarbeitet werden. Grundlage ist ein Standardvertragsklauseln-Abkommen gemäß Art. 46 DSGVO. Datenschutzerklärung Google: <a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer" className="text-indigo-600 underline">policies.google.com/privacy</a></p>
+            <p>Wir nutzen Google Firebase (Google LLC, 1600 Amphitheatre Parkway, Mountain View, CA 94043, USA) für Nutzeranmeldung und Datenspeicherung. Daten können auf Servern in den USA verarbeitet werden. Grundlage ist ein Standardvertragsklauseln-Abkommen gemäß Art. 46 DSGVO. Datenschutzerklärung Google: <a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer" className="text-indigo-600 underline">policies.google.com/privacy</a></p>
 
             <h4 className="font-bold text-slate-800 mb-2 mt-4">3.2 Google Gemini KI</h4>
-            <p>Unser KI-Assistent „Eddy" und die Suchfunktion nutzen Google Gemini (Google LLC). Anfragen, die Sie an Eddy stellen, werden zur Verarbeitung an die Google Gemini API øbertragen. Wir empfehlen, keine sensiblen personenbezogenen Daten in Chat-Anfragen einzugeben. Rechtsgrundlage: Art. 6 Abs. 1 lit. b DSGVO (Vertragserføllung / Bereitstellung des Dienstes).</p>
+            <p>Unser KI-Assistent „Eddy" und die Suchfunktion nutzen Google Gemini (Google LLC). Anfragen, die Sie an Eddy stellen, werden zur Verarbeitung an die Google Gemini API übertragen. Wir empfehlen, keine sensiblen personenbezogenen Daten in Chat-Anfragen einzugeben. Rechtsgrundlage: Art. 6 Abs. 1 lit. b DSGVO (Vertragserfüllung / Bereitstellung des Dienstes).</p>
 
             <h4 className="font-bold text-slate-800 mb-2 mt-4">3.3 Resend (E-Mail-Versand)</h4>
-            <p>Für den Versand von E-Mails (Anfragen, Kontaktformular) nutzen wir Resend (Resend Inc., USA). Dabei werden Name und E-Mail-Adresse der Absender an Resend øbermittelt. Datenschutzerklärung: <a href="https://resend.com/legal/privacy-policy" target="_blank" rel="noopener noreferrer" className="text-indigo-600 underline">resend.com/legal/privacy-policy</a></p>
+            <p>Für den Versand von E-Mails (Anfragen, Kontaktformular) nutzen wir Resend (Resend Inc., USA). Dabei werden Name und E-Mail-Adresse der Absender an Resend übermittelt. Datenschutzerklärung: <a href="https://resend.com/legal/privacy-policy" target="_blank" rel="noopener noreferrer" className="text-indigo-600 underline">resend.com/legal/privacy-policy</a></p>
 
             <h4 className="font-bold text-slate-800 mb-2 mt-4">3.4 Vercel (Hosting)</h4>
             <p>Die Plattform wird auf Vercel (Vercel Inc., USA) gehostet. Beim Seitenaufruf werden technische Daten (IP-Adresse, Browsertyp, Zugriffszeit) im Rahmen des regulären Serverbetriebs verarbeitet. Datenschutzerklärung: <a href="https://vercel.com/legal/privacy-policy" target="_blank" rel="noopener noreferrer" className="text-indigo-600 underline">vercel.com/legal/privacy-policy</a></p>
@@ -436,7 +436,7 @@ export const LegalPage: React.FC<{ type: 'impressum' | 'privacy' | 'agb' }> = ({
 
           <section>
             <h3 className="text-xl font-bold text-slate-900 mb-4">6. Ihre Rechte</h3>
-            <p>Sie haben das Recht auf Auskunft (Art. 15 DSGVO), Berichtigung (Art. 16), Löschung (Art. 17), Einschränkung der Verarbeitung (Art. 18), Datenøbertragbarkeit (Art. 20) sowie Widerspruch (Art. 21 DSGVO). Beschwerden können an die zuständige Datenschutzaufsichtsbehörde gerichtet werden (Landesbeauftragte für Datenschutz NRW).</p>
+            <p>Sie haben das Recht auf Auskunft (Art. 15 DSGVO), Berichtigung (Art. 16), Löschung (Art. 17), Einschränkung der Verarbeitung (Art. 18), Datenübertragbarkeit (Art. 20) sowie Widerspruch (Art. 21 DSGVO). Beschwerden können an die zuständige Datenschutzaufsichtsbehörde gerichtet werden (Landesbeauftragte für Datenschutz NRW).</p>
             <p className="mt-2">Anfragen richten Sie bitte an: <a href="mailto:info@bundwimmobilien.de" className="text-indigo-600 underline">info@bundwimmobilien.de</a></p>
           </section>
         </>
@@ -451,7 +451,7 @@ export const LegalPage: React.FC<{ type: 'impressum' | 'privacy' | 'agb' }> = ({
 
           <section>
             <h3 className="text-xl font-bold text-slate-900 mb-4">§ 2 Leistungsbeschreibung</h3>
-            <p>HausMatch ist eine digitale Vermittlungsplattform, die Eigentümer von Immobilien mit professionellen Hausverwaltungsunternehmen zusammenführt. Der Betreiber vermittelt lediglich den Kontakt zwischen den Parteien und ist nicht Vertragspartner der zwischen Eigentümern Und Verwaltern geschlossenen Verwaltungsverträge.</p>
+            <p>HausMatch ist eine digitale Vermittlungsplattform, die Eigentümer von Immobilien mit professionellen Hausverwaltungsunternehmen zusammenführt. Der Betreiber vermittelt lediglich den Kontakt zwischen den Parteien und ist nicht Vertragspartner der zwischen Eigentümern und Verwaltern geschlossenen Verwaltungsverträge.</p>
             <p className="mt-2">Die Plattform bietet zusätzlich einen KI-gestützten Assistenten („Eddy"), der allgemeine Informationen zu Immobilienthemen bereitstellt. Eddy ersetzt keine Rechts-, Steuer- oder Finanzberatung.</p>
           </section>
 
@@ -473,12 +473,12 @@ export const LegalPage: React.FC<{ type: 'impressum' | 'privacy' | 'agb' }> = ({
 
           <section>
             <h3 className="text-xl font-bold text-slate-900 mb-4">§ 6 KI-Assistent (Eddy)</h3>
-            <p>Der KI-Assistent Eddy stellt automatisch generierte Informationen bereit. Diese Informationen sind allgemeiner Natur und stellen keine Rechts-, Steuer- oder Finanzberatung dar. Før Entscheidungen, die auf Eddy-Antworten basieren, øbernimmt der Betreiber keine Haftung. Nutzer werden ausdrücklich aufgefordert, bei rechtlichen oder finanziellen Fragen einen zugelassenen Fachberater hinzuzuziehen.</p>
+            <p>Der KI-Assistent Eddy stellt automatisch generierte Informationen bereit. Diese Informationen sind allgemeiner Natur und stellen keine Rechts-, Steuer- oder Finanzberatung dar. Für Entscheidungen, die auf Eddy-Antworten basieren, übernimmt der Betreiber keine Haftung. Nutzer werden ausdrücklich aufgefordert, bei rechtlichen oder finanziellen Fragen einen zugelassenen Fachberater hinzuzuziehen.</p>
           </section>
 
           <section>
             <h3 className="text-xl font-bold text-slate-900 mb-4">§ 7 Änderungen der AGB</h3>
-            <p>Der Betreiber behält sich vor, diese AGB jederzeit zu ändern. Registrierte Nutzer werden øber wesentliche Änderungen per E-Mail informiert. Die fortgesetzte Nutzung der Plattform nach Bekanntgabe der Änderungen gilt als Zustimmung.</p>
+            <p>Der Betreiber behält sich vor, diese AGB jederzeit zu ändern. Registrierte Nutzer werden über wesentliche Änderungen per E-Mail informiert. Die fortgesetzte Nutzung der Plattform nach Bekanntgabe der Änderungen gilt als Zustimmung.</p>
           </section>
 
           <section>
@@ -488,15 +488,15 @@ export const LegalPage: React.FC<{ type: 'impressum' | 'privacy' | 'agb' }> = ({
 
           <section>
             <h3 className="text-xl font-bold text-slate-900 mb-4">§ 9 Anwendbares Recht und Gerichtsstand</h3>
-            <p>Es gilt das Recht der Bundesrepublik Deutschland. Gerichtsstand før alle Streitigkeiten aus oder im Zusammenhang mit diesen AGB ist, soweit gesetzlich zulässig, Gelsenkirchen.</p>
+            <p>Es gilt das Recht der Bundesrepublik Deutschland. Gerichtsstand für alle Streitigkeiten aus oder im Zusammenhang mit diesen AGB ist, soweit gesetzlich zulässig, Gelsenkirchen.</p>
           </section>
 
           <section>
             <h3 className="text-xl font-bold text-slate-900 mb-4">§ 10 Salvatorische Klausel</h3>
-            <p>Sollten einzelne Bestimmungen dieser AGB unwirksam sein oder werden, bleibt die Wirksamkeit der øbrigen Bestimmungen unberøhrt.</p>
+            <p>Sollten einzelne Bestimmungen dieser AGB unwirksam sein oder werden, bleibt die Wirksamkeit der übrigen Bestimmungen unberührt.</p>
           </section>
 
-          <p className="text-sm text-slate-400 italic mt-8">Stand: Juni 2026 | B &amp; W Immobilien Management UG (haftungsbeschrƳnkt)</p>
+          <p className="text-sm text-slate-400 italic mt-8">Stand: Juni 2026 | B &amp; W Immobilien Management UG (haftungsbeschränkt)</p>
         </>
       )}
     </div>
