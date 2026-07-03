@@ -10,8 +10,9 @@ const SectionHeader = ({ title, subtitle }: { title: string; subtitle: string })
   </div>
 );
 
-// Eddy die Eule — für About-Seite
-const EDDY_URL = "https://cdn.jsdelivr.net/gh/BundW32/claude-hausmatch-new@main/hf_20260616_092652_b3b38af5-a913-44c1-80ef-1ac5d9adedb4.png";
+// Eddy die Eule — lokal aus /public ausgeliefert (DSGVO: kein Drittanbieter-CDN,
+// keine IP-Übertragung an jsdelivr/Fastly).
+const EDDY_URL = "/eddy-eule.png";
 
 const EddyOwl = ({ size = 120 }: { size?: number }) => (
   <div style={{ width: size, height: size, borderRadius: '1.5rem', overflow: 'hidden', background: '#2563FF', display: 'inline-block', flexShrink: 0 }}>
@@ -418,6 +419,11 @@ export const ContactPage: React.FC = () => {
           {status === 'error' && (
             <p className="text-red-600 text-sm font-medium bg-red-50 p-3 rounded-xl">Beim Senden ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut oder schreiben Sie uns direkt an info@bundwimmobilien.de.</p>
           )}
+          <p className="text-xs text-slate-500 font-medium leading-relaxed">
+            Ihre Angaben werden ausschließlich zur Bearbeitung Ihrer Anfrage verwendet (Art. 6 Abs. 1 lit. b DSGVO)
+            und nicht an Dritte weitergegeben. Weitere Informationen finden Sie in unserer{' '}
+            <Link to="/legal/privacy" className="text-indigo-600 underline font-bold">Datenschutzerklärung</Link>.
+          </p>
           <button
             type="submit"
             disabled={status === 'sending'}
@@ -441,7 +447,7 @@ export const LegalPage: React.FC<{ type: 'impressum' | 'privacy' | 'agb' }> = ({
       {type === 'impressum' && (
         <>
           <section>
-            <h3 className="text-xl font-bold text-slate-900 mb-4">Angaben gemäß § 5 TMG</h3>
+            <h3 className="text-xl font-bold text-slate-900 mb-4">Angaben gemäß § 5 DDG</h3>
             <p>
               B &amp; W Immobilien Management UG (haftungsbeschränkt)<br />
               Goethestraße 42<br />
@@ -493,7 +499,7 @@ export const LegalPage: React.FC<{ type: 'impressum' | 'privacy' | 'agb' }> = ({
             </p>
           </section>
           <section>
-            <h3 className="text-xl font-bold text-slate-900 mb-4">Verantwortlich für den Inhalt nach § 55 Abs. 2 RStV:</h3>
+            <h3 className="text-xl font-bold text-slate-900 mb-4">Verantwortlich für den Inhalt nach § 18 Abs. 2 MStV:</h3>
             <p>
               Franz-Josef Barth<br />
               Goethestraße 42<br />
@@ -515,40 +521,62 @@ export const LegalPage: React.FC<{ type: 'impressum' | 'privacy' | 'agb' }> = ({
 
           <section>
             <h3 className="text-xl font-bold text-slate-900 mb-4">2. Erhebung und Verarbeitung personenbezogener Daten</h3>
-            <p>Wir erheben personenbezogene Daten nur, soweit dies für die Bereitstellung unserer Dienste erforderlich ist. Dazu gehören bei Registrierung: Name, E-Mail-Adresse, Rollenangabe (Eigentümer/Verwalter). Diese Daten werden für den Betrieb der Plattform genutzt und nicht an Dritte verkauft.</p>
+            <p>Wir erheben personenbezogene Daten nur, soweit dies für die Bereitstellung unserer Dienste erforderlich ist (Grundsatz der Datenminimierung, Art. 5 Abs. 1 lit. c DSGVO):</p>
+            <ul className="list-disc pl-6 mt-2 space-y-1">
+              <li><strong>Registrierung:</strong> Name bzw. Firmenname, E-Mail-Adresse, Passwort (verschlüsselt), Stadt/Standort, Rollenangabe (Eigentümer/Verwalter/Profi); optional Profilbild, Kurzbeschreibung, Telefonnummer und Webseite. Rechtsgrundlage: Art. 6 Abs. 1 lit. b DSGVO (Vertragserfüllung).</li>
+              <li><strong>Verwaltungs-Anfragen (Matching):</strong> Angaben zum Objekt (Stadt, Einheiten, Objekttyp, Beschreibung) sowie Ihre Kontaktdaten (Name, E-Mail, ggf. Telefon). Rechtsgrundlage: Art. 6 Abs. 1 lit. b DSGVO.</li>
+              <li><strong>Kontaktformular:</strong> Vor- und Nachname, E-Mail-Adresse und Ihre Nachricht — ausschließlich zur Bearbeitung Ihrer Anfrage. Rechtsgrundlage: Art. 6 Abs. 1 lit. b bzw. f DSGVO.</li>
+            </ul>
+            <p className="mt-2">Ihre Daten werden nicht an Dritte verkauft und nicht zu Werbezwecken an Dritte weitergegeben.</p>
           </section>
 
           <section>
-            <h3 className="text-xl font-bold text-slate-900 mb-4">3. Eingesetzte Dienste und Drittanbieter</h3>
-
-            <h4 className="font-bold text-slate-800 mb-2">3.1 Google Firebase (Authentifizierung &amp; Datenbank)</h4>
-            <p>Wir nutzen Google Firebase (Google LLC, 1600 Amphitheatre Parkway, Mountain View, CA 94043, USA) für Nutzeranmeldung und Datenspeicherung. Daten können auf Servern in den USA verarbeitet werden. Grundlage ist ein Standardvertragsklauseln-Abkommen gemäß Art. 46 DSGVO. Datenschutzerklärung Google: <a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer" className="text-indigo-600 underline">policies.google.com/privacy</a></p>
-
-            <h4 className="font-bold text-slate-800 mb-2 mt-4">3.2 Google Gemini KI</h4>
-            <p>Unser KI-Assistent „Eddy" und die Suchfunktion nutzen Google Gemini (Google LLC). Anfragen, die Sie an Eddy stellen, werden zur Verarbeitung an die Google Gemini API übertragen. Wir empfehlen, keine sensiblen personenbezogenen Daten in Chat-Anfragen einzugeben. Rechtsgrundlage: Art. 6 Abs. 1 lit. b DSGVO (Vertragserfüllung / Bereitstellung des Dienstes).</p>
-
-            <h4 className="font-bold text-slate-800 mb-2 mt-4">3.3 Resend (E-Mail-Versand)</h4>
-            <p>Für den Versand von E-Mails (Anfragen, Kontaktformular) nutzen wir Resend (Resend Inc., USA). Dabei werden Name und E-Mail-Adresse der Absender an Resend übermittelt. Datenschutzerklärung: <a href="https://resend.com/legal/privacy-policy" target="_blank" rel="noopener noreferrer" className="text-indigo-600 underline">resend.com/legal/privacy-policy</a></p>
-
-            <h4 className="font-bold text-slate-800 mb-2 mt-4">3.4 Vercel (Hosting)</h4>
-            <p>Die Plattform wird auf Vercel (Vercel Inc., USA) gehostet. Beim Seitenaufruf werden technische Daten (IP-Adresse, Browsertyp, Zugriffszeit) im Rahmen des regulären Serverbetriebs verarbeitet. Datenschutzerklärung: <a href="https://vercel.com/legal/privacy-policy" target="_blank" rel="noopener noreferrer" className="text-indigo-600 underline">vercel.com/legal/privacy-policy</a></p>
+            <h3 className="text-xl font-bold text-slate-900 mb-4">3. Sichtbarkeit Ihrer Daten auf der Plattform</h3>
+            <p>HausMatch ist eine Vermittlungs- und Community-Plattform. Dies bedeutet:</p>
+            <ul className="list-disc pl-6 mt-2 space-y-1">
+              <li>Ihr <strong>Nutzerprofil</strong> (Name, Profilbild, Stadt, Kurzbeschreibung und von Ihnen freigegebene Kontaktdaten) ist für andere registrierte Nutzer der Plattform sichtbar — das ist Kern der Netzwerk-Funktion.</li>
+              <li>Stellen Sie eine <strong>Verwaltungs-Anfrage</strong>, werden Ihre Anfrage- und Kontaktdaten registrierten Hausverwaltungen zugänglich gemacht, damit diese Ihnen Angebote unterbreiten können — das ist der Zweck der Anfrage.</li>
+              <li>Beiträge im <strong>Forum</strong> und auf dem <strong>Marktplatz</strong> sind öffentlich bzw. für registrierte Nutzer sichtbar. Bitte veröffentlichen Sie dort keine Daten, die Sie nicht teilen möchten.</li>
+            </ul>
           </section>
 
           <section>
-            <h3 className="text-xl font-bold text-slate-900 mb-4">4. Cookies</h3>
-            <p>Diese Website verwendet ausschließlich technisch notwendige Cookies (z. B. für die Anmeldesitzung). Es werden keine Tracking- oder Marketing-Cookies gesetzt. Eine Cookie-Einwilligung ist daher nicht erforderlich.</p>
+            <h3 className="text-xl font-bold text-slate-900 mb-4">4. Eingesetzte Dienste und Drittanbieter</h3>
+
+            <h4 className="font-bold text-slate-800 mb-2">4.1 Google Firebase (Authentifizierung &amp; Datenbank)</h4>
+            <p>Wir nutzen Google Firebase (Google Ireland Ltd., Gordon House, Barrow Street, Dublin 4, Irland; Mutterkonzern: Google LLC, USA) für Nutzeranmeldung und Datenspeicherung. Daten können dabei auch auf Servern in den USA verarbeitet werden. Google LLC ist unter dem EU-US Data Privacy Framework zertifiziert (Angemessenheitsbeschluss der EU-Kommission gemäß Art. 45 DSGVO); ergänzend gelten Standardvertragsklauseln (Art. 46 DSGVO). Mit Google besteht ein Auftragsverarbeitungsvertrag (Art. 28 DSGVO). Datenschutzerklärung Google: <a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer" className="text-indigo-600 underline">policies.google.com/privacy</a></p>
+
+            <h4 className="font-bold text-slate-800 mb-2 mt-4">4.2 Google Gemini KI</h4>
+            <p>Unser KI-Assistent „Eddy" und die KI-gestützte Suchfunktion nutzen Google Gemini (Google LLC). Anfragen, die Sie an Eddy stellen, werden zur Verarbeitung an die Google Gemini API übertragen. Bitte geben Sie keine sensiblen personenbezogenen Daten in Chat-Anfragen ein. Rechtsgrundlage: Art. 6 Abs. 1 lit. b DSGVO (Bereitstellung des von Ihnen aktiv genutzten Dienstes).</p>
+
+            <h4 className="font-bold text-slate-800 mb-2 mt-4">4.3 Resend (E-Mail-Versand)</h4>
+            <p>Für den Versand von E-Mails (Anfragen, Kontaktformular) nutzen wir Resend (Resend Inc., USA). Dabei werden Name und E-Mail-Adresse der Absender an Resend übermittelt. Die Übermittlung in die USA erfolgt auf Grundlage des EU-US Data Privacy Framework bzw. von Standardvertragsklauseln. Datenschutzerklärung: <a href="https://resend.com/legal/privacy-policy" target="_blank" rel="noopener noreferrer" className="text-indigo-600 underline">resend.com/legal/privacy-policy</a></p>
+
+            <h4 className="font-bold text-slate-800 mb-2 mt-4">4.4 Vercel (Hosting)</h4>
+            <p>Die Plattform wird auf Vercel (Vercel Inc., USA) gehostet. Beim Seitenaufruf werden technische Daten (IP-Adresse, Browsertyp, Zugriffszeit) im Rahmen des regulären Serverbetriebs in Server-Logs verarbeitet. Rechtsgrundlage: Art. 6 Abs. 1 lit. f DSGVO (berechtigtes Interesse an einem sicheren, stabilen Betrieb). Vercel ist unter dem EU-US Data Privacy Framework zertifiziert. Datenschutzerklärung: <a href="https://vercel.com/legal/privacy-policy" target="_blank" rel="noopener noreferrer" className="text-indigo-600 underline">vercel.com/legal/privacy-policy</a></p>
+
+            <h4 className="font-bold text-slate-800 mb-2 mt-4">4.5 Schriftarten und Bilder</h4>
+            <p>Alle Schriftarten (Inter) und Bilder werden lokal von unseren eigenen Servern ausgeliefert. Es findet <strong>keine</strong> Verbindung zu Google Fonts oder anderen Drittanbieter-CDNs statt; Ihre IP-Adresse wird dafür an keinen Dritten übertragen.</p>
           </section>
 
           <section>
-            <h3 className="text-xl font-bold text-slate-900 mb-4">5. Speicherdauer</h3>
-            <p>Nutzerdaten werden gespeichert, solange das Konto aktiv ist. Nach Kontolöschung werden alle personenbezogenen Daten innerhalb von 30 Tagen gelöscht, sofern keine gesetzlichen Aufbewahrungspflichten entgegenstehen.</p>
+            <h3 className="text-xl font-bold text-slate-900 mb-4">5. Cookies und lokale Speicherung</h3>
+            <p>Diese Website verwendet ausschließlich technisch notwendige Cookies und lokale Speicherung (§ 25 Abs. 2 Nr. 2 TDDDG), konkret: die Firebase-Anmeldesitzung (damit Sie eingeloggt bleiben), die Zwischenspeicherung des Einladungs-Logins sowie einen lokalen Cache der Blog-Artikel in Ihrem Browser (localStorage). Es werden <strong>keine</strong> Tracking-, Analyse- oder Marketing-Cookies gesetzt und keine Analysedienste eingesetzt. Eine Cookie-Einwilligung (Cookie-Banner) ist daher nicht erforderlich.</p>
           </section>
 
           <section>
-            <h3 className="text-xl font-bold text-slate-900 mb-4">6. Ihre Rechte</h3>
-            <p>Sie haben das Recht auf Auskunft (Art. 15 DSGVO), Berichtigung (Art. 16), Löschung (Art. 17), Einschränkung der Verarbeitung (Art. 18), Datenübertragbarkeit (Art. 20) sowie Widerspruch (Art. 21 DSGVO). Beschwerden können an die zuständige Datenschutzaufsichtsbehörde gerichtet werden (Landesbeauftragte für Datenschutz NRW).</p>
+            <h3 className="text-xl font-bold text-slate-900 mb-4">6. Speicherdauer und Kontolöschung</h3>
+            <p>Nutzerdaten werden gespeichert, solange das Konto aktiv ist. Sie können Ihr Konto jederzeit selbst löschen (Profil → „Konto löschen") oder die Löschung per E-Mail an <a href="mailto:info@bundwimmobilien.de" className="text-indigo-600 underline">info@bundwimmobilien.de</a> verlangen. Nach Kontolöschung werden alle personenbezogenen Daten innerhalb von 30 Tagen gelöscht, sofern keine gesetzlichen Aufbewahrungspflichten entgegenstehen. Server-Logs werden nach spätestens 30 Tagen automatisch gelöscht.</p>
+          </section>
+
+          <section>
+            <h3 className="text-xl font-bold text-slate-900 mb-4">7. Ihre Rechte</h3>
+            <p>Sie haben das Recht auf Auskunft (Art. 15 DSGVO), Berichtigung (Art. 16), Löschung (Art. 17), Einschränkung der Verarbeitung (Art. 18), Datenübertragbarkeit (Art. 20) sowie Widerspruch gegen Verarbeitungen auf Grundlage berechtigter Interessen (Art. 21 DSGVO). Eine erteilte Einwilligung können Sie jederzeit mit Wirkung für die Zukunft widerrufen (Art. 7 Abs. 3 DSGVO).</p>
             <p className="mt-2">Anfragen richten Sie bitte an: <a href="mailto:info@bundwimmobilien.de" className="text-indigo-600 underline">info@bundwimmobilien.de</a></p>
+            <p className="mt-2">Zudem haben Sie das Recht auf Beschwerde bei einer Datenschutzaufsichtsbehörde (Art. 77 DSGVO). Zuständig ist die Landesbeauftragte für Datenschutz und Informationsfreiheit Nordrhein-Westfalen (LDI NRW), Kavalleriestraße 2–4, 40213 Düsseldorf, <a href="https://www.ldi.nrw.de" target="_blank" rel="noopener noreferrer" className="text-indigo-600 underline">www.ldi.nrw.de</a>.</p>
           </section>
+
+          <p className="text-sm text-slate-400 italic mt-8">Stand: Juli 2026</p>
         </>
       )}
 
@@ -606,7 +634,7 @@ export const LegalPage: React.FC<{ type: 'impressum' | 'privacy' | 'agb' }> = ({
             <p>Sollten einzelne Bestimmungen dieser AGB unwirksam sein oder werden, bleibt die Wirksamkeit der übrigen Bestimmungen unberührt.</p>
           </section>
 
-          <p className="text-sm text-slate-400 italic mt-8">Stand: Juni 2026 | B &amp; W Immobilien Management UG (haftungsbeschränkt)</p>
+          <p className="text-sm text-slate-400 italic mt-8">Stand: Juli 2026 | B &amp; W Immobilien Management UG (haftungsbeschränkt)</p>
         </>
       )}
     </div>

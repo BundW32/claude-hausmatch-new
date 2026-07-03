@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 
-const EDDY_URL = "https://cdn.jsdelivr.net/gh/BundW32/claude-hausmatch-new@main/hf_20260616_092652_b3b38af5-a913-44c1-80ef-1ac5d9adedb4.png";
+const EDDY_URL = "/eddy-eule.png";
 
 const EddyOwl = ({ size = 40 }: { size?: number }) => (
   <div style={{ width: size, height: size, borderRadius: Math.round(size * 0.25) + 'px', overflow: 'hidden', background: '#2563FF', display: 'inline-block', flexShrink: 0 }}>

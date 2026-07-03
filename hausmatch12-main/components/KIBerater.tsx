@@ -14,7 +14,7 @@ const QUICK_QUESTIONS = [
   'Wie funktioniert die Nebenkostenabrechnung?',
 ];
 
-const EDDY_URL = "https://cdn.jsdelivr.net/gh/BundW32/claude-hausmatch-new@main/hf_20260616_092652_b3b38af5-a913-44c1-80ef-1ac5d9adedb4.png";
+const EDDY_URL = "/eddy-eule.png";
 
 const EddyAvatar = ({ size = 40, radius }: { size?: number; radius?: number }) => (
   <div style={{

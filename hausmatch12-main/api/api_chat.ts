@@ -1,4 +1,5 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
+import { applyCors } from './_cors';
 
 const SYSTEM_PROMPT = `Du bist Max, ein freundlicher und kompetenter Immobilien-Assistent von HausMatch. Du hilfst Eigentümern und Immobilienprofis in Deutschland bei Fragen rund um:
 
@@ -14,9 +15,7 @@ Antworte immer auf Deutsch, freundlich und klar strukturiert. Verwende bei Bedar
 WICHTIG: Du bist eine KI und kein Rechtsanwalt oder Steuerberater. Bei rechtlichen oder steuerlichen Fragen weise immer darauf hin, dass ein Fachanwalt oder Steuerberater konsultiert werden sollte.`;
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  applyCors(req, res);
 
   if (req.method === 'OPTIONS') return res.status(200).end();
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });

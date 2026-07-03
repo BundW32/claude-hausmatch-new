@@ -81,6 +81,26 @@ export const logoutUser = async () => {
   await signOut(auth);
 };
 
+// DSGVO Art. 17 (Recht auf Löschung): löscht das Firestore-Profil und das
+// Firebase-Auth-Konto des aktuell eingeloggten Nutzers. Mit Passwort wird vorab
+// re-authentifiziert, damit Firebase die Löschung nicht wegen 'requires-recent-login'
+// ablehnt. Das Profil-Dokument muss VOR dem Auth-Konto gelöscht werden, weil die
+// Firestore-Regeln danach keinen Zugriff mehr erlauben.
+export const deleteAccount = async (password?: string): Promise<void> => {
+  const currentUser = auth.currentUser;
+  if (!currentUser) throw new Error('Nicht angemeldet.');
+  const { deleteDoc } = await import('firebase/firestore');
+  const { deleteUser, reauthenticateWithCredential, EmailAuthProvider } = await import('firebase/auth');
+
+  if (password && currentUser.email) {
+    const credential = EmailAuthProvider.credential(currentUser.email, password);
+    await reauthenticateWithCredential(currentUser, credential);
+  }
+
+  await deleteDoc(doc(db, 'users', currentUser.uid));
+  await deleteUser(currentUser);
+};
+
 export const registerUser = async (email: string, password: string, name: string, role: UserRole, avatar?: string, bio?: string, city?: string, userType?: UserType): Promise<User> => {
   const resolvedUserType: UserType = userType ?? (role === 'manager' ? 'hausverwaltung' : role === 'profi' ? 'sonstige_profi' : 'owner');
   try {

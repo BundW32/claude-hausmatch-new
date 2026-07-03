@@ -303,7 +303,7 @@ const Footer = () => {
             </p>
             <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-slate-500">
               <span className="w-1.5 h-1.5 bg-emerald-400 rounded-full animate-pulse" />
-              Made in Germany · DSGVO-konform
+              Made in Germany · Ohne Tracking-Cookies
             </div>
           </div>
 

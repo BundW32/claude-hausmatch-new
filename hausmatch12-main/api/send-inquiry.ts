@@ -1,9 +1,11 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
+import { applyCors } from './_cors';
 
 const ADMIN_EMAIL = process.env.ADMIN_EMAIL || 'barth@bundwimmobilien.de';
 const FROM_EMAIL = process.env.RESEND_FROM_EMAIL || 'HausMatch <onboarding@resend.dev>';
 const FIREBASE_PROJECT = 'hausmatch-1';
-const FIREBASE_API_KEY = process.env.FIREBASE_API_KEY || 'AIzaSyC1o_LoqOxhmK4J0lhIzf8qcHABS7XNoY8';
+// Kein hardcodierter Fallback: der Key kommt ausschließlich aus der Umgebung.
+const FIREBASE_API_KEY = process.env.FIREBASE_API_KEY || '';
 // Basis-URL der App (HashRouter -> Routen mit /#/...). haus-match.de ist die offizielle Domain.
 // Per Env (APP_URL) überschreibbar.
 const APP_URL = (process.env.APP_URL || 'https://haus-match.de').replace(/\/$/, '');
@@ -33,6 +35,7 @@ async function saveToFirestore(data: {
   companies: { name: string; email?: string }[];
   managerEmails: string[];
 }): Promise<void> {
+  if (!FIREBASE_API_KEY) { console.error('FIREBASE_API_KEY fehlt — Inquiry wird nicht gespeichert.'); return; }
   const units = parseInt(data.message?.match(/\d+/)?.[0] || '0') || 0;
   const body = {
     fields: {
@@ -64,6 +67,7 @@ async function saveToFirestore(data: {
 }
 
 async function getAnonFirebaseToken(): Promise<string | null> {
+  if (!FIREBASE_API_KEY) return null;
   try {
     const res = await fetch(
       `https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=${FIREBASE_API_KEY}`,
@@ -206,9 +210,7 @@ const managerHtml = (
 // ─── Handler ───────────────────────────────────────────────────────────────────
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  applyCors(req, res);
 
   if (req.method === 'OPTIONS') return res.status(200).end();
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
