@@ -359,7 +359,8 @@ export interface BlogArticle {
   id: string;
   title: string;
   summary: string;
-  fullContent: string;
+  fullContent: string; // Markdown-ähnlich: "## " Zwischenüberschriften, "- " Listen, **fett**
+  keyPoints?: string[]; // "Das Wichtigste in Kürze" (3–5 Punkte)
   category: 'Recht' | 'Technik' | 'Management' | 'News';
   date: string;
   isLatest: boolean;

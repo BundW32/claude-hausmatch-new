@@ -64,6 +64,83 @@ export const AboutPage: React.FC = () => (
   </div>
 );
 
+// ─── Artikel-Darstellung (Eddys News) ────────────────────────────────────────
+
+const readingMinutes = (a: BlogArticle): number =>
+  Math.max(2, Math.round((a.fullContent || '').split(/\s+/).length / 180));
+
+// **fett** innerhalb einer Zeile → <strong>, ohne HTML-Injection.
+const renderInline = (text: string): React.ReactNode[] =>
+  text.split(/\*\*(.+?)\*\*/g).map((part, i) =>
+    i % 2 === 1 ? <strong key={i} className="font-black text-slate-900">{part}</strong> : part
+  );
+
+// Rendert den strukturierten Berichtstext: "## " Zwischenüberschriften,
+// "- " Aufzählungen, Absätze, "Eddys Einordnung:" als hervorgehobener Kasten.
+const ArticleBody: React.FC<{ content: string }> = ({ content }) => {
+  const blocks: React.ReactNode[] = [];
+  let list: string[] = [];
+  let para: string[] = [];
+  let key = 0;
+
+  const flushList = () => {
+    if (!list.length) return;
+    blocks.push(
+      <ul key={key++} className="space-y-2.5 my-5">
+        {list.map((li, i) => (
+          <li key={i} className="flex gap-3 text-slate-600 leading-relaxed font-medium">
+            <span className="mt-2.5 w-1.5 h-1.5 rounded-full bg-indigo-500 flex-shrink-0" />
+            <span>{renderInline(li)}</span>
+          </li>
+        ))}
+      </ul>
+    );
+    list = [];
+  };
+
+  const flushPara = () => {
+    if (!para.length) return;
+    const text = para.join(' ');
+    if (/^eddys einordnung/i.test(text)) {
+      blocks.push(
+        <div key={key++} className="my-8 bg-indigo-50 border border-indigo-100 rounded-2xl p-5 sm:p-6 flex gap-4">
+          <img src={EDDY_URL} alt="Eddy" width={44} height={44} style={{ display: 'block', objectFit: 'cover', borderRadius: '0.9rem', flexShrink: 0 }} />
+          <div>
+            <p className="text-[10px] font-black uppercase tracking-widest text-indigo-500 mb-1.5">Eddys Einordnung 🦉</p>
+            <p className="text-slate-700 font-medium leading-relaxed">{renderInline(text.replace(/^eddys einordnung:?\s*/i, ''))}</p>
+          </div>
+        </div>
+      );
+    } else {
+      blocks.push(
+        <p key={key++} className="text-slate-600 leading-[1.85] font-medium my-4 text-[15px] sm:text-base">{renderInline(text)}</p>
+      );
+    }
+    para = [];
+  };
+
+  for (const raw of content.split('\n')) {
+    const line = raw.trim();
+    if (!line) { flushList(); flushPara(); continue; }
+    if (/^#{2,3}\s+/.test(line)) {
+      flushList(); flushPara();
+      blocks.push(
+        <h3 key={key++} className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight mt-10 mb-3">
+          {line.replace(/^#{2,3}\s+/, '')}
+        </h3>
+      );
+    } else if (/^[-•*]\s+/.test(line)) {
+      flushPara();
+      list.push(line.replace(/^[-•*]\s+/, ''));
+    } else {
+      flushList();
+      para.push(line);
+    }
+  }
+  flushList(); flushPara();
+  return <>{blocks}</>;
+};
+
 export const BlogPage: React.FC = () => {
   const [articles, setArticles] = useState<BlogArticle[]>([]);
   const [loading, setLoading] = useState(true);
@@ -133,6 +210,7 @@ export const BlogPage: React.FC = () => {
                    <div className="flex items-center gap-4 mb-6">
                       <span className="bg-indigo-600 text-white text-[10px] font-black px-4 py-1.5 rounded-full uppercase tracking-widest">{articles[0].category}</span>
                       <span className="text-xs font-black text-slate-300 uppercase tracking-widest">{articles[0].date}</span>
+                      <span className="text-xs font-black text-slate-300 uppercase tracking-widest">· {readingMinutes(articles[0])} Min.</span>
                    </div>
                    <h2 className="text-4xl md:text-5xl font-black text-slate-900 mb-6 tracking-tighter leading-tight">{articles[0].title}</h2>
                    <p className="text-xl text-slate-500 font-medium leading-relaxed mb-8">{articles[0].summary}</p>
@@ -164,6 +242,7 @@ export const BlogPage: React.FC = () => {
                 <div className="flex items-center gap-4 mb-6">
                   <span className="text-[10px] font-black text-indigo-600 uppercase tracking-widest px-3 py-1 bg-indigo-50 rounded-full">{post.category}</span>
                   <span className="text-[10px] text-slate-300 font-black uppercase tracking-widest">{post.date}</span>
+                  <span className="text-[10px] text-slate-300 font-black uppercase tracking-widest">· {readingMinutes(post)} Min.</span>
                 </div>
                 <h3 className="text-2xl font-black text-slate-900 mb-4 group-hover:text-indigo-600 transition-colors tracking-tight">{post.title}</h3>
                 <p className="text-slate-500 font-medium leading-relaxed mb-8 flex-1">{post.summary}</p>
@@ -198,7 +277,11 @@ export const BlogPage: React.FC = () => {
           <div className="bg-white w-full max-w-4xl max-h-[90vh] rounded-[3rem] overflow-hidden shadow-2xl flex flex-col animate-fade-in-up">
             <div className="p-8 md:p-12 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
               <div className="flex-1 pr-8">
-                <span className="bg-indigo-600 text-white text-[10px] font-black px-4 py-1.5 rounded-full uppercase tracking-widest mb-4 inline-block">{selectedArticle.category}</span>
+                <div className="flex flex-wrap items-center gap-3 mb-4">
+                  <span className="bg-indigo-600 text-white text-[10px] font-black px-4 py-1.5 rounded-full uppercase tracking-widest">{selectedArticle.category}</span>
+                  <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{selectedArticle.date}</span>
+                  <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">· {readingMinutes(selectedArticle)} Min. Lesezeit</span>
+                </div>
                 <h2 className="text-3xl md:text-4xl font-black text-slate-900 tracking-tighter leading-tight">{selectedArticle.title}</h2>
               </div>
               <button onClick={() => setSelectedArticle(null)} className="p-4 bg-white rounded-2xl border border-slate-200 text-slate-400 hover:text-slate-900 transition-colors shrink-0">
@@ -206,13 +289,26 @@ export const BlogPage: React.FC = () => {
               </button>
             </div>
             <div className="flex-1 overflow-y-auto p-8 md:p-12 custom-scrollbar">
-              <div className="prose prose-slate prose-lg max-w-none">
-                <p className="text-xl font-bold text-slate-900 mb-8 leading-relaxed italic border-l-4 border-indigo-600 pl-6 bg-indigo-50/30 py-4 rounded-r-2xl">
+              <div className="max-w-none">
+                <p className="text-lg sm:text-xl font-bold text-slate-900 mb-8 leading-relaxed italic border-l-4 border-indigo-600 pl-6 bg-indigo-50/30 py-4 rounded-r-2xl">
                   {selectedArticle.summary}
                 </p>
-                <div className="text-slate-600 leading-relaxed whitespace-pre-wrap font-medium">
-                  {selectedArticle.fullContent}
-                </div>
+
+                {selectedArticle.keyPoints && selectedArticle.keyPoints.length > 0 && (
+                  <div className="bg-slate-50 border border-slate-100 rounded-2xl p-6 mb-8">
+                    <h4 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.25em] mb-4">Das Wichtigste in Kürze</h4>
+                    <ul className="space-y-2.5">
+                      {selectedArticle.keyPoints.map((kp, i) => (
+                        <li key={i} className="flex gap-3 text-sm sm:text-[15px] font-bold text-slate-700 leading-relaxed">
+                          <svg className="w-4 h-4 text-indigo-500 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" /></svg>
+                          {kp}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+
+                <ArticleBody content={selectedArticle.fullContent} />
               </div>
               <div className="mt-12 pt-12 border-t border-slate-100">
                 <h4 className="text-xs font-black text-slate-400 uppercase tracking-widest mb-6">Referenzen &amp; Weiterführende Links</h4>
