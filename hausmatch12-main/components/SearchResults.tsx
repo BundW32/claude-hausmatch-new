@@ -57,7 +57,7 @@ const CompanyCard = ({ company, selected, onToggle }: { company: SearchCompany; 
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 mb-1 flex-wrap">
               {company.isPartner && <span className="bg-indigo-600 text-white text-[9px] font-black px-2 py-0.5 rounded-full uppercase tracking-widest">Partner</span>}
-              <h3 className="text-xl font-black text-slate-900 truncate">{company.name}</h3>
+              <h3 className="text-xl font-black text-slate-900 break-words">{company.name}</h3>
             </div>
             <p className="text-slate-500 text-sm font-medium truncate">{company.address || company.city}</p>
           </div>
@@ -133,7 +133,7 @@ const NetworkManagerCard = ({ manager, selected, onToggle }: { manager: User; se
         <div className="flex items-start gap-3 mb-4">
           <Checkbox checked={selected} onToggle={onToggle} />
           <div className="min-w-0 flex-1">
-            <h3 className="text-xl font-black text-slate-900 pr-24 sm:pr-32 truncate">{displayName}</h3>
+            <h3 className="text-xl font-black text-slate-900 pr-24 sm:pr-32 break-words">{displayName}</h3>
             {location && <p className="text-slate-500 text-sm font-medium mt-0.5">{location}</p>}
           </div>
         </div>
