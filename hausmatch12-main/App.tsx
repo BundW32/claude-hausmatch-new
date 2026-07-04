@@ -366,6 +366,16 @@ const ProtectedRoute = ({ children, allowedRoles }: React.PropsWithChildren<{ al
   return <>{children}</>;
 };
 
+// Bei jedem Seitenwechsel wieder ganz oben anfangen — sonst behält die
+// SPA die Scroll-Position der vorherigen Unterseite bei.
+const ScrollToTop = () => {
+  const { pathname } = useLocation();
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [pathname]);
+  return null;
+};
+
 const AppRoutes = () => {
   const location = useLocation();
   return (
@@ -433,6 +443,7 @@ const App = () => {
   return (
     <AuthProvider>
       <HashRouter>
+        <ScrollToTop />
         <div className="min-h-screen pt-16 bg-slate-50 selection:bg-blue-100 selection:text-blue-900 flex flex-col">
           <Navbar />
           <div className="flex-1">
