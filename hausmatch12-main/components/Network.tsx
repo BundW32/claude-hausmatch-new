@@ -180,12 +180,13 @@ const Network = () => {
                 <div key={u.id} className="bg-white p-10 rounded-[3.5rem] border border-slate-100 shadow-sm hover:shadow-2xl transition-all group relative overflow-hidden flex flex-col">
                   <div className="absolute top-0 right-0 w-32 h-32 bg-slate-50 rounded-bl-[5rem] -mr-16 -mt-16 group-hover:bg-indigo-50 transition-colors"></div>
 
-                  <Link to={`/profile/${u.id}`} className="flex items-center gap-6 mb-8 relative z-10 group/link">
-                    <div className="w-24 h-24 rounded-[2rem] bg-slate-100 flex items-center justify-center overflow-hidden border-4 border-white shadow-lg group-hover/link:scale-105 transition-transform">
+                  {/* Logo oben, Name darunter – so wird der Name nie abgeschnitten */}
+                  <Link to={`/profile/${u.id}`} className="flex flex-col items-start gap-4 mb-8 relative z-10 group/link">
+                    <div className="w-24 h-24 rounded-[2rem] bg-slate-100 flex items-center justify-center overflow-hidden border-4 border-white shadow-lg group-hover/link:scale-105 transition-transform flex-shrink-0">
                       {u.avatar ? <img src={u.avatar} className="w-full h-full object-cover" alt="" /> : <span className="text-4xl font-black text-slate-300">{(u?.name || '?')[0]}</span>}
                     </div>
-                    <div className="flex-1 min-w-0">
-                      <h3 className="text-2xl font-black text-slate-900 leading-tight group-hover/link:text-indigo-600 transition-colors truncate">{u.name}</h3>
+                    <div className="min-w-0 w-full">
+                      <h3 className="text-xl sm:text-2xl font-black text-slate-900 leading-tight group-hover/link:text-indigo-600 transition-colors break-words">{u.name}</h3>
                       <span className={`text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded-full mt-2 inline-block border ${u.role === 'profi' ? 'bg-purple-50 text-purple-600 border-purple-100' : 'bg-slate-100 text-slate-500 border-slate-200'}`}>
                         {u.userType ? USER_TYPE_LABELS[u.userType] : u.role === 'manager' ? 'Hausverwaltung' : 'Eigentümer'}
                       </span>
