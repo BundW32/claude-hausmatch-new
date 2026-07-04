@@ -5,6 +5,10 @@ body {
   font-family: 'Inter', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  /* Sicherheitsnetz: einzelne zu breite Elemente dürfen die Seite auf dem
+     Handy nie horizontal scrollbar machen. "clip" statt "hidden", damit
+     position: sticky (Navbar-Unterleisten etc.) funktionsfähig bleibt. */
+  overflow-x: clip;
 }
 
 /* ─── Bewegung / "lebendige" Seite ────────────────────────────────────────────
