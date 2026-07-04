@@ -366,7 +366,7 @@ const AppRoutes = () => {
   const location = useLocation();
   return (
     <Suspense fallback={<div className="h-screen flex items-center justify-center font-black uppercase tracking-widest text-slate-300">Lädt...</div>}>
-      <div key={location.pathname} className="animate-fade-in">
+      <div key={location.pathname} className="hm-page-enter">
       <Routes location={location}>
         <Route path="/" element={<LandingHome />} />
         <Route path="/seekers" element={<ForSeekers />} />
