@@ -32,6 +32,12 @@ body {
 /* Einblenden beim ersten Laden / bei Navigation */
 .animate-fade-in    { animation: hm-fade-in .5s ease-out both; }
 .animate-fade-in-up { animation: hm-fade-in-up .6s cubic-bezier(.16, .84, .44, 1) both; }
+
+/* Seiten-Wrapper: bewusst OHNE fill-mode. "both" hielte die Animation dauerhaft
+   aktiv und damit einen permanenten Stacking-Context – fixe Overlays (Artikel,
+   Modals) im Seiteninhalt würden dann vom später gerenderten Footer/Navbar
+   überdeckt. Ohne fill endet der Stacking-Context mit der Animation. */
+.hm-page-enter { animation: hm-fade-in .45s ease-out; }
 /* Ersatz für tailwindcss-animate ("animate-in fade-in slide-in-from-bottom-8") */
 .animate-in         { animation: hm-fade-in-up .6s cubic-bezier(.16, .84, .44, 1) both; }
 
@@ -96,6 +102,7 @@ body {
   .animate-fade-in,
   .animate-fade-in-up,
   .animate-in,
+  .hm-page-enter,
   .hm-stagger > * {
     animation: none !important;
   }

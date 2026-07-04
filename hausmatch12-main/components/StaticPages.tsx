@@ -156,6 +156,15 @@ export const BlogPage: React.FC = () => {
     loadBlog();
   }, []);
 
+  // Solange ein Bericht offen ist, Hintergrund-Scroll sperren – sonst schiebt
+  // sich beim Scrollen der Seite der Footer über das Artikel-Fenster.
+  useEffect(() => {
+    if (!selectedArticle) return;
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    return () => { document.body.style.overflow = prev; };
+  }, [selectedArticle]);
+
   const editionStr = getCurrentEditionDate().toLocaleDateString('de-DE', {
     weekday: 'long', day: '2-digit', month: 'long', year: 'numeric',
   });
