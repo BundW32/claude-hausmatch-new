@@ -376,13 +376,13 @@ const Profile = () => {
                 <div className="grid lg:grid-cols-12 gap-8 md:gap-12">
                    
                    {/* Left Column: Vision and Expertise */}
-                   <div className="lg:col-span-8 space-y-10">
+                   <div className="lg:col-span-8 space-y-10 min-w-0">
                       
                       {/* Detailed Bio - Only if set */}
                       {profileUser.bio ? (
                         <section>
-                           <h3 className="text-[11px] font-black text-slate-300 uppercase tracking-[0.4em] mb-10">Unternehmens-Porträt</h3>
-                           <p className="text-2xl md:text-3xl text-slate-800 font-medium leading-[1.6] italic border-l-[6px] border-indigo-600 pl-10">
+                           <h3 className="text-[11px] font-black text-slate-300 uppercase tracking-[0.4em] mb-6 md:mb-10">Unternehmens-Porträt</h3>
+                           <p className="text-lg sm:text-2xl md:text-3xl text-slate-800 font-medium leading-[1.7] md:leading-[1.6] italic border-l-4 md:border-l-[6px] border-indigo-600 pl-5 md:pl-10 break-words">
                              "{profileUser.bio}"
                            </p>
                         </section>
@@ -412,14 +412,14 @@ const Profile = () => {
                          <div className="p-8 bg-slate-50 rounded-[2.5rem] border border-slate-100 group hover:bg-white hover:shadow-2xl transition-all duration-500">
                             <h4 className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-6">Expertise-Score</h4>
                             <div className="flex items-end gap-3">
-                               <div className="text-6xl font-black text-slate-900 tracking-tighter">{computeProfileScore(profileUser)}%</div>
+                               <div className="text-5xl md:text-6xl font-black text-slate-900 tracking-tighter">{computeProfileScore(profileUser)}%</div>
                                <span className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-2.5">Profil ausgefüllt</span>
                             </div>
                          </div>
                          <div className="p-8 bg-slate-50 rounded-[2.5rem] border border-slate-100 group hover:bg-white hover:shadow-2xl transition-all duration-500">
                             <h4 className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-6">Partner-Netzwerk</h4>
                             <div className="flex items-end gap-3">
-                               <div className="text-6xl font-black text-slate-900 tracking-tighter">{profileUser.friends?.length || 0}</div>
+                               <div className="text-5xl md:text-6xl font-black text-slate-900 tracking-tighter">{profileUser.friends?.length || 0}</div>
                                <span className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-2.5">Kontakte</span>
                             </div>
                          </div>
@@ -427,7 +427,7 @@ const Profile = () => {
                    </div>
 
                    {/* Right Column: Contact Details & Stats */}
-                   <div className="lg:col-span-4 space-y-8 order-first lg:order-none">
+                   <div className="lg:col-span-4 space-y-8 order-first lg:order-none min-w-0">
                       <div className="p-6 md:p-8 bg-white border border-slate-100 rounded-[2.5rem] shadow-2xl relative overflow-hidden group">
                          <div className="absolute top-0 right-0 w-32 h-32 bg-indigo-50 rounded-bl-[4rem] -mr-12 -mt-12 group-hover:bg-indigo-600 transition-all duration-500"></div>
                          
@@ -439,7 +439,7 @@ const Profile = () => {
                                  <div className="w-11 h-11 rounded-2xl bg-indigo-50 flex items-center justify-center text-indigo-600 shrink-0 transition-colors group-hover/item:bg-indigo-600 group-hover/item:text-white">
                                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /></svg>
                                  </div>
-                                 <div className="flex flex-col min-w-0">
+                                 <div className="flex flex-col min-w-0 flex-1">
                                     <span className="text-[10px] font-black text-slate-300 uppercase tracking-widest">Region</span>
                                     <span className="text-slate-900 font-black text-base tracking-tight truncate">{profileUser.location}</span>
                                  </div>
@@ -451,7 +451,7 @@ const Profile = () => {
                                  <div className="w-11 h-11 rounded-2xl bg-blue-50 flex items-center justify-center text-blue-600 shrink-0 transition-colors group-hover/item:bg-blue-600 group-hover/item:text-white">
                                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" /></svg>
                                  </div>
-                                 <div className="flex flex-col min-w-0">
+                                 <div className="flex flex-col min-w-0 flex-1">
                                     <span className="text-[10px] font-black text-slate-300 uppercase tracking-widest">Direktwahl</span>
                                     <span className="text-slate-900 font-black text-base tracking-tight truncate">{profileUser.phone}</span>
                                  </div>
@@ -463,7 +463,7 @@ const Profile = () => {
                                 <div className="w-11 h-11 rounded-2xl bg-green-50 flex items-center justify-center text-green-600 shrink-0 transition-colors group-hover/item:bg-green-600 group-hover/item:text-white">
                                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
                                 </div>
-                                <div className="flex flex-col min-w-0">
+                                <div className="flex flex-col min-w-0 flex-1">
                                   <span className="text-[10px] font-black text-slate-300 uppercase tracking-widest">E-Mail</span>
                                   <a href={`mailto:${profileUser.email}`} className="block text-slate-900 font-black text-base hover:text-indigo-600 transition-colors tracking-tight truncate">{profileUser.email}</a>
                                 </div>
@@ -475,7 +475,7 @@ const Profile = () => {
                                  <div className="w-11 h-11 rounded-2xl bg-purple-50 flex items-center justify-center text-purple-600 shrink-0 transition-colors group-hover/item:bg-purple-600 group-hover/item:text-white">
                                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" /></svg>
                                  </div>
-                                 <div className="flex flex-col min-w-0">
+                                 <div className="flex flex-col min-w-0 flex-1">
                                     <span className="text-[10px] font-black text-slate-300 uppercase tracking-widest">Webseite</span>
                                     <a href={profileUser.website.startsWith('http') ? profileUser.website : `https://${profileUser.website}`} target="_blank" rel="noreferrer" className="block text-slate-900 font-black text-base hover:text-indigo-600 transition-colors tracking-tight truncate">
                                       {profileUser.website.replace(/(^\w+:|^)\/\//, '')}
