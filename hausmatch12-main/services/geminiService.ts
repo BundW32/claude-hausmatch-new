@@ -72,9 +72,10 @@ export const analyzePropertyRequirement = async (formData: {
 };
 
 // ─── Eddys News der Woche ───────────────────────────────────────────────────
-// Zwei Ausgaben pro Woche: Montag & Donnerstag. Die "aktuelle Ausgabe" ist der
-// letzte dieser beiden Tage; pro Ausgabe wird das Ergebnis im localStorage
-// gecacht, damit nicht jeder Seitenaufruf einen neuen KI-Abruf auslöst.
+// Zwei Ausgaben pro Woche: Montag & Donnerstag. Die eigentliche KI-Recherche
+// läuft serverseitig in /api/blog (nur dort existiert der GEMINI_API_KEY);
+// hier wird nur abgerufen und pro Ausgabe im localStorage gecacht, damit nicht
+// jeder Seitenaufruf einen Netzwerk-Abruf auslöst.
 
 export const getCurrentEditionDate = (): Date => {
   const d = new Date();
@@ -84,9 +85,9 @@ export const getCurrentEditionDate = (): Date => {
 };
 
 const EDITION_CACHE_BASE = 'hm_eddy_news_';
-// v2: vollständige, strukturierte Berichte (Markdown + keyPoints) – alte
-// Kurzfassungs-Caches werden beim Schreiben mit aufgeräumt.
-const EDITION_CACHE_PREFIX = EDITION_CACHE_BASE + 'v2_';
+// v3: Artikel kommen aus /api/blog (echte Recherche mit Quellen-Links) –
+// alte Cache-Versionen werden beim Schreiben mit aufgeräumt.
+const EDITION_CACHE_PREFIX = EDITION_CACHE_BASE + 'v3_';
 
 const readEditionCache = (key: string): BlogArticle[] | null => {
   try {
@@ -113,88 +114,18 @@ export const fetchLatestIndustryBlog = async (): Promise<BlogArticle[]> => {
   const cached = readEditionCache(cacheKey);
   if (cached && cached.length > 0) return cached;
 
-  if (!API_KEY) {
-    return [
-      {
-        id: "1",
-        title: "WEG-Sanierung: Beschlüsse werden einfacher (Beispiel)",
-        summary: "Beispiel-Inhalt: Neue Regelungen zur energetischen Sanierung beschlossen.",
-        fullContent: "Beispiel-Inhalt, da kein KI-Zugang konfiguriert ist.\n\n## Worum geht es?\nDie Eigentümerversammlung kann nun einfacher über Sanierungen entscheiden.\n\n## Was heißt das für Eigentümer und Verwalter?\n- Beschlussfassung prüfen\n- Fristen im Blick behalten\n\nEddys Einordnung: Für WEGs lohnt sich jetzt ein Blick in die Beschlussfassung.",
-        keyPoints: ["Beispiel-Artikel ohne KI-Zugang", "Beschlüsse zur Sanierung werden einfacher", "Fristen und Formvorgaben beachten"],
-        category: "Recht",
-        date: editionStr,
-        isLatest: true,
-        sources: [{ title: "Haufe Immobilien", url: "https://www.haufe.de/immobilien" }]
-      },
-      {
-        id: "2",
-        title: "Digitalisierung in der Hausverwaltung (Beispiel)",
-        summary: "Beispiel-Inhalt: Warum Excel-Listen nicht mehr ausreichen.",
-        fullContent: "Beispiel-Inhalt, da kein KI-Zugang konfiguriert ist.\n\n## Worum geht es?\nModerne Software-Lösungen sparen bis zu **30 % Arbeitszeit**.\n\n## Was heißt das für Eigentümer und Verwalter?\n- Mieterportale werden zum Standard\n- Abrechnungen lassen sich automatisieren\n\nEddys Einordnung: Wer 2026 noch ohne Mieterportal arbeitet, verliert Zeit und Bewerber.",
-        keyPoints: ["Beispiel-Artikel ohne KI-Zugang", "Software spart bis zu 30 % Arbeitszeit", "Mieterportale werden Standard"],
-        category: "Management",
-        date: editionStr,
-        isLatest: false,
-        sources: [{ title: "Immobilien Zeitung", url: "https://www.iz.de" }]
-      }
-    ];
-  }
-
   try {
-    const ai = new GoogleGenAI({ apiKey: API_KEY });
-    const response = await ai.models.generateContent({
-      model: "gemini-2.5-flash",
-      contents: `Du bist Eddy, der KI-Immobilienassistent von HausMatch. Erstelle "Eddys News der Woche" – Ausgabe vom ${editionStr}. ` +
-        `Finde über die Google-Suche die 4 aktuellsten und wichtigsten Nachrichten der letzten 7 Tage für Immobilieneigentümer und Hausverwaltungen in Deutschland ` +
-        `(rechtliche Änderungen & Urteile, Markt & Mieten, Zinsen & Finanzierung, Energie & Technik). Schreibe auf Deutsch.\n\n` +
-        `Jeder Artikel ist ein VOLLSTÄNDIGER Bericht wie in einem professionellen Immobilien-Blog:\n` +
-        `- fullContent: 400–600 Wörter, gegliedert mit Markdown: "## " für 2–4 Zwischenüberschriften, "- " für Aufzählungen, **fett** für zentrale Begriffe und Zahlen.\n` +
-        `- Aufbau: prägnanter Einstieg (worum geht es, warum jetzt wichtig) → Hintergrund & Details mit konkreten Zahlen, Daten, Fristen und Namen → Abschnitt "## Was heißt das für Eigentümer und Verwalter?" mit praktischen Konsequenzen → letzter Absatz beginnt mit "Eddys Einordnung:" (kurze, ehrliche, praktische Einschätzung in Eddys Ton).\n` +
-        `- keyPoints: 3–5 prägnante Stichpunkte "Das Wichtigste in Kürze" (je max. 15 Wörter).\n` +
-        `- summary: 1–2 Sätze Teaser ohne Wiederholung des Titels.\n` +
-        `date ist jeweils "${editionStr}". Gib echte, seriöse Quellen mit URLs an.`,
-      config: {
-        tools: [{ googleSearch: {} }],
-        responseMimeType: "application/json",
-        responseSchema: {
-          type: Type.ARRAY,
-          items: {
-            type: Type.OBJECT,
-            properties: {
-              id: { type: Type.STRING },
-              title: { type: Type.STRING },
-              summary: { type: Type.STRING },
-              fullContent: { type: Type.STRING },
-              keyPoints: { type: Type.ARRAY, items: { type: Type.STRING } },
-              category: { type: Type.STRING, enum: ["Recht", "Technik", "Management", "News"] },
-              date: { type: Type.STRING },
-              sources: {
-                type: Type.ARRAY,
-                items: {
-                  type: Type.OBJECT,
-                  properties: {
-                    title: { type: Type.STRING },
-                    url: { type: Type.STRING }
-                  },
-                  required: ["title", "url"]
-                }
-              }
-            },
-            required: ["id", "title", "summary", "fullContent", "keyPoints", "category", "date", "sources"]
-          }
-        }
-      }
-    });
+    const res = await fetch('/api/blog');
+    if (!res.ok) throw new Error(`Blog-Abruf fehlgeschlagen (Status ${res.status})`);
 
-    const text = response.text;
-    if (!text) throw new Error("Keine Blog-Daten erhalten");
+    const data = await res.json();
+    const articles: BlogArticle[] = Array.isArray(data?.articles) ? data.articles : [];
+    if (articles.length === 0) throw new Error('Keine Artikel erhalten');
 
-    const articles = (JSON.parse(text) as BlogArticle[]).map((a, i) => ({ ...a, isLatest: i === 0 }));
-    if (articles.length > 0) writeEditionCache(cacheKey, articles);
+    writeEditionCache(cacheKey, articles);
     return articles;
-
   } catch (error) {
-    console.error("Blog-KI-Fehler:", error);
+    console.error("Blog-Abruf-Fehler:", error);
     return [
       {
         id: "err-1",
