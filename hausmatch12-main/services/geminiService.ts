@@ -85,9 +85,9 @@ export const getCurrentEditionDate = (): Date => {
 };
 
 const EDITION_CACHE_BASE = 'hm_eddy_news_';
-// v3: Artikel kommen aus /api/blog (echte Recherche mit Quellen-Links) –
+// v4: ausführliche Berichte (900–1300 Wörter) aus /api/blog –
 // alte Cache-Versionen werden beim Schreiben mit aufgeräumt.
-const EDITION_CACHE_PREFIX = EDITION_CACHE_BASE + 'v3_';
+const EDITION_CACHE_PREFIX = EDITION_CACHE_BASE + 'v4_';
 
 const readEditionCache = (key: string): BlogArticle[] | null => {
   try {

@@ -156,6 +156,18 @@ export const BlogPage: React.FC = () => {
     loadBlog();
   }, []);
 
+  // Vollbild-Bericht: Hintergrund-Scroll sperren, Escape schließt.
+  useEffect(() => {
+    if (!selectedArticle) return;
+    document.body.style.overflow = 'hidden';
+    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') setSelectedArticle(null); };
+    window.addEventListener('keydown', onKey);
+    return () => {
+      document.body.style.overflow = '';
+      window.removeEventListener('keydown', onKey);
+    };
+  }, [selectedArticle]);
+
   const editionStr = getCurrentEditionDate().toLocaleDateString('de-DE', {
     weekday: 'long', day: '2-digit', month: 'long', year: 'numeric',
   });
@@ -271,66 +283,95 @@ export const BlogPage: React.FC = () => {
         <div className="text-center py-20 text-slate-300 font-black uppercase tracking-[0.2em]">Keine neuen Updates verfügbar.</div>
       )}
 
-      {/* Article Modal */}
+      {/* Vollbild-Bericht (key erzwingt Scroll-Start oben bei Artikelwechsel) */}
       {selectedArticle && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-md animate-fade-in">
-          <div className="bg-white w-full max-w-4xl max-h-[90vh] rounded-[3rem] overflow-hidden shadow-2xl flex flex-col animate-fade-in-up">
-            <div className="p-8 md:p-12 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
-              <div className="flex-1 pr-8">
-                <div className="flex flex-wrap items-center gap-3 mb-4">
-                  <span className="bg-indigo-600 text-white text-[10px] font-black px-4 py-1.5 rounded-full uppercase tracking-widest">{selectedArticle.category}</span>
-                  <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{selectedArticle.date}</span>
-                  <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">· {readingMinutes(selectedArticle)} Min. Lesezeit</span>
-                </div>
-                <h2 className="text-3xl md:text-4xl font-black text-slate-900 tracking-tighter leading-tight">{selectedArticle.title}</h2>
+        <div key={selectedArticle.id} className="fixed inset-0 z-[100] bg-white overflow-y-auto animate-fade-in">
+          {/* Sticky-Leiste mit Zurück-Button */}
+          <div className="sticky top-0 z-10 bg-white/90 backdrop-blur-md border-b border-slate-100">
+            <div className="max-w-5xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-4">
+              <button
+                onClick={() => setSelectedArticle(null)}
+                className="flex items-center gap-2 text-slate-500 hover:text-slate-900 font-black uppercase text-[11px] tracking-widest transition-colors"
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M10 19l-7-7m0 0l7-7m-7 7h18" /></svg>
+                <span className="hidden sm:inline">Zurück zur Übersicht</span>
+                <span className="sm:hidden">Zurück</span>
+              </button>
+              <div className="flex items-center gap-3 min-w-0">
+                <img src={EDDY_URL} alt="Eddy" width={32} height={32} style={{ display: 'block', objectFit: 'cover', borderRadius: '0.6rem', flexShrink: 0 }} />
+                <span className="hidden md:block text-sm font-black tracking-tight text-slate-900 truncate">Eddys News der Woche</span>
               </div>
-              <button onClick={() => setSelectedArticle(null)} className="p-4 bg-white rounded-2xl border border-slate-200 text-slate-400 hover:text-slate-900 transition-colors shrink-0">
-                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M6 18L18 6M6 6l12 12" /></svg>
+              <button
+                onClick={() => setSelectedArticle(null)}
+                className="p-2.5 rounded-xl border border-slate-200 text-slate-400 hover:text-slate-900 hover:border-slate-300 transition-colors shrink-0"
+                aria-label="Bericht schließen"
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M6 18L18 6M6 6l12 12" /></svg>
               </button>
             </div>
-            <div className="flex-1 overflow-y-auto p-8 md:p-12 custom-scrollbar">
-              <div className="max-w-none">
-                <p className="text-lg sm:text-xl font-bold text-slate-900 mb-8 leading-relaxed italic border-l-4 border-indigo-600 pl-6 bg-indigo-50/30 py-4 rounded-r-2xl">
-                  {selectedArticle.summary}
-                </p>
+          </div>
 
-                {selectedArticle.keyPoints && selectedArticle.keyPoints.length > 0 && (
-                  <div className="bg-slate-50 border border-slate-100 rounded-2xl p-6 mb-8">
-                    <h4 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.25em] mb-4">Das Wichtigste in Kürze</h4>
-                    <ul className="space-y-2.5">
-                      {selectedArticle.keyPoints.map((kp, i) => (
-                        <li key={i} className="flex gap-3 text-sm sm:text-[15px] font-bold text-slate-700 leading-relaxed">
-                          <svg className="w-4 h-4 text-indigo-500 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" /></svg>
-                          {kp}
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
-
-                <ArticleBody content={selectedArticle.fullContent} />
+          {/* Hero */}
+          <div className="bg-slate-950 text-white relative overflow-hidden">
+            <div className="absolute -top-32 right-0 w-[36rem] h-[24rem] bg-indigo-600/20 rounded-full blur-[100px] pointer-events-none" />
+            <div className="relative max-w-3xl mx-auto px-4 sm:px-6 py-14 md:py-20">
+              <div className="flex flex-wrap items-center gap-3 mb-6">
+                <span className="bg-indigo-600 text-white text-[10px] font-black px-4 py-1.5 rounded-full uppercase tracking-widest">{selectedArticle.category}</span>
+                <span className="text-[11px] font-black text-slate-400 uppercase tracking-widest">{selectedArticle.date}</span>
+                <span className="text-[11px] font-black text-slate-400 uppercase tracking-widest">· {readingMinutes(selectedArticle)} Min. Lesezeit</span>
               </div>
-              <div className="mt-12 pt-12 border-t border-slate-100">
-                <h4 className="text-xs font-black text-slate-400 uppercase tracking-widest mb-6">Referenzen &amp; Weiterführende Links</h4>
-                <div className="grid sm:grid-cols-2 gap-4">
-                  {selectedArticle.sources?.map((s, idx) => (
-                    <a key={idx} href={s.url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-4 p-4 bg-slate-50 rounded-2xl border border-slate-100 hover:border-indigo-300 hover:bg-white transition-all group">
-                      <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center text-indigo-600 shadow-sm group-hover:scale-110 transition-transform">
-                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" /></svg>
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <p className="text-sm font-black text-slate-900 group-hover:text-indigo-600 transition-colors truncate">{s.title}</p>
-                        <p className="text-[10px] text-slate-400 font-bold truncate">{s.url}</p>
-                      </div>
-                    </a>
-                  ))}
-                </div>
-              </div>
-            </div>
-            <div className="p-8 bg-slate-50 border-t border-slate-100 flex justify-center">
-              <button onClick={() => setSelectedArticle(null)} className="bg-slate-900 text-white px-12 py-4 rounded-2xl font-black uppercase text-xs tracking-widest hover:bg-indigo-600 transition-all shadow-xl shadow-slate-200">Schließen</button>
+              <h1 className="text-3xl sm:text-5xl md:text-6xl font-black tracking-tighter leading-[1.05] mb-6">{selectedArticle.title}</h1>
+              <p className="text-lg md:text-2xl text-slate-300 font-medium leading-relaxed">{selectedArticle.summary}</p>
             </div>
           </div>
+
+          {/* Berichtstext */}
+          <article className="max-w-3xl mx-auto px-4 sm:px-6 py-12 md:py-16">
+            {selectedArticle.keyPoints && selectedArticle.keyPoints.length > 0 && (
+              <div className="bg-slate-50 border border-slate-100 rounded-2xl p-6 sm:p-8 mb-10">
+                <h4 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.25em] mb-4">Das Wichtigste in Kürze</h4>
+                <ul className="space-y-2.5">
+                  {selectedArticle.keyPoints.map((kp, i) => (
+                    <li key={i} className="flex gap-3 text-sm sm:text-[15px] font-bold text-slate-700 leading-relaxed">
+                      <svg className="w-4 h-4 text-indigo-500 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" /></svg>
+                      {kp}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+
+            <ArticleBody content={selectedArticle.fullContent} />
+
+            <div className="mt-14 pt-12 border-t border-slate-100">
+              <h4 className="text-xs font-black text-slate-400 uppercase tracking-widest mb-6">Referenzen &amp; Weiterführende Links</h4>
+              <div className="grid sm:grid-cols-2 gap-4">
+                {selectedArticle.sources?.map((s, idx) => (
+                  <a key={idx} href={s.url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-4 p-4 bg-slate-50 rounded-2xl border border-slate-100 hover:border-indigo-300 hover:bg-white transition-all group">
+                    <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center text-indigo-600 shadow-sm group-hover:scale-110 transition-transform">
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" /></svg>
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-black text-slate-900 group-hover:text-indigo-600 transition-colors truncate">{s.title}</p>
+                      <p className="text-[10px] text-slate-400 font-bold truncate">{s.url}</p>
+                    </div>
+                  </a>
+                ))}
+              </div>
+              <p className="text-[10px] font-medium text-slate-400 mt-8">
+                KI-generierter Bericht mit Quellenangaben — keine Rechts-, Steuer- oder Finanzberatung.
+              </p>
+            </div>
+
+            <div className="mt-12 flex justify-center">
+              <button
+                onClick={() => setSelectedArticle(null)}
+                className="bg-slate-900 text-white px-12 py-4 rounded-2xl font-black uppercase text-xs tracking-widest hover:bg-indigo-600 transition-all shadow-xl shadow-slate-200"
+              >
+                Zurück zur Übersicht
+              </button>
+            </div>
+          </article>
         </div>
       )}
     </div>

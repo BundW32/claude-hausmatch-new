@@ -62,10 +62,11 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
 Recherchiere über die Google-Suche die 4 aktuellsten und wichtigsten Nachrichten der letzten 7 Tage für Immobilieneigentümer und Hausverwaltungen in Deutschland. Decke möglichst verschiedene Themenfelder ab: rechtliche Änderungen & Urteile, Markt & Mieten, Zinsen & Finanzierung, Energie & Technik. Schreibe auf Deutsch mit korrekten Umlauten (ä, ö, ü, ß).
 
-Jeder Artikel ist ein VOLLSTÄNDIGER Bericht wie in einem professionellen Immobilien-Blog:
-- "fullContent": 500–800 Wörter, gegliedert mit Markdown: "## " für 3–4 Zwischenüberschriften, "- " für Aufzählungen, **fett** für zentrale Begriffe und Zahlen.
-- Aufbau: prägnanter Einstieg (worum geht es, warum jetzt wichtig) → Hintergrund & Details mit konkreten Zahlen, Daten, Fristen und Namen aus den Suchergebnissen → Abschnitt "## Was heißt das für Eigentümer und Verwalter?" mit praktischen Konsequenzen → letzter Absatz beginnt mit "Eddys Einordnung:" (kurze, ehrliche, praktische Einschätzung in Eddys Ton).
-- "keyPoints": 3–5 prägnante Stichpunkte "Das Wichtigste in Kürze" (je max. 15 Wörter).
+Jeder Artikel ist ein AUSFÜHRLICHER, vollständiger Fachbericht wie in einem professionellen Immobilien-Magazin:
+- "fullContent": 900–1300 Wörter, gegliedert mit Markdown: "## " für 4–6 Zwischenüberschriften, "- " für Aufzählungen, **fett** für zentrale Begriffe und Zahlen.
+- Aufbau: prägnanter Einstieg (worum geht es, warum jetzt wichtig) → "## Hintergrund" mit Kontext und Vorgeschichte → Details mit konkreten Zahlen, Daten, Fristen, Namen und wo verfügbar Zitaten oder Positionen aus den Suchergebnissen → falls relevant regionale Unterschiede oder Beispielrechnungen → Abschnitt "## Was heißt das für Eigentümer und Verwalter?" mit einer konkreten Handlungs-Checkliste als Aufzählung → letzter Absatz beginnt mit "Eddys Einordnung:" (ehrliche, praktische Einschätzung in Eddys Ton, 3–5 Sätze).
+- Schreibe in ganzen, gut lesbaren Absätzen (3–6 Sätze je Absatz) — keine Stichwort-Sammlung. Erkläre Fachbegriffe kurz beim ersten Auftreten.
+- "keyPoints": 4–6 prägnante Stichpunkte "Das Wichtigste in Kürze" (je max. 15 Wörter).
 - "summary": 1–2 Sätze Teaser ohne Wiederholung des Titels.
 - "sources": 2–4 ECHTE Quellen aus den Suchergebnissen mit vollständiger URL (z. B. Haufe, Immobilien Zeitung, Handelsblatt, Tagesschau, BGH/Gerichte, Ministerien). KEINE erfundenen URLs.
 - "category": genau eine von "Recht", "Technik", "Management", "News".
@@ -96,7 +97,7 @@ Antworte NUR mit einem JSON-Array (kein Markdown-Codeblock, kein erklärender Te
           contents: [{ role: 'user', parts: [{ text: prompt }] }],
           generationConfig: {
             temperature: 0.4,
-            maxOutputTokens: 16384,
+            maxOutputTokens: 32768,
             thinkingConfig: { thinkingBudget: 0 },
           },
         }),
