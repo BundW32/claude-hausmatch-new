@@ -84,9 +84,9 @@ export const getCurrentEditionDate = (): Date => {
 };
 
 const EDITION_CACHE_BASE = 'hm_eddy_news_';
-// v2: vollständige, strukturierte Berichte (Markdown + keyPoints) – alte
-// Kurzfassungs-Caches werden beim Schreiben mit aufgeräumt.
-const EDITION_CACHE_PREFIX = EDITION_CACHE_BASE + 'v2_';
+// v3: echte News über den Server-Endpoint /api/news – alte Caches (v1/v2 aus
+// dem früheren Browser-Direktaufruf) werden beim Schreiben mit aufgeräumt.
+const EDITION_CACHE_PREFIX = EDITION_CACHE_BASE + 'v3_';
 
 const readEditionCache = (key: string): BlogArticle[] | null => {
   try {
@@ -107,100 +107,35 @@ const writeEditionCache = (key: string, articles: BlogArticle[]) => {
 
 export const fetchLatestIndustryBlog = async (): Promise<BlogArticle[]> => {
   const edition = getCurrentEditionDate();
+  const editionISO = edition.toISOString().slice(0, 10);
   const editionStr = edition.toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year: 'numeric' });
-  const cacheKey = EDITION_CACHE_PREFIX + edition.toISOString().slice(0, 10);
+  const cacheKey = EDITION_CACHE_PREFIX + editionISO;
 
   const cached = readEditionCache(cacheKey);
   if (cached && cached.length > 0) return cached;
 
-  if (!API_KEY) {
-    return [
-      {
-        id: "1",
-        title: "WEG-Sanierung: Beschlüsse werden einfacher (Beispiel)",
-        summary: "Beispiel-Inhalt: Neue Regelungen zur energetischen Sanierung beschlossen.",
-        fullContent: "Beispiel-Inhalt, da kein KI-Zugang konfiguriert ist.\n\n## Worum geht es?\nDie Eigentümerversammlung kann nun einfacher über Sanierungen entscheiden.\n\n## Was heißt das für Eigentümer und Verwalter?\n- Beschlussfassung prüfen\n- Fristen im Blick behalten\n\nEddys Einordnung: Für WEGs lohnt sich jetzt ein Blick in die Beschlussfassung.",
-        keyPoints: ["Beispiel-Artikel ohne KI-Zugang", "Beschlüsse zur Sanierung werden einfacher", "Fristen und Formvorgaben beachten"],
-        category: "Recht",
-        date: editionStr,
-        isLatest: true,
-        sources: [{ title: "Haufe Immobilien", url: "https://www.haufe.de/immobilien" }]
-      },
-      {
-        id: "2",
-        title: "Digitalisierung in der Hausverwaltung (Beispiel)",
-        summary: "Beispiel-Inhalt: Warum Excel-Listen nicht mehr ausreichen.",
-        fullContent: "Beispiel-Inhalt, da kein KI-Zugang konfiguriert ist.\n\n## Worum geht es?\nModerne Software-Lösungen sparen bis zu **30 % Arbeitszeit**.\n\n## Was heißt das für Eigentümer und Verwalter?\n- Mieterportale werden zum Standard\n- Abrechnungen lassen sich automatisieren\n\nEddys Einordnung: Wer 2026 noch ohne Mieterportal arbeitet, verliert Zeit und Bewerber.",
-        keyPoints: ["Beispiel-Artikel ohne KI-Zugang", "Software spart bis zu 30 % Arbeitszeit", "Mieterportale werden Standard"],
-        category: "Management",
-        date: editionStr,
-        isLatest: false,
-        sources: [{ title: "Immobilien Zeitung", url: "https://www.iz.de" }]
-      }
-    ];
-  }
-
   try {
-    const ai = new GoogleGenAI({ apiKey: API_KEY });
-    const response = await ai.models.generateContent({
-      model: "gemini-2.5-flash",
-      contents: `Du bist Eddy, der KI-Immobilienassistent von HausMatch. Erstelle "Eddys News der Woche" – Ausgabe vom ${editionStr}. ` +
-        `Finde über die Google-Suche die 4 aktuellsten und wichtigsten Nachrichten der letzten 7 Tage für Immobilieneigentümer und Hausverwaltungen in Deutschland ` +
-        `(rechtliche Änderungen & Urteile, Markt & Mieten, Zinsen & Finanzierung, Energie & Technik). Schreibe auf Deutsch.\n\n` +
-        `Jeder Artikel ist ein VOLLSTÄNDIGER Bericht wie in einem professionellen Immobilien-Blog:\n` +
-        `- fullContent: 400–600 Wörter, gegliedert mit Markdown: "## " für 2–4 Zwischenüberschriften, "- " für Aufzählungen, **fett** für zentrale Begriffe und Zahlen.\n` +
-        `- Aufbau: prägnanter Einstieg (worum geht es, warum jetzt wichtig) → Hintergrund & Details mit konkreten Zahlen, Daten, Fristen und Namen → Abschnitt "## Was heißt das für Eigentümer und Verwalter?" mit praktischen Konsequenzen → letzter Absatz beginnt mit "Eddys Einordnung:" (kurze, ehrliche, praktische Einschätzung in Eddys Ton).\n` +
-        `- keyPoints: 3–5 prägnante Stichpunkte "Das Wichtigste in Kürze" (je max. 15 Wörter).\n` +
-        `- summary: 1–2 Sätze Teaser ohne Wiederholung des Titels.\n` +
-        `date ist jeweils "${editionStr}". Gib echte, seriöse Quellen mit URLs an.`,
-      config: {
-        tools: [{ googleSearch: {} }],
-        responseMimeType: "application/json",
-        responseSchema: {
-          type: Type.ARRAY,
-          items: {
-            type: Type.OBJECT,
-            properties: {
-              id: { type: Type.STRING },
-              title: { type: Type.STRING },
-              summary: { type: Type.STRING },
-              fullContent: { type: Type.STRING },
-              keyPoints: { type: Type.ARRAY, items: { type: Type.STRING } },
-              category: { type: Type.STRING, enum: ["Recht", "Technik", "Management", "News"] },
-              date: { type: Type.STRING },
-              sources: {
-                type: Type.ARRAY,
-                items: {
-                  type: Type.OBJECT,
-                  properties: {
-                    title: { type: Type.STRING },
-                    url: { type: Type.STRING }
-                  },
-                  required: ["title", "url"]
-                }
-              }
-            },
-            required: ["id", "title", "summary", "fullContent", "keyPoints", "category", "date", "sources"]
-          }
-        }
-      }
-    });
+    // Echte News kommen vom Server-Endpoint /api/news (Gemini + Google-Suche).
+    // Der GEMINI_API_KEY liegt nur dort – im Browser existiert er nicht; der
+    // frühere Direktaufruf aus dem Client konnte deshalb nie echte News liefern.
+    const res = await fetch(`/api/news?edition=${editionISO}`);
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const data = await res.json();
+    const articles = (Array.isArray(data?.articles) ? data.articles : []) as BlogArticle[];
+    if (articles.length === 0) throw new Error('Keine Artikel erhalten');
 
-    const text = response.text;
-    if (!text) throw new Error("Keine Blog-Daten erhalten");
-
-    const articles = (JSON.parse(text) as BlogArticle[]).map((a, i) => ({ ...a, isLatest: i === 0 }));
-    if (articles.length > 0) writeEditionCache(cacheKey, articles);
-    return articles;
-
+    const mapped = articles.map((a, i) => ({ ...a, isLatest: i === 0 }));
+    writeEditionCache(cacheKey, mapped);
+    return mapped;
   } catch (error) {
-    console.error("Blog-KI-Fehler:", error);
+    console.error('Eddys News konnten nicht geladen werden:', error);
     return [
       {
         id: "err-1",
         title: "Eddys News sind gerade nicht erreichbar",
         summary: "Die aktuelle Ausgabe konnte nicht geladen werden – bitte später erneut versuchen.",
-        fullContent: "Die KI-Recherche für diese Ausgabe ist momentan nicht erreichbar. Schauen Sie in Kürze wieder vorbei.\n\nEddys Einordnung: Manchmal braucht auch eine Eule eine kurze Pause. 🦉",
+        fullContent: "Die News-Recherche ist momentan nicht erreichbar (Server-Endpoint /api/news antwortet nicht oder der GEMINI_API_KEY ist in Vercel nicht gesetzt).\n\n## Was heißt das für Eigentümer und Verwalter?\n- Einfach später erneut vorbeischauen – die Ausgabe wird automatisch nachgeladen.\n\nEddys Einordnung: Manchmal braucht auch eine Eule eine kurze Pause. 🦉",
+        keyPoints: ["News-Recherche derzeit nicht erreichbar", "Ausgabe wird beim nächsten Besuch nachgeladen"],
         category: "News",
         date: editionStr,
         isLatest: true,
