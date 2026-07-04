@@ -318,7 +318,7 @@ const Footer = () => {
               <li><Link to="/marktplatz" className="hover:text-white transition-colors">Marktplatz</Link></li>
               <li><Link to="/network" className="hover:text-white transition-colors">Netzwerk</Link></li>
               <li><Link to="/forum" className="hover:text-white transition-colors">Forum</Link></li>
-              <li><Link to="/vermittlung" className="hover:text-white transition-colors">Verwalter finden</Link></li>
+              <li><Link to="/wizard" className="hover:text-white transition-colors">Verwalter finden</Link></li>
             </ul>
           </div>
           <div className="md:col-span-2">
