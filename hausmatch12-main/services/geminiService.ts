@@ -1,5 +1,6 @@
 import { InquiryAnalysis, ManagerSearchResult, BlogArticle, SearchCompany } from "../types";
 import { GoogleGenAI, Type } from "@google/genai";
+import { getProfession } from "./professions";
 
 // Wir lesen den Key sicher aus
 const API_KEY = process.env.GEMINI_API_KEY || "";
@@ -145,12 +146,15 @@ export const fetchLatestIndustryBlog = async (): Promise<BlogArticle[]> => {
   }
 };
 
-export const searchPropertyManagers = async (city: string): Promise<ManagerSearchResult> => {
+// Multi-Profi-Suche: professionId steuert Suchbegriff und Branche
+// (Standard bleibt Hausverwaltung – bestehende Aufrufe funktionieren unverändert).
+export const searchPropertyManagers = async (city: string, professionId?: string): Promise<ManagerSearchResult> => {
+  const prof = getProfession(professionId);
   try {
     const res = await fetch('/api/search', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ query: `Hausverwaltung ${city}` })
+      body: JSON.stringify({ query: `${prof.searchTerm} ${city}`, profession: prof.label })
     });
 
     if (!res.ok) {
@@ -162,8 +166,8 @@ export const searchPropertyManagers = async (city: string): Promise<ManagerSearc
 
     return {
       introText: companies.length > 0
-        ? `${companies.length} Hausverwaltungen in ${city} gefunden – live durchsucht über Google Search.`
-        : `Es konnten keine Hausverwaltungen in ${city} gefunden werden. Versuchen Sie es mit einer anderen Stadt oder Region.`,
+        ? `${companies.length} ${prof.plural} in ${city} gefunden – live durchsucht über Google Search.`
+        : `Es konnten keine ${prof.plural} in ${city} gefunden werden. Versuchen Sie es mit einer anderen Stadt oder Region.`,
       sources: [],
       companies
     };

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { searchPropertyManagers } from '../services/geminiService';
 import { getManagersByCity } from '../services/dataService';
+import { getProfession } from '../services/professions';
 import { ManagerSearchResult, SearchCompany, User } from '../types';
 
 const EDDY_URL = "/eddy-eule.png";
@@ -231,7 +232,7 @@ const ExpressModal = ({ selected, city, onClose }: { selected: SelectableEntry[]
           </div>
           <div className="flex-1">
             <h2 className="text-white font-black text-xl">Express-Matching</h2>
-            <p className="text-indigo-200 text-sm font-medium">{selected.length} Verwalter werden kontaktiert</p>
+            <p className="text-indigo-200 text-sm font-medium">{selected.length} Anbieter werden kontaktiert</p>
           </div>
           <button onClick={onClose} className="text-white/60 hover:text-white transition-colors">
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M6 18L18 6M6 6l12 12" /></svg>
@@ -248,11 +249,11 @@ const ExpressModal = ({ selected, city, onClose }: { selected: SelectableEntry[]
               </div>
               <h3 className="text-2xl font-black text-slate-900 mb-3">Anfragen versendet!</h3>
               <p className="text-slate-500 font-medium mb-2">
-                Wir haben <span className="font-black text-indigo-600">{selected.length} Hausverwaltungen</span> in {city} um ein Angebot gebeten.
+                Wir haben <span className="font-black text-indigo-600">{selected.length} Anbieter</span> in {city} um ein Angebot gebeten.
               </p>
               <p className="text-slate-400 text-sm mb-8">Die Angebote werden direkt an <span className="font-semibold">{ownerEmail}</span> gesendet.</p>
               <div className="bg-slate-50 rounded-2xl p-4 text-left mb-6">
-                <p className="text-xs font-black text-slate-400 uppercase tracking-widest mb-3">Kontaktierte Verwalter</p>
+                <p className="text-xs font-black text-slate-400 uppercase tracking-widest mb-3">Kontaktierte Anbieter</p>
                 {selected.map((s, i) => (
                   <div key={i} className="flex items-center gap-2 py-1.5 border-b border-slate-100 last:border-0">
                     <div className="w-2 h-2 bg-indigo-500 rounded-full flex-shrink-0" />
@@ -268,7 +269,7 @@ const ExpressModal = ({ selected, city, onClose }: { selected: SelectableEntry[]
           ) : (
             <form onSubmit={handleSend} className="space-y-5">
               <div className="bg-indigo-50 rounded-2xl p-4 mb-6">
-                <p className="text-xs font-black text-indigo-600 uppercase tracking-widest mb-2">Ausgewählte Verwalter ({selected.length})</p>
+                <p className="text-xs font-black text-indigo-600 uppercase tracking-widest mb-2">Ausgewählte Anbieter ({selected.length})</p>
                 <div className="space-y-1">
                   {selected.map((s, i) => (
                     <div key={i} className="flex items-center gap-2">
@@ -318,9 +319,9 @@ const ExpressModal = ({ selected, city, onClose }: { selected: SelectableEntry[]
                     </svg>
                     Anfragen werden gesendet...
                   </span>
-                ) : `Angebote bei ${selected.length} Verwaltern anfragen`}
+                ) : `Angebote bei ${selected.length} Anbietern anfragen`}
               </button>
-              <p className="text-slate-400 text-xs text-center">Die Verwalter erhalten Ihre Anfrage und senden ihr Angebot direkt an Ihre E-Mail.</p>
+              <p className="text-slate-400 text-xs text-center">Die Anbieter erhalten Ihre Anfrage und senden ihr Angebot direkt an Ihre E-Mail.</p>
             </form>
           )}
         </div>
@@ -334,6 +335,8 @@ const SearchResults = () => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const city = searchParams.get('city') || 'Deutschland';
+  const beruf = searchParams.get('beruf') || 'hausverwaltung';
+  const prof = getProfession(beruf);
   const [result, setResult] = useState<ManagerSearchResult | null>(null);
   const [networkManagers, setNetworkManagers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
@@ -344,15 +347,16 @@ const SearchResults = () => {
     const fetchData = async () => {
       setLoading(true);
       const [data, managers] = await Promise.all([
-        searchPropertyManagers(city),
-        getManagersByCity(city),
+        searchPropertyManagers(city, beruf),
+        // Hausverwaltung: wie bisher über role=manager; andere Gewerke über userType.
+        getManagersByCity(city, beruf === 'hausverwaltung' ? undefined : prof.userTypes),
       ]);
       setResult(data);
       setNetworkManagers(managers);
       setLoading(false);
     };
     fetchData();
-  }, [city]);
+  }, [city, beruf]);
 
   const toggle = (key: string) => setSelectedKeys(prev => {
     const next = new Set(prev);
@@ -380,7 +384,7 @@ const SearchResults = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex flex-wrap items-center gap-3 mb-6 md:mb-12">
           <span className="bg-indigo-600 text-white text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-widest shadow-lg shadow-indigo-100">Live Matching</span>
-          <h1 className="text-2xl sm:text-3xl md:text-4xl font-black text-slate-900 tracking-tight">Empfohlene Partner in {city}</h1>
+          <h1 className="text-2xl sm:text-3xl md:text-4xl font-black text-slate-900 tracking-tight">{prof.plural} in {city}</h1>
         </div>
 
         <div className="grid lg:grid-cols-3 gap-10">
@@ -397,7 +401,7 @@ const SearchResults = () => {
                   </div>
                 </div>
                 <h3 className="text-2xl font-black text-slate-900 mb-3 tracking-tight">Eddy sucht für Sie...</h3>
-                <p className="text-slate-400 font-medium">Passende Hausverwaltungen in <span className="text-indigo-600 font-black">{city}</span> werden geprüft</p>
+                <p className="text-slate-400 font-medium">Passende {prof.plural} in <span className="text-indigo-600 font-black">{city}</span> werden geprüft</p>
                 <p className="text-slate-300 text-sm mt-2 font-medium">Kontaktdaten werden direkt von den Websites geladen</p>
               </div>
             ) : result ? (
@@ -470,7 +474,7 @@ const SearchResults = () => {
                 </div>
               </div>
               <p className="text-indigo-100 text-base mb-8 leading-relaxed font-semibold">
-                Wählen Sie Verwalter aus der Liste aus und fordern Sie mit einem Klick Angebote an — diskret und kostenlos.
+                Wählen Sie Anbieter aus der Liste aus und fordern Sie mit einem Klick Angebote an — diskret und kostenlos.
               </p>
               {selectedKeys.size > 0 ? (
                 <button onClick={() => setShowModal(true)} className="w-full bg-white text-indigo-700 py-5 rounded-2xl font-black text-lg hover:bg-indigo-50 transition-all shadow-xl active:scale-95">
@@ -478,7 +482,7 @@ const SearchResults = () => {
                 </button>
               ) : (
                 <div className="w-full bg-white/20 text-white/70 py-5 rounded-2xl font-black text-base text-center">
-                  Bitte erst Verwalter auswählen
+                  Bitte erst Anbieter auswählen
                 </div>
               )}
             </div>
@@ -497,7 +501,7 @@ const SearchResults = () => {
                 </svg>
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-white font-black text-sm">{selectedKeys.size} Verwalter ausgewählt</p>
+                <p className="text-white font-black text-sm">{selectedKeys.size} Anbieter ausgewählt</p>
                 <p className="text-slate-400 text-xs font-medium truncate">
                   {getSelectedEntries().map(e => e.name).join(', ')}
                 </p>

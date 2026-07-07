@@ -285,9 +285,14 @@ const haversineKm = (lat1: number, lon1: number, lat2: number, lon2: number): nu
   return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 };
 
-export const getManagersByCity = async (city: string): Promise<User[]> => {
+// Netzwerk-Partner in einer Stadt finden. Ohne userTypes: Hausverwaltungen
+// (role manager, wie bisher). Mit userTypes: passende Profis des Gewerks
+// (z. B. ['makler'] oder ['anwalt']) für die Multi-Profi-Suche.
+export const getManagersByCity = async (city: string, userTypes?: string[]): Promise<User[]> => {
   try {
-    const q = query(collection(db, "users"), where("role", "==", "manager"), limit(50));
+    const q = userTypes && userTypes.length > 0
+      ? query(collection(db, "users"), where("userType", "in", userTypes.slice(0, 10)), limit(50))
+      : query(collection(db, "users"), where("role", "==", "manager"), limit(50));
     const snapshot = await getDocs(q);
     const managers = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as User));
     if (managers.length === 0) return [];

@@ -45,16 +45,18 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   const apiKey = process.env.GEMINI_API_KEY;
   if (!apiKey) return res.status(500).json({ error: 'API key not configured' });
 
-  const { query } = req.body || {};
+  const { query, profession } = req.body || {};
   if (!query || typeof query !== 'string') {
     return res.status(400).json({ error: 'query is required' });
   }
+  // Gewerk/Branche (z. B. "Immobilienmakler", "Energieberater"); Standard bleibt Hausverwaltung.
+  const branche = typeof profession === 'string' && profession.trim() ? profession.trim() : 'Hausverwaltung';
 
   try {
-    const prompt = `Suche nach echten, aktiven deutschen Hausverwaltungsunternehmen für die Suchanfrage: "${query}".
+    const prompt = `Suche nach echten, aktiven deutschen Anbietern der Branche "${branche}" für die Suchanfrage: "${query}".
 
-Nutze Google-Suchergebnisse um ECHTE Unternehmen mit echten Kontaktdaten zu finden.
-Gib exakt 8 Unternehmen zurück, sortiert nach Google-Bewertung (höchste zuerst).
+Nutze Google-Suchergebnisse um ECHTE Unternehmen/Kanzleien/Betriebe mit echten Kontaktdaten zu finden.
+Gib exakt 8 Anbieter zurück, sortiert nach Google-Bewertung (höchste zuerst).
 Verwende in allen Texten korrekte deutsche Umlaute (ä, ö, ü, ß) — z. B. "München", nicht "Muenchen".
 
 Antworte NUR mit einem JSON-Array (kein Markdown, kein erklärender Text), in diesem Format:
@@ -126,7 +128,7 @@ Felder die unbekannt sind als leeren String "" angeben, rating als 0 wenn unbeka
       email: String(c.email || ''),
       rating: Math.min(5, Math.max(0, Number(c.rating) || 0)),
       reviews: Math.max(0, Number(c.reviews) || 0),
-      specialization: String(c.specialization || 'Hausverwaltung'),
+      specialization: String(c.specialization || branche),
       isPartner: false
     }));
 
