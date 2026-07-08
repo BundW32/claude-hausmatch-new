@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { searchPropertyManagers } from '../services/geminiService';
 import { getManagersByCity } from '../services/dataService';
-import { getProfession } from '../services/professions';
+import { getProfession, resolveSearchTarget } from '../services/professions';
 import { ManagerSearchResult, SearchCompany, User } from '../types';
 
 const EDDY_URL = "/eddy-eule.png";
@@ -336,7 +336,9 @@ const SearchResults = () => {
   const navigate = useNavigate();
   const city = searchParams.get('city') || 'Deutschland';
   const beruf = searchParams.get('beruf') || 'hausverwaltung';
+  const gewerk = searchParams.get('gewerk'); // konkretes Handwerks-Gewerk (optional)
   const prof = getProfession(beruf);
+  const target = resolveSearchTarget(beruf, gewerk); // effektives Label/Plural für Titel & Suche
   const [result, setResult] = useState<ManagerSearchResult | null>(null);
   const [networkManagers, setNetworkManagers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
@@ -347,7 +349,7 @@ const SearchResults = () => {
     const fetchData = async () => {
       setLoading(true);
       const [data, managers] = await Promise.all([
-        searchPropertyManagers(city, beruf),
+        searchPropertyManagers(city, beruf, gewerk),
         // Hausverwaltung: wie bisher über role=manager; andere Gewerke über userType.
         getManagersByCity(city, beruf === 'hausverwaltung' ? undefined : prof.userTypes),
       ]);
@@ -356,7 +358,7 @@ const SearchResults = () => {
       setLoading(false);
     };
     fetchData();
-  }, [city, beruf]);
+  }, [city, beruf, gewerk]);
 
   const toggle = (key: string) => setSelectedKeys(prev => {
     const next = new Set(prev);
@@ -384,7 +386,7 @@ const SearchResults = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex flex-wrap items-center gap-3 mb-6 md:mb-12">
           <span className="bg-indigo-600 text-white text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-widest shadow-lg shadow-indigo-100">Live Matching</span>
-          <h1 className="text-2xl sm:text-3xl md:text-4xl font-black text-slate-900 tracking-tight">{prof.plural} in {city}</h1>
+          <h1 className="text-2xl sm:text-3xl md:text-4xl font-black text-slate-900 tracking-tight">{target.plural} in {city}</h1>
         </div>
 
         <div className="grid lg:grid-cols-3 gap-10">
@@ -401,7 +403,7 @@ const SearchResults = () => {
                   </div>
                 </div>
                 <h3 className="text-2xl font-black text-slate-900 mb-3 tracking-tight">Eddy sucht für Sie...</h3>
-                <p className="text-slate-400 font-medium">Passende {prof.plural} in <span className="text-indigo-600 font-black">{city}</span> werden geprüft</p>
+                <p className="text-slate-400 font-medium">Passende {target.plural} in <span className="text-indigo-600 font-black">{city}</span> werden geprüft</p>
                 <p className="text-slate-300 text-sm mt-2 font-medium">Kontaktdaten werden direkt von den Websites geladen</p>
               </div>
             ) : result ? (

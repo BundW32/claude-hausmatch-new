@@ -1,6 +1,6 @@
 import { InquiryAnalysis, ManagerSearchResult, BlogArticle, SearchCompany } from "../types";
 import { GoogleGenAI, Type } from "@google/genai";
-import { getProfession } from "./professions";
+import { resolveSearchTarget } from "./professions";
 
 // Wir lesen den Key sicher aus
 const API_KEY = process.env.GEMINI_API_KEY || "";
@@ -146,15 +146,16 @@ export const fetchLatestIndustryBlog = async (): Promise<BlogArticle[]> => {
   }
 };
 
-// Multi-Profi-Suche: professionId steuert Suchbegriff und Branche
-// (Standard bleibt Hausverwaltung – bestehende Aufrufe funktionieren unverändert).
-export const searchPropertyManagers = async (city: string, professionId?: string): Promise<ManagerSearchResult> => {
-  const prof = getProfession(professionId);
+// Multi-Profi-Suche: professionId steuert die Branche, tradeId optional das
+// konkrete Handwerks-Gewerk (z. B. 'shk', 'dachdecker'). Standard bleibt
+// Hausverwaltung – bestehende Aufrufe funktionieren unverändert.
+export const searchPropertyManagers = async (city: string, professionId?: string, tradeId?: string | null): Promise<ManagerSearchResult> => {
+  const target = resolveSearchTarget(professionId, tradeId);
   try {
     const res = await fetch('/api/search', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ query: `${prof.searchTerm} ${city}`, profession: prof.label })
+      body: JSON.stringify({ query: `${target.searchTerm} ${city}`, profession: target.label })
     });
 
     if (!res.ok) {
@@ -166,8 +167,8 @@ export const searchPropertyManagers = async (city: string, professionId?: string
 
     return {
       introText: companies.length > 0
-        ? `${companies.length} ${prof.plural} in ${city} gefunden – live durchsucht über Google Search.`
-        : `Es konnten keine ${prof.plural} in ${city} gefunden werden. Versuchen Sie es mit einer anderen Stadt oder Region.`,
+        ? `${companies.length} ${target.plural} in ${city} gefunden – live durchsucht über Google Search.`
+        : `Es konnten keine ${target.plural} in ${city} gefunden werden. Versuchen Sie es mit einer anderen Stadt oder Region.`,
       sources: [],
       companies
     };

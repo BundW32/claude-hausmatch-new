@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { PROFESSIONS, getProfession } from '../services/professions';
+import { PROFESSIONS, HANDWERK_GEWERKE, resolveSearchTarget } from '../services/professions';
 
 const EDDY_URL = "/eddy-eule.png";
 
@@ -19,6 +19,7 @@ const EddyOwl3D = ({ size = 180 }: { size?: number }) => (
 const LandingHome = () => {
   const [city, setCity] = useState('');
   const [beruf, setBeruf] = useState('hausverwaltung');
+  const [gewerk, setGewerk] = useState('alle'); // konkretes Handwerks-Gewerk (nur bei beruf 'handwerker')
   const navigate = useNavigate();
 
   // Multi-Profi-Suche: Hausverwaltung behält den Detail-Vorfilter (Wizard),
@@ -28,7 +29,8 @@ const LandingHome = () => {
     if (beruf === 'hausverwaltung') {
       navigate(city.trim() ? `/wizard?city=${encodeURIComponent(city)}` : '/wizard');
     } else {
-      navigate(`/search-results?city=${encodeURIComponent(city.trim() || 'Deutschland')}&beruf=${beruf}`);
+      const gewerkParam = beruf === 'handwerker' && gewerk !== 'alle' ? `&gewerk=${gewerk}` : '';
+      navigate(`/search-results?city=${encodeURIComponent(city.trim() || 'Deutschland')}&beruf=${beruf}${gewerkParam}`);
     }
   };
 
@@ -80,6 +82,29 @@ const LandingHome = () => {
                   </button>
                 ))}
               </div>
+
+              {/* Zweite Ebene: konkretes Handwerks-Gewerk (Sanitär, Dachdecker, …) */}
+              {beruf === 'handwerker' && (
+                <div className="mt-4 bg-white/70 backdrop-blur border border-slate-200/80 rounded-3xl p-4 animate-fade-in">
+                  <p className="text-[10px] font-black uppercase tracking-[0.25em] text-slate-400 mb-3">Welches Gewerk?</p>
+                  <div className="flex flex-wrap justify-center gap-1.5">
+                    {HANDWERK_GEWERKE.map(t => (
+                      <button
+                        key={t.id}
+                        type="button"
+                        onClick={() => setGewerk(t.id)}
+                        className={`px-3 py-1.5 rounded-full text-[10px] font-black uppercase tracking-wider transition-all border ${
+                          gewerk === t.id
+                            ? 'bg-slate-900 text-white border-slate-900 shadow'
+                            : 'bg-white text-slate-500 border-slate-200 hover:border-slate-400 hover:text-slate-800'
+                        }`}
+                      >
+                        {t.label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
 
             <form onSubmit={handleStartFunnel} className="max-w-2xl mx-auto relative group px-2 sm:px-0">
@@ -104,7 +129,7 @@ const LandingHome = () => {
                   type="submit"
                   className="w-full md:w-auto bg-blue-600 text-white px-8 md:px-10 py-4 md:py-5 rounded-[1.5rem] md:rounded-[2.2rem] font-black text-base md:text-lg hover:bg-blue-700 transition-all flex items-center justify-center gap-3 shadow-xl active:scale-95 whitespace-nowrap"
                 >
-                  {getProfession(beruf).label} finden
+                  {resolveSearchTarget(beruf, beruf === 'handwerker' ? gewerk : undefined).label} finden
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M13 7l5 5m0 0l-5 5m5-5H6" /></svg>
                 </button>
               </div>
