@@ -159,11 +159,12 @@ export const BlogPage: React.FC = () => {
   // Vollbild-Bericht: Hintergrund-Scroll sperren, Escape schließt.
   useEffect(() => {
     if (!selectedArticle) return;
+    const prev = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
     const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') setSelectedArticle(null); };
     window.addEventListener('keydown', onKey);
     return () => {
-      document.body.style.overflow = '';
+      document.body.style.overflow = prev;
       window.removeEventListener('keydown', onKey);
     };
   }, [selectedArticle]);

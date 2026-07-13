@@ -295,18 +295,20 @@ const haversineKm = (lat1: number, lon1: number, lat2: number, lon2: number): nu
   return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 };
 
-// Netzwerk-Partner einer Stadt für ein Gewerk. Für 'hausverwaltung' sind das
-// Nutzer mit role 'manager'; für alle anderen Gewerke Nutzer mit role 'profi'
-// und passendem userType. Ohne gewerkKey wird wie bisher nach Verwaltern gesucht.
-export const getManagersByCity = async (city: string, gewerkKey?: string): Promise<User[]> => {
+// Netzwerk-Partner einer Stadt finden. Ohne Angabe (oder 'hausverwaltung'):
+// Hausverwaltungen (role 'manager', wie bisher). Sonst passende Profis des
+// Gewerks – entweder ein einzelner Gewerk-Key (Funnel) oder eine Liste von
+// userTypes (Multi-Profi-Suche der Startseite).
+export const getManagersByCity = async (city: string, gewerk?: string | string[]): Promise<User[]> => {
   try {
-    const isHausverwaltung = !gewerkKey || gewerkKey === 'hausverwaltung';
-    const roleValue = isHausverwaltung ? 'manager' : 'profi';
-    const q = query(collection(db, "users"), where("role", "==", roleValue), limit(50));
+    const userTypes = Array.isArray(gewerk)
+      ? gewerk.filter(Boolean)
+      : gewerk && gewerk !== 'hausverwaltung' ? [gewerk] : [];
+    const q = userTypes.length > 0
+      ? query(collection(db, "users"), where("userType", "in", userTypes.slice(0, 10)), limit(50))
+      : query(collection(db, "users"), where("role", "==", "manager"), limit(50));
     const snapshot = await getDocs(q);
-    let managers = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as User));
-    // Bei Profi-Gewerken zusätzlich nach userType filtern.
-    if (!isHausverwaltung) managers = managers.filter(m => m.userType === gewerkKey);
+    const managers = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as User));
     if (managers.length === 0) return [];
 
     // Geocode search city; fall back to string match if unavailable

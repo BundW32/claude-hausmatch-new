@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
+import { PROFESSIONS, HANDWERK_GEWERKE, resolveSearchTarget } from '../services/professions';
 
 const EDDY_URL = "/eddy-eule.png";
 
@@ -17,14 +18,19 @@ const EddyOwl3D = ({ size = 180 }: { size?: number }) => (
 
 const LandingHome = () => {
   const [city, setCity] = useState('');
+  const [beruf, setBeruf] = useState('hausverwaltung');
+  const [gewerk, setGewerk] = useState('alle'); // konkretes Handwerks-Gewerk (nur bei beruf 'handwerker')
   const navigate = useNavigate();
 
+  // Multi-Profi-Suche: Hausverwaltung behält den Detail-Vorfilter (Wizard),
+  // alle anderen Gewerke gehen direkt in die Live-Suche mit Gewerk-Parameter.
   const handleStartFunnel = (e: React.FormEvent) => {
     e.preventDefault();
-    if (city.trim()) {
-      navigate(`/wizard?city=${encodeURIComponent(city)}`);
+    if (beruf === 'hausverwaltung') {
+      navigate(city.trim() ? `/wizard?city=${encodeURIComponent(city)}` : '/wizard');
     } else {
-      navigate('/wizard');
+      const gewerkParam = beruf === 'handwerker' && gewerk !== 'alle' ? `&gewerk=${gewerk}` : '';
+      navigate(`/search-results?city=${encodeURIComponent(city.trim() || 'Deutschland')}&beruf=${beruf}${gewerkParam}`);
     }
   };
 
@@ -57,6 +63,50 @@ const LandingHome = () => {
               HausMatch ist Ihre Community für Immobilienprofis und Eigentümer. Vernetzen Sie sich, tauschen Sie Erfahrungen aus und finden Sie geprüfte Experten in Ihrer Region.
             </p>
 
+            {/* Wen suchen Sie? – Gewerk-Auswahl für die Multi-Profi-Suche */}
+            <div className="max-w-2xl mx-auto mb-5">
+              <p className="text-[10px] font-black uppercase tracking-[0.25em] text-slate-400 mb-3">Wen suchen Sie?</p>
+              <div className="flex flex-wrap justify-center gap-2">
+                {PROFESSIONS.map(p => (
+                  <button
+                    key={p.id}
+                    type="button"
+                    onClick={() => setBeruf(p.id)}
+                    className={`px-4 py-2 rounded-full text-[11px] font-black uppercase tracking-widest transition-all border ${
+                      beruf === p.id
+                        ? 'bg-blue-600 text-white border-blue-600 shadow-lg shadow-blue-200'
+                        : 'bg-white/80 backdrop-blur text-slate-600 border-slate-200 hover:border-blue-300 hover:text-blue-700'
+                    }`}
+                  >
+                    {p.label}
+                  </button>
+                ))}
+              </div>
+
+              {/* Zweite Ebene: konkretes Handwerks-Gewerk (Sanitär, Dachdecker, …) */}
+              {beruf === 'handwerker' && (
+                <div className="mt-4 bg-white/70 backdrop-blur border border-slate-200/80 rounded-3xl p-4 animate-fade-in">
+                  <p className="text-[10px] font-black uppercase tracking-[0.25em] text-slate-400 mb-3">Welches Gewerk?</p>
+                  <div className="flex flex-wrap justify-center gap-1.5">
+                    {HANDWERK_GEWERKE.map(t => (
+                      <button
+                        key={t.id}
+                        type="button"
+                        onClick={() => setGewerk(t.id)}
+                        className={`px-3 py-1.5 rounded-full text-[10px] font-black uppercase tracking-wider transition-all border ${
+                          gewerk === t.id
+                            ? 'bg-slate-900 text-white border-slate-900 shadow'
+                            : 'bg-white text-slate-500 border-slate-200 hover:border-slate-400 hover:text-slate-800'
+                        }`}
+                      >
+                        {t.label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+
             <form onSubmit={handleStartFunnel} className="max-w-2xl mx-auto relative group px-2 sm:px-0">
               <div className="absolute -inset-1.5 bg-gradient-to-r from-blue-400 to-indigo-500 rounded-[2.5rem] md:rounded-[3rem] blur opacity-20 group-hover:opacity-40 transition duration-1000"></div>
               <div className="relative flex flex-col md:flex-row items-center p-2 md:p-3 bg-white rounded-[2rem] md:rounded-[2.8rem] shadow-2xl border border-slate-100">
@@ -79,18 +129,11 @@ const LandingHome = () => {
                   type="submit"
                   className="w-full md:w-auto bg-blue-600 text-white px-8 md:px-10 py-4 md:py-5 rounded-[1.5rem] md:rounded-[2.2rem] font-black text-base md:text-lg hover:bg-blue-700 transition-all flex items-center justify-center gap-3 shadow-xl active:scale-95 whitespace-nowrap"
                 >
-                  Jetzt vernetzen
+                  {resolveSearchTarget(beruf, beruf === 'handwerker' ? gewerk : undefined).label} finden
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M13 7l5 5m0 0l-5 5m5-5H6" /></svg>
                 </button>
               </div>
             </form>
-
-            <div className="mt-5 md:mt-6">
-              <Link to="/vermittlung" className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-white/80 backdrop-blur border border-slate-200 text-xs md:text-sm font-black text-slate-700 hover:text-blue-700 hover:border-blue-300 hover:shadow-lg hover:shadow-blue-100 transition-all uppercase tracking-widest">
-                Verwalter finden
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M9 5l7 7-7 7" /></svg>
-              </Link>
-            </div>
 
             <div className="mt-8 md:mt-10 flex flex-wrap justify-center items-center gap-x-6 gap-y-3 opacity-70">
               {['Community-Forum', 'Experten-Netzwerk', 'KI-Ratgeber', 'Kreditrechner'].map(feature => (

@@ -45,11 +45,15 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   const apiKey = process.env.GEMINI_API_KEY;
   if (!apiKey) return res.status(500).json({ error: 'API key not configured' });
 
-  const { query, serviceLabel } = req.body || {};
+  const { query, serviceLabel, profession } = req.body || {};
   if (!query || typeof query !== 'string') {
     return res.status(400).json({ error: 'query is required' });
   }
-  const label = (typeof serviceLabel === 'string' && serviceLabel.trim()) || 'Hausverwaltung';
+  // Gewerk/Branche (z. B. "Immobilienmakler", "Energieberater"); beide
+  // Parameternamen werden akzeptiert. Standard bleibt Hausverwaltung.
+  const label = (typeof serviceLabel === 'string' && serviceLabel.trim())
+    || (typeof profession === 'string' && profession.trim())
+    || 'Hausverwaltung';
 
   try {
     const prompt = `Suche nach echten, aktiven deutschen Anbietern im Bereich "${label}" für die Suchanfrage: "${query}".

@@ -2,6 +2,7 @@ import React, { useEffect, useState, useContext } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { searchPropertyManagers } from '../services/geminiService';
 import { getManagersByCity } from '../services/dataService';
+import { resolveSearchTarget } from '../services/professions';
 import { ManagerSearchResult, SearchCompany, User } from '../types';
 import { resolveGewerk, GewerkDef, FUNNEL_MESSAGE_KEY } from '../services/gewerke';
 import { AuthContext } from '../App';
@@ -63,7 +64,7 @@ const CompanyCard = ({ company, selected, onToggle }: { company: SearchCompany; 
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 mb-1 flex-wrap">
               {company.isPartner && <span className="bg-indigo-600 text-white text-[9px] font-black px-2 py-0.5 rounded-full uppercase tracking-widest">Partner</span>}
-              <h3 className="text-xl font-black text-slate-900 truncate">{company.name}</h3>
+              <h3 className="text-xl font-black text-slate-900 break-words">{company.name}</h3>
             </div>
             <p className="text-slate-500 text-sm font-medium truncate">{company.address || company.city}</p>
           </div>
@@ -139,7 +140,7 @@ const NetworkManagerCard = ({ manager, selected, onToggle }: { manager: User; se
         <div className="flex items-start gap-3 mb-4">
           <Checkbox checked={selected} onToggle={onToggle} />
           <div className="min-w-0 flex-1">
-            <h3 className="text-xl font-black text-slate-900 pr-24 sm:pr-32 truncate">{displayName}</h3>
+            <h3 className="text-xl font-black text-slate-900 pr-24 sm:pr-32 break-words">{displayName}</h3>
             {location && <p className="text-slate-500 text-sm font-medium mt-0.5">{location}</p>}
           </div>
         </div>
@@ -395,7 +396,15 @@ const SearchResults = () => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const city = searchParams.get('city') || 'Deutschland';
-  const gewerk = resolveGewerk(searchParams.get('gewerk'));
+  // Zwei Einstiege: der Funnel (Wizard) nutzt ?gewerk=<Gewerk-Key>, die
+  // Startseiten-Suche ?beruf=<Beruf>&gewerk=<Handwerks-Gewerk>. Ist beruf
+  // gesetzt, bezeichnet gewerk also das konkrete Handwerks-Gewerk.
+  const beruf = searchParams.get('beruf');
+  const gewerkParam = searchParams.get('gewerk');
+  const professionId = beruf || gewerkParam || 'hausverwaltung';
+  const tradeId = beruf ? gewerkParam : null;
+  const gewerk = resolveGewerk(professionId); // Funnel-Definition (serviceType, Resume-Link)
+  const target = resolveSearchTarget(professionId, tradeId); // Label/Plural/Suchbegriff/userTypes
   const [result, setResult] = useState<ManagerSearchResult | null>(null);
   const [networkManagers, setNetworkManagers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
@@ -409,15 +418,16 @@ const SearchResults = () => {
     const fetchData = async () => {
       setLoading(true);
       const [data, managers] = await Promise.all([
-        searchPropertyManagers(city, gewerk),
-        getManagersByCity(city, gewerk.key),
+        searchPropertyManagers(city, { searchTerm: target.searchTerm, label: target.label, labelPlural: target.plural }),
+        // Hausverwaltung: wie bisher über role=manager; andere Gewerke über userType.
+        getManagersByCity(city, professionId === 'hausverwaltung' ? undefined : target.userTypes),
       ]);
       setResult(data);
       setNetworkManagers(managers);
       setLoading(false);
     };
     fetchData();
-  }, [city, gewerk.key]);
+  }, [city, professionId, tradeId]);
 
   // Rückkehr aus der Registrierung: gespeicherte Anfrage wiederherstellen und
   // das Absende-Modal (jetzt eingeloggt) direkt wieder öffnen.
@@ -460,7 +470,7 @@ const SearchResults = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex flex-wrap items-center gap-3 mb-6 md:mb-12">
           <span className="bg-indigo-600 text-white text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-widest shadow-lg shadow-indigo-100">Live Matching</span>
-          <h1 className="text-2xl sm:text-3xl md:text-4xl font-black text-slate-900 tracking-tight">Empfohlene {gewerk.labelPlural} in {city}</h1>
+          <h1 className="text-2xl sm:text-3xl md:text-4xl font-black text-slate-900 tracking-tight">Empfohlene {target.plural} in {city}</h1>
         </div>
 
         <div className="grid lg:grid-cols-3 gap-10">
@@ -477,7 +487,7 @@ const SearchResults = () => {
                   </div>
                 </div>
                 <h3 className="text-2xl font-black text-slate-900 mb-3 tracking-tight">Eddy sucht für Sie...</h3>
-                <p className="text-slate-400 font-medium">Passende {gewerk.labelPlural} in <span className="text-indigo-600 font-black">{city}</span> werden geprüft</p>
+                <p className="text-slate-400 font-medium">Passende {target.plural} in <span className="text-indigo-600 font-black">{city}</span> werden geprüft</p>
                 <p className="text-slate-300 text-sm mt-2 font-medium">Kontaktdaten werden direkt von den Websites geladen</p>
               </div>
             ) : result ? (
@@ -550,7 +560,7 @@ const SearchResults = () => {
                 </div>
               </div>
               <p className="text-indigo-100 text-base mb-8 leading-relaxed font-semibold">
-                Wählen Sie {gewerk.labelPlural} aus der Liste aus und fordern Sie mit einem Klick Angebote an — diskret und kostenlos.
+                Wählen Sie {target.plural} aus der Liste aus und fordern Sie mit einem Klick Angebote an — diskret und kostenlos.
               </p>
               {selectedKeys.size > 0 ? (
                 <button onClick={() => setShowModal(true)} className="w-full bg-white text-indigo-700 py-5 rounded-2xl font-black text-lg hover:bg-indigo-50 transition-all shadow-xl active:scale-95">
@@ -558,7 +568,7 @@ const SearchResults = () => {
                 </button>
               ) : (
                 <div className="w-full bg-white/20 text-white/70 py-5 rounded-2xl font-black text-base text-center">
-                  Bitte erst Verwalter auswählen
+                  Bitte erst Anbieter auswählen
                 </div>
               )}
             </div>
@@ -577,7 +587,7 @@ const SearchResults = () => {
                 </svg>
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-white font-black text-sm">{selectedKeys.size} {gewerk.labelPlural} ausgewählt</p>
+                <p className="text-white font-black text-sm">{selectedKeys.size} {target.plural} ausgewählt</p>
                 <p className="text-slate-400 text-xs font-medium truncate">
                   {getSelectedEntries().map(e => e.name).join(', ')}
                 </p>

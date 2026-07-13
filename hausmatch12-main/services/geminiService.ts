@@ -108,8 +108,9 @@ const writeEditionCache = (key: string, articles: BlogArticle[]) => {
 
 export const fetchLatestIndustryBlog = async (): Promise<BlogArticle[]> => {
   const edition = getCurrentEditionDate();
+  const editionISO = edition.toISOString().slice(0, 10);
   const editionStr = edition.toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year: 'numeric' });
-  const cacheKey = EDITION_CACHE_PREFIX + edition.toISOString().slice(0, 10);
+  const cacheKey = EDITION_CACHE_PREFIX + editionISO;
 
   const cached = readEditionCache(cacheKey);
   if (cached && cached.length > 0) return cached;
@@ -131,7 +132,8 @@ export const fetchLatestIndustryBlog = async (): Promise<BlogArticle[]> => {
         id: "err-1",
         title: "Eddys News sind gerade nicht erreichbar",
         summary: "Die aktuelle Ausgabe konnte nicht geladen werden – bitte später erneut versuchen.",
-        fullContent: "Die KI-Recherche für diese Ausgabe ist momentan nicht erreichbar. Schauen Sie in Kürze wieder vorbei.\n\nEddys Einordnung: Manchmal braucht auch eine Eule eine kurze Pause. 🦉",
+        fullContent: "Die News-Recherche ist momentan nicht erreichbar (Server-Endpoint /api/news antwortet nicht oder der GEMINI_API_KEY ist in Vercel nicht gesetzt).\n\n## Was heißt das für Eigentümer und Verwalter?\n- Einfach später erneut vorbeischauen – die Ausgabe wird automatisch nachgeladen.\n\nEddys Einordnung: Manchmal braucht auch eine Eule eine kurze Pause. 🦉",
+        keyPoints: ["News-Recherche derzeit nicht erreichbar", "Ausgabe wird beim nächsten Besuch nachgeladen"],
         category: "News",
         date: editionStr,
         isLatest: true,

@@ -142,7 +142,9 @@ const Navbar = () => {
         <div className="flex justify-between items-center h-full">
           {/* Logo */}
           <Link to="/" className="flex items-center gap-2.5 group">
-            <div className="w-9 h-9 bg-gradient-to-br from-blue-600 via-indigo-600 to-indigo-700 rounded-xl flex items-center justify-center text-white font-black text-sm shadow-lg shadow-indigo-200/60 group-hover:shadow-indigo-300/80 group-hover:scale-105 transition-all">H</div>
+            <div className="w-9 h-9 rounded-xl overflow-hidden shadow-lg shadow-indigo-200/60 group-hover:shadow-indigo-300/80 group-hover:scale-105 transition-all">
+              <img src="/eddy-icon-256.png" alt="Eddy — HausMatch Logo" className="w-full h-full object-cover" />
+            </div>
             <div className="flex flex-col leading-none">
               <span className="text-xl font-black tracking-tighter text-slate-900">HausMatch</span>
               <span className="text-[8px] font-black uppercase tracking-[0.3em] text-slate-400 hidden sm:block">Immobilien-Community</span>
@@ -291,7 +293,9 @@ const Footer = () => {
           {/* Brand */}
           <div className="col-span-2 md:col-span-5 pr-0 md:pr-16">
             <div className="flex items-center gap-3 mb-5">
-              <div className="w-10 h-10 bg-gradient-to-br from-blue-500 via-indigo-500 to-indigo-700 rounded-xl flex items-center justify-center text-white font-black shadow-lg shadow-indigo-900/40">H</div>
+              <div className="w-10 h-10 rounded-xl overflow-hidden shadow-lg shadow-indigo-900/40">
+                <img src="/eddy-icon-256.png" alt="Eddy — HausMatch Logo" className="w-full h-full object-cover" />
+              </div>
               <div className="flex flex-col leading-none">
                 <span className="text-xl font-black tracking-tighter text-white">HausMatch</span>
                 <span className="text-[8px] font-black uppercase tracking-[0.3em] text-slate-500">Immobilien-Community</span>
@@ -314,7 +318,6 @@ const Footer = () => {
               <li><Link to="/marktplatz" className="hover:text-white transition-colors">Marktplatz</Link></li>
               <li><Link to="/network" className="hover:text-white transition-colors">Netzwerk</Link></li>
               <li><Link to="/forum" className="hover:text-white transition-colors">Forum</Link></li>
-              <li><Link to="/vermittlung" className="hover:text-white transition-colors">Verwalter finden</Link></li>
             </ul>
           </div>
           <div className="md:col-span-2">
@@ -362,11 +365,21 @@ const ProtectedRoute = ({ children, allowedRoles }: React.PropsWithChildren<{ al
   return <>{children}</>;
 };
 
+// Bei jedem Seitenwechsel wieder ganz oben anfangen — sonst behält die
+// SPA die Scroll-Position der vorherigen Unterseite bei.
+const ScrollToTop = () => {
+  const { pathname } = useLocation();
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [pathname]);
+  return null;
+};
+
 const AppRoutes = () => {
   const location = useLocation();
   return (
     <Suspense fallback={<div className="h-screen flex items-center justify-center font-black uppercase tracking-widest text-slate-300">Lädt...</div>}>
-      <div key={location.pathname} className="animate-fade-in">
+      <div key={location.pathname} className="hm-page-enter">
       <Routes location={location}>
         <Route path="/" element={<LandingHome />} />
         <Route path="/seekers" element={<ForSeekers />} />
@@ -429,6 +442,7 @@ const App = () => {
   return (
     <AuthProvider>
       <HashRouter>
+        <ScrollToTop />
         <div className="min-h-screen pt-16 bg-slate-50 selection:bg-blue-100 selection:text-blue-900 flex flex-col">
           <Navbar />
           <div className="flex-1">
