@@ -187,12 +187,14 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     companies: companyArr, managerEmails: allManagers.map(m => m.email),
   }).catch(err => console.error('Firestore save failed:', err));
 
-  // ─── LAUNCH-SCHALTER (bewusst hartkodiert) ───────────────────────────────────
-  // false  = E-Mails gehen NUR an @bundwimmobilien.de (sicherer Vor-Launch-/Testbetrieb).
-  // true   = E-Mails gehen an ALLE Empfänger (externe Verwalter etc.).
-  // Erst auf true setzen, wenn die Resend-Domain haus-match.de verifiziert UND
-  // RESEND_FROM_EMAIL auf z.B. "HausMatch <noreply@haus-match.de>" gesetzt ist.
-  const ALLOW_EXTERNAL_EMAILS = false;
+  // ─── LAUNCH-SCHALTER (per Vercel-Umgebungsvariable) ──────────────────────────
+  // Standard = false: E-Mails gehen NUR an @bundwimmobilien.de (sicherer
+  //   Vor-Launch-/Testbetrieb) — auch wenn die Variable fehlt.
+  // ALLOW_EXTERNAL_EMAILS=true in Vercel setzen, damit an ALLE Empfänger
+  //   (externe Eigentümer & Verwalter) gesendet wird. Voraussetzung: die
+  //   Resend-Domain (z. B. haus-match.de) ist verifiziert UND RESEND_FROM_EMAIL
+  //   ist auf eine Adresse dieser Domain gesetzt (z. B. "HausMatch <noreply@haus-match.de>").
+  const ALLOW_EXTERNAL_EMAILS = process.env.ALLOW_EXTERNAL_EMAILS === 'true';
   const isAllowed = (email: string) => ALLOW_EXTERNAL_EMAILS || email.toLowerCase().endsWith('@bundwimmobilien.de');
 
   // E-Mail 2: Bestätigung an Eigentümer (nur wenn @bundwimmobilien.de in Test)
