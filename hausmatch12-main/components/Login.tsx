@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { loginUser, registerUser } from '../services/dataService';
 import { UserRole, UserType, USER_TYPE_LABELS } from '../types';
 
@@ -54,6 +54,10 @@ const PROFI_TYPES: { type: UserType; label: string; desc: string; icon: React.Re
 
 const Login: React.FC<LoginProps> = ({ initialView = 'login' }) => {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  // Nach erfolgreichem Login/Registrierung ggf. zu diesem Ziel zurückkehren
+  // (z. B. zurück zur offenen Express-Anfrage). Sonst rollenbasierte Standardseite.
+  const redirect = searchParams.get('redirect');
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [view, setView] = useState<'login' | 'role_select' | 'profi_type_select' | 'register_form'>(initialView);
@@ -86,7 +90,8 @@ const Login: React.FC<LoginProps> = ({ initialView = 'login' }) => {
     setError('');
     try {
       const user = await loginUser(email, password);
-      if (user.role === 'manager') navigate('/dashboard');
+      if (redirect) navigate(redirect);
+      else if (user.role === 'manager') navigate('/dashboard');
       else if (user.role === 'profi') navigate('/profile');
       else navigate('/wizard');
     } catch (err: any) {
@@ -114,7 +119,8 @@ const Login: React.FC<LoginProps> = ({ initialView = 'login' }) => {
     setError('');
     try {
       await registerUser(email, password, name, role, avatar, bio, city.trim(), userType);
-      if (role === 'manager') navigate('/dashboard');
+      if (redirect) navigate(redirect);
+      else if (role === 'manager') navigate('/dashboard');
       else if (role === 'profi') navigate('/profile');
       else navigate('/wizard');
     } catch (err: any) {

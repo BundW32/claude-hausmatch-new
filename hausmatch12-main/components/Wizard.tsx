@@ -1,219 +1,177 @@
-import React, { useState, useContext } from 'react';
+import React, { useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { AuthContext } from '../App';
-import { analyzePropertyRequirement } from '../services/geminiService';
-import { createInquiry } from '../services/dataService';
-
-const LEISTUNGEN = [
-  'WEG-Verwaltung', 'Mietverwaltung', 'Sondereigentum (SEV)', 'Buchhaltung & Abrechnung',
-  'Technische Betreuung', 'Instandhaltung & Sanierung', 'Rechtliche Beratung', 'Eigentümerversammlung',
-];
+import { GEWERKE, resolveGewerk, buildInquiryMessage, FunnelField, FunnelAnswers, FUNNEL_MESSAGE_KEY } from '../services/gewerke';
 
 const Wizard = () => {
-  const { user } = useContext(AuthContext);
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
+
+  // Schritt 0 = Gewerk-Auswahl, Schritt 1 = Fragen zum Gewerk.
   const [step, setStep] = useState(0);
-  const [loading, setLoading] = useState(false);
-  
-  const [formData, setFormData] = useState({
-    city: searchParams.get('city') || '',
-    units: 10,
-    propertyType: 'WEG',
-    servicesNeeded: [] as string[],
-    buildingAge: '',
-    condition: '',
-    description: '',
-  });
+  const [gewerkKey, setGewerkKey] = useState<string | null>(null);
+  const [city, setCity] = useState(searchParams.get('city') || '');
+  const [answers, setAnswers] = useState<FunnelAnswers>({});
 
-  const toggleService = (s: string) => setFormData(f => ({
-    ...f,
-    servicesNeeded: f.servicesNeeded.includes(s)
-      ? f.servicesNeeded.filter(x => x !== s)
-      : [...f.servicesNeeded, s],
-  }));
+  const gewerk = gewerkKey ? resolveGewerk(gewerkKey) : null;
 
-  const handleSubmit = async () => {
-    if (!formData.city) {
-      alert("Bitte geben Sie eine Stadt ein.");
-      return;
-    }
-    setLoading(true);
-    try {
-      const analysis = await analyzePropertyRequirement(formData);
-      createInquiry({
-        ...formData,
-        ownerId: user?.id || 'gast',
-        ownerName: user?.name || 'Gast',
-        ownerEmail: user?.email || 'gast@example.de',
-        status: 'neu',
-        aiAnalysis: analysis,
-        units: Number(formData.units),
-        propertyType: formData.propertyType as 'WEG' | 'Mietshaus' | 'Gewerbe',
-      }).catch(e => console.error('Anfrage speichern fehlgeschlagen:', e));
-    } catch (e) {
-      console.error(e);
-    }
-    setTimeout(() => navigate(`/search-results?city=${encodeURIComponent(formData.city)}`), 3000);
+  const setField = (key: string, value: string | string[]) =>
+    setAnswers(a => ({ ...a, [key]: value }));
+
+  const toggleChip = (key: string, option: string) =>
+    setAnswers(a => {
+      const cur = Array.isArray(a[key]) ? (a[key] as string[]) : [];
+      return { ...a, [key]: cur.includes(option) ? cur.filter(x => x !== option) : [...cur, option] };
+    });
+
+  const chooseGewerk = (key: string) => {
+    setGewerkKey(key);
+    setAnswers({});
+    setStep(1);
   };
 
-  if (loading) {
+  const handleSubmit = () => {
+    if (!gewerk) return;
+    if (!city.trim()) { alert('Bitte geben Sie eine Stadt/Region an.'); return; }
+    // Pflichtfelder prüfen
+    const missing = gewerk.fields.find(f => f.required && !answers[f.key]);
+    if (missing) { alert(`Bitte füllen Sie das Feld „${missing.label}" aus.`); return; }
+
+    const message = buildInquiryMessage(gewerk, city.trim(), answers);
+    try { sessionStorage.setItem(FUNNEL_MESSAGE_KEY, message); } catch { /* ignore */ }
+    navigate(`/search-results?city=${encodeURIComponent(city.trim())}&gewerk=${encodeURIComponent(gewerk.key)}`);
+  };
+
+  // ─── Schritt 0: Gewerk-Auswahl ────────────────────────────────────────────
+  if (step === 0) {
     return (
-      <div className="min-h-[80vh] flex flex-col items-center justify-center p-8">
-        <div className="w-full max-w-sm text-center space-y-8">
-          <div className="w-20 h-20 rounded-[1.5rem] overflow-hidden mx-auto shadow-xl shadow-indigo-200" style={{ background: '#2563FF' }}>
-            <img src="/eddy-eule.png"
-              alt="Eddy" width={80} height={80} style={{ display: 'block', objectFit: 'cover' }} className="animate-pulse" />
-          </div>
-          <div>
-            <h3 className="text-2xl font-black text-slate-900 tracking-tight mb-2">Eddy sucht für Sie...</h3>
-            <p className="text-slate-400 font-medium">Verwalter in <span className="text-indigo-600 font-black">{formData.city}</span> werden analysiert</p>
-          </div>
-          <div className="w-full bg-slate-100 rounded-full h-2 overflow-hidden">
-            <div className="h-2 bg-indigo-600 rounded-full animate-[progress_3s_ease-in-out_forwards]"
-              style={{ animation: 'progress 3s ease-in-out forwards' }} />
-          </div>
-          <style>{`@keyframes progress { from { width: 0% } to { width: 92% } }`}</style>
+      <div className="max-w-5xl mx-auto px-6 py-20">
+        <div className="text-center mb-14">
+          <h1 className="text-4xl font-black text-slate-900 tracking-tighter mb-4">Wen suchen Sie?</h1>
+          <p className="text-slate-500 font-medium max-w-xl mx-auto">
+            Wählen Sie das passende Gewerk — danach stellen wir Ihnen die richtigen Fragen und finden
+            passende Anbieter in Ihrer Region.
+          </p>
+        </div>
+
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6">
+          {GEWERKE.map(g => (
+            <button
+              key={g.key}
+              onClick={() => chooseGewerk(g.key)}
+              className="group bg-white rounded-3xl p-6 sm:p-8 flex flex-col items-center text-center shadow-sm hover:shadow-xl border-2 border-slate-100 hover:border-indigo-400 hover:-translate-y-1 transition-all duration-300"
+            >
+              <div className="w-16 h-16 bg-indigo-50 rounded-2xl flex items-center justify-center text-3xl mb-4 group-hover:bg-indigo-600 group-hover:scale-110 transition-all duration-300">
+                {g.icon}
+              </div>
+              <span className="font-black text-slate-900 text-sm sm:text-base leading-tight mb-1">{g.label}</span>
+              <span className="text-[11px] sm:text-xs text-slate-400 font-medium leading-snug">{g.tagline}</span>
+            </button>
+          ))}
         </div>
       </div>
     );
   }
 
+  // ─── Schritt 1: Fragen zum gewählten Gewerk ───────────────────────────────
+  const renderField = (f: FunnelField) => {
+    const val = answers[f.key];
+    switch (f.kind) {
+      case 'select':
+        return (
+          <select
+            value={typeof val === 'string' ? val : ''}
+            onChange={e => setField(f.key, e.target.value)}
+            className="w-full bg-slate-50 border-0 rounded-2xl px-6 py-4 text-slate-900 ring-1 ring-slate-200 focus:ring-2 focus:ring-indigo-500 transition-all font-medium"
+          >
+            <option value="">Bitte wählen …</option>
+            {f.options!.map(o => <option key={o} value={o}>{o}</option>)}
+          </select>
+        );
+      case 'chips':
+        return (
+          <div className="flex flex-wrap gap-2">
+            {f.options!.map(o => {
+              const active = Array.isArray(val) && val.includes(o);
+              return (
+                <button
+                  key={o} type="button" onClick={() => toggleChip(f.key, o)}
+                  className={`px-4 py-2.5 rounded-full text-xs font-black uppercase tracking-wider transition-all ${
+                    active ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-200' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                  }`}
+                >
+                  {o}
+                </button>
+              );
+            })}
+          </div>
+        );
+      case 'textarea':
+        return (
+          <textarea
+            value={typeof val === 'string' ? val : ''}
+            onChange={e => setField(f.key, e.target.value)}
+            rows={5}
+            placeholder={f.placeholder}
+            className="w-full bg-slate-50 border-0 rounded-[2rem] px-8 py-6 text-slate-900 ring-1 ring-slate-200 focus:ring-2 focus:ring-indigo-500 transition-all font-medium resize-none"
+          />
+        );
+      default: // text / number
+        return (
+          <input
+            type={f.kind === 'number' ? 'number' : 'text'}
+            value={typeof val === 'string' ? val : ''}
+            onChange={e => setField(f.key, e.target.value)}
+            placeholder={f.placeholder}
+            className="w-full bg-slate-50 border-0 rounded-2xl px-6 py-4 text-slate-900 ring-1 ring-slate-200 focus:ring-2 focus:ring-indigo-500 transition-all font-medium"
+          />
+        );
+    }
+  };
+
   return (
     <div className="max-w-4xl mx-auto px-6 py-20">
-      <div className="text-center mb-16">
-        <h1 className="text-4xl font-black text-slate-900 tracking-tighter mb-4">Objekt-Konfigurator</h1>
-        <div className="flex justify-center gap-3">
-          {[0,1,2].map(i => (
-            <div key={i} className={`h-1.5 rounded-full transition-all duration-500 ${step === i ? 'w-12 bg-indigo-600' : 'w-4 bg-slate-200'}`}></div>
-          ))}
+      <div className="text-center mb-12">
+        <div className="inline-flex items-center gap-2 bg-indigo-50 text-indigo-700 text-xs font-black uppercase tracking-widest px-4 py-2 rounded-full mb-4">
+          <span className="text-base">{gewerk!.icon}</span> {gewerk!.label} finden
         </div>
+        <h1 className="text-4xl font-black text-slate-900 tracking-tighter">Ihre Anfrage</h1>
       </div>
 
-      <div className="bg-white rounded-[3rem] p-12 shadow-2xl border border-slate-100 animate-fade-in-up">
-        {step === 0 && (
-          <div className="space-y-10">
-            <h2 className="text-2xl font-black text-slate-800">Basis-Informationen</h2>
-            <div className="grid md:grid-cols-2 gap-8">
-               <div className="space-y-2">
-                  <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-4">Stadt</label>
-                  <input 
-                    type="text" 
-                    value={formData.city} 
-                    onChange={e => setFormData({...formData, city: e.target.value})}
-                    className="w-full bg-slate-50 border-0 rounded-2xl px-6 py-4 text-slate-900 ring-1 ring-slate-200 focus:ring-2 focus:ring-indigo-500 transition-all font-medium"
-                  />
-               </div>
-               <div className="space-y-2">
-                  <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-4">Anzahl Einheiten</label>
-                  <input 
-                    type="number" 
-                    value={formData.units} 
-                    onChange={e => setFormData({...formData, units: Number(e.target.value)})}
-                    className="w-full bg-slate-50 border-0 rounded-2xl px-6 py-4 text-slate-900 ring-1 ring-slate-200 focus:ring-2 focus:ring-indigo-500 transition-all font-medium"
-                  />
-               </div>
-            </div>
-          </div>
-        )}
+      <div className="bg-white rounded-[3rem] p-8 sm:p-12 shadow-2xl border border-slate-100 animate-fade-in-up space-y-8">
+        {/* Stadt ist für jedes Gewerk Pflicht */}
+        <div className="space-y-2">
+          <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-4">
+            Stadt / Region <span className="text-indigo-500">*</span>
+          </label>
+          <input
+            type="text" value={city} onChange={e => setCity(e.target.value)}
+            placeholder="z. B. Gladbeck"
+            className="w-full bg-slate-50 border-0 rounded-2xl px-6 py-4 text-slate-900 ring-1 ring-slate-200 focus:ring-2 focus:ring-indigo-500 transition-all font-medium"
+          />
+        </div>
 
-        {step === 1 && (
-          <div className="space-y-10">
-            <h2 className="text-2xl font-black text-slate-800">Objekt-Spezifikationen</h2>
-            <div className="grid md:grid-cols-2 gap-8">
-               <div className="space-y-2">
-                  <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-4">Objekttyp</label>
-                  <select 
-                    value={formData.propertyType}
-                    onChange={e => setFormData({...formData, propertyType: e.target.value as any})}
-                    className="w-full bg-slate-50 border-0 rounded-2xl px-6 py-4 text-slate-900 ring-1 ring-slate-200 focus:ring-2 focus:ring-indigo-500 transition-all font-medium"
-                  >
-                    <option value="WEG">WEG (Wohnungseigentum)</option>
-                    <option value="Mietshaus">Mietshaus (Globalobjekt)</option>
-                    <option value="Gewerbe">Gewerbeimmobilie</option>
-                  </select>
-               </div>
-               <div className="space-y-2">
-                  <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-4">Baujahr (Ca.)</label>
-                  <input 
-                    type="text" 
-                    value={formData.buildingAge} 
-                    onChange={e => setFormData({...formData, buildingAge: e.target.value})}
-                    className="w-full bg-slate-50 border-0 rounded-2xl px-6 py-4 text-slate-900 ring-1 ring-slate-200 focus:ring-2 focus:ring-indigo-500 transition-all font-medium"
-                    placeholder="z.B. 1980"
-                  />
-               </div>
-               <div className="space-y-2 md:col-span-2">
-                  <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-4">Zustand des Objekts</label>
-                  <select 
-                    value={formData.condition}
-                    onChange={e => setFormData({...formData, condition: e.target.value})}
-                    className="w-full bg-slate-50 border-0 rounded-2xl px-6 py-4 text-slate-900 ring-1 ring-slate-200 focus:ring-2 focus:ring-indigo-500 transition-all font-medium"
-                  >
-                    <option value="">Zustand wählen...</option>
-                    <option value="Sehr gut / Saniert">Sehr gut / Saniert</option>
-                    <option value="Gepflegt">Gepflegt</option>
-                    <option value="Renovierungsbedürftig">Renovierungsbedürftig</option>
-                    <option value="Sanierungsstau">Sanierungsstau</option>
-                  </select>
-               </div>
-            </div>
+        {gewerk!.fields.map(f => (
+          <div key={f.key} className="space-y-2">
+            <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-4">
+              {f.label}{f.required && <span className="text-indigo-500"> *</span>}
+            </label>
+            {renderField(f)}
           </div>
-        )}
+        ))}
 
-        {step === 2 && (
-          <div className="space-y-10">
-            <h2 className="text-2xl font-black text-slate-800">Bedarfs-Analyse (KI-Input)</h2>
-            <div className="space-y-3">
-              <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-4">Benötigte Leistungen</label>
-              <div className="flex flex-wrap gap-2">
-                {LEISTUNGEN.map(s => (
-                  <button
-                    key={s}
-                    type="button"
-                    onClick={() => toggleService(s)}
-                    className={`px-4 py-2.5 rounded-full text-xs font-black uppercase tracking-wider transition-all ${
-                      formData.servicesNeeded.includes(s)
-                        ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-200'
-                        : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
-                    }`}
-                  >
-                    {s}
-                  </button>
-                ))}
-              </div>
-            </div>
-            <div className="space-y-2">
-              <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-4">Freitext-Beschreibung</label>
-              <textarea 
-                value={formData.description}
-                onChange={e => setFormData({...formData, description: e.target.value})}
-                rows={6}
-                className="w-full bg-slate-50 border-0 rounded-[2rem] px-8 py-6 text-slate-900 ring-1 ring-slate-200 focus:ring-2 focus:ring-indigo-500 transition-all font-medium resize-none"
-                placeholder="Beschreiben Sie Besonderheiten, Probleme oder Wünsche an die neue Verwaltung..."
-              />
-              <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest mt-2 ml-4">Tipp: Je detaillierter, desto besser der KI-Match.</p>
-            </div>
-          </div>
-        )}
-
-        <div className="mt-16 flex justify-between pt-10 border-t border-slate-50">
-          <button 
-            onClick={() => setStep(s => s - 1)} 
-            disabled={step === 0}
-            className="px-8 py-4 rounded-2xl text-slate-400 font-black uppercase text-xs tracking-widest hover:text-slate-900 disabled:opacity-0 transition-all"
+        <div className="flex justify-between pt-8 border-t border-slate-50">
+          <button
+            onClick={() => { setStep(0); setGewerkKey(null); }}
+            className="px-8 py-4 rounded-2xl text-slate-400 font-black uppercase text-xs tracking-widest hover:text-slate-900 transition-all"
           >
             Zurück
           </button>
-          {step < 2 ? (
-            <button onClick={() => setStep(s => s + 1)} className="px-10 py-4 bg-slate-900 text-white rounded-2xl font-black uppercase text-xs tracking-widest shadow-xl shadow-slate-900/20 hover:scale-[1.05] transition-all">
-              Weiter
-            </button>
-          ) : (
-            <button onClick={handleSubmit} className="px-12 py-4 bg-indigo-600 text-white rounded-2xl font-black uppercase text-xs tracking-widest shadow-xl shadow-indigo-200 hover:bg-indigo-700 hover:scale-[1.05] transition-all">
-              Matches Finden
-            </button>
-          )}
+          <button
+            onClick={handleSubmit}
+            className="px-12 py-4 bg-indigo-600 text-white rounded-2xl font-black uppercase text-xs tracking-widest shadow-xl shadow-indigo-200 hover:bg-indigo-700 hover:scale-[1.05] transition-all"
+          >
+            Passende {gewerk!.labelPlural} finden
+          </button>
         </div>
       </div>
     </div>

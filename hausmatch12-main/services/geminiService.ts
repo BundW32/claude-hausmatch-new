@@ -1,6 +1,5 @@
 import { InquiryAnalysis, ManagerSearchResult, BlogArticle, SearchCompany } from "../types";
 import { GoogleGenAI, Type } from "@google/genai";
-import { resolveSearchTarget } from "./professions";
 
 // Wir lesen den Key sicher aus
 const API_KEY = process.env.GEMINI_API_KEY || "";
@@ -73,9 +72,10 @@ export const analyzePropertyRequirement = async (formData: {
 };
 
 // ─── Eddys News der Woche ───────────────────────────────────────────────────
-// Zwei Ausgaben pro Woche: Montag & Donnerstag. Die "aktuelle Ausgabe" ist der
-// letzte dieser beiden Tage; pro Ausgabe wird das Ergebnis im localStorage
-// gecacht, damit nicht jeder Seitenaufruf einen neuen KI-Abruf auslöst.
+// Zwei Ausgaben pro Woche: Montag & Donnerstag. Die eigentliche KI-Recherche
+// läuft serverseitig in /api/blog (nur dort existiert der GEMINI_API_KEY);
+// hier wird nur abgerufen und pro Ausgabe im localStorage gecacht, damit nicht
+// jeder Seitenaufruf einen Netzwerk-Abruf auslöst.
 
 export const getCurrentEditionDate = (): Date => {
   const d = new Date();
@@ -85,9 +85,9 @@ export const getCurrentEditionDate = (): Date => {
 };
 
 const EDITION_CACHE_BASE = 'hm_eddy_news_';
-// v3: echte News über den Server-Endpoint /api/news – alte Caches (v1/v2 aus
-// dem früheren Browser-Direktaufruf) werden beim Schreiben mit aufgeräumt.
-const EDITION_CACHE_PREFIX = EDITION_CACHE_BASE + 'v3_';
+// v4: ausführliche Berichte (900–1300 Wörter) aus /api/blog –
+// alte Cache-Versionen werden beim Schreiben mit aufgeräumt.
+const EDITION_CACHE_PREFIX = EDITION_CACHE_BASE + 'v4_';
 
 const readEditionCache = (key: string): BlogArticle[] | null => {
   try {
@@ -116,20 +116,17 @@ export const fetchLatestIndustryBlog = async (): Promise<BlogArticle[]> => {
   if (cached && cached.length > 0) return cached;
 
   try {
-    // Echte News kommen vom Server-Endpoint /api/news (Gemini + Google-Suche).
-    // Der GEMINI_API_KEY liegt nur dort – im Browser existiert er nicht; der
-    // frühere Direktaufruf aus dem Client konnte deshalb nie echte News liefern.
-    const res = await fetch(`/api/news?edition=${editionISO}`);
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const res = await fetch('/api/blog');
+    if (!res.ok) throw new Error(`Blog-Abruf fehlgeschlagen (Status ${res.status})`);
+
     const data = await res.json();
-    const articles = (Array.isArray(data?.articles) ? data.articles : []) as BlogArticle[];
+    const articles: BlogArticle[] = Array.isArray(data?.articles) ? data.articles : [];
     if (articles.length === 0) throw new Error('Keine Artikel erhalten');
 
-    const mapped = articles.map((a, i) => ({ ...a, isLatest: i === 0 }));
-    writeEditionCache(cacheKey, mapped);
-    return mapped;
+    writeEditionCache(cacheKey, articles);
+    return articles;
   } catch (error) {
-    console.error('Eddys News konnten nicht geladen werden:', error);
+    console.error("Blog-Abruf-Fehler:", error);
     return [
       {
         id: "err-1",
@@ -146,16 +143,18 @@ export const fetchLatestIndustryBlog = async (): Promise<BlogArticle[]> => {
   }
 };
 
-// Multi-Profi-Suche: professionId steuert die Branche, tradeId optional das
-// konkrete Handwerks-Gewerk (z. B. 'shk', 'dachdecker'). Standard bleibt
-// Hausverwaltung – bestehende Aufrufe funktionieren unverändert.
-export const searchPropertyManagers = async (city: string, professionId?: string, tradeId?: string | null): Promise<ManagerSearchResult> => {
-  const target = resolveSearchTarget(professionId, tradeId);
+// Live-Suche nach Anbietern des jeweiligen Gewerks. gewerk steuert Suchbegriff
+// und Beschriftung; ohne Angabe wird Hausverwaltung gesucht (abwärtskompatibel).
+export const searchPropertyManagers = async (
+  city: string,
+  gewerk?: { searchTerm: string; label: string; labelPlural: string }
+): Promise<ManagerSearchResult> => {
+  const g = gewerk || { searchTerm: 'Hausverwaltung', label: 'Hausverwaltung', labelPlural: 'Hausverwaltungen' };
   try {
     const res = await fetch('/api/search', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ query: `${target.searchTerm} ${city}`, profession: target.label })
+      body: JSON.stringify({ query: `${g.searchTerm} ${city}`.trim(), serviceLabel: g.label })
     });
 
     if (!res.ok) {
@@ -167,8 +166,8 @@ export const searchPropertyManagers = async (city: string, professionId?: string
 
     return {
       introText: companies.length > 0
-        ? `${companies.length} ${target.plural} in ${city} gefunden – live durchsucht über Google Search.`
-        : `Es konnten keine ${target.plural} in ${city} gefunden werden. Versuchen Sie es mit einer anderen Stadt oder Region.`,
+        ? `${companies.length} ${companies.length === 1 ? g.label : g.labelPlural} in ${city} gefunden – live durchsucht über Google Search.`
+        : `Es konnten keine ${g.labelPlural} in ${city} gefunden werden. Versuchen Sie es mit einer anderen Stadt oder Region.`,
       sources: [],
       companies
     };
