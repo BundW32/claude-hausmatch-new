@@ -1,9 +1,14 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { searchPropertyManagers } from '../services/geminiService';
 import { getManagersByCity } from '../services/dataService';
 import { ManagerSearchResult, SearchCompany, User } from '../types';
 import { resolveGewerk, GewerkDef, FUNNEL_MESSAGE_KEY } from '../services/gewerke';
+import { AuthContext } from '../App';
+
+// Offene Anfrage, die vor der Registrierung zwischengespeichert wird, damit die
+// Auswahl nach dem Registrieren erhalten bleibt.
+const PENDING_INQUIRY_KEY = 'hm_pending_inquiry';
 
 const EDDY_URL = "/eddy-eule.png";
 
@@ -184,8 +189,10 @@ const NetworkManagerCard = ({ manager, selected, onToggle }: { manager: User; se
 
 // ─── ExpressModal ───────────────────────────────────────────────────────────────
 const ExpressModal = ({ selected, city, gewerk, onClose }: { selected: SelectableEntry[]; city: string; gewerk: GewerkDef; onClose: () => void }) => {
-  const [ownerName, setOwnerName] = useState('');
-  const [ownerEmail, setOwnerEmail] = useState('');
+  const { user } = useContext(AuthContext);
+  const navigate = useNavigate();
+  const [ownerName, setOwnerName] = useState(user?.name || '');
+  const [ownerEmail, setOwnerEmail] = useState(user?.email || '');
   const [ownerPhone, setOwnerPhone] = useState('');
   // Beschreibung mit dem im Wizard zusammengestellten Text vorbelegen (falls vorhanden).
   const [description, setDescription] = useState(() => {
@@ -218,11 +225,22 @@ const ExpressModal = ({ selected, city, gewerk, onClose }: { selected: Selectabl
         throw new Error(d.error || 'Fehler beim Senden');
       }
       setDone(true);
+      try { sessionStorage.removeItem(PENDING_INQUIRY_KEY); } catch { /* ignore */ }
     } catch (err: any) {
       setError(err.message || 'Anfrage konnte nicht gesendet werden.');
     } finally {
       setSending(false);
     }
+  };
+
+  // Nicht eingeloggt: Auswahl zwischenspeichern und zur Registrierung schicken.
+  // Nach der Registrierung kehrt der Nutzer über ?resume=1 hierher zurück.
+  const goToRegister = (mode: 'register' | 'login') => {
+    try {
+      sessionStorage.setItem(PENDING_INQUIRY_KEY, JSON.stringify({ city, gewerkKey: gewerk.key, entries: selected }));
+    } catch { /* ignore */ }
+    const ret = `/search-results?city=${encodeURIComponent(city)}&gewerk=${encodeURIComponent(gewerk.key)}&resume=1`;
+    navigate(`/${mode}?redirect=${encodeURIComponent(ret)}`);
   };
 
   return (
@@ -244,7 +262,45 @@ const ExpressModal = ({ selected, city, gewerk, onClose }: { selected: Selectabl
         </div>
 
         <div className="overflow-y-auto flex-1 p-4 sm:p-8">
-          {done ? (
+          {!done && !user ? (
+            <div className="py-4">
+              <div className="bg-indigo-50 rounded-2xl p-4 mb-6">
+                <p className="text-xs font-black text-indigo-600 uppercase tracking-widest mb-2">Ausgewählte {gewerk.labelPlural} ({selected.length})</p>
+                <div className="space-y-1">
+                  {selected.map((s, i) => (
+                    <div key={i} className="flex items-center gap-2">
+                      <div className="w-1.5 h-1.5 bg-indigo-400 rounded-full" />
+                      <span className="text-sm font-semibold text-slate-700">{s.name}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div className="text-center px-2">
+                <div className="w-14 h-14 bg-indigo-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                  <svg className="w-7 h-7 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 11c0 3.517-1.009 6.799-2.753 9.571m-3.44-2.04l.054-.09A13.916 13.916 0 008 11a4 4 0 118 0c0 1.017-.07 2.019-.203 3m-2.118 6.844A21.88 21.88 0 0015.171 17m3.839 1.132c.645-2.266.99-4.659.99-7.132A8 8 0 008 4.07M3 15.364c.64-1.319 1-2.8 1-4.364 0-1.457.39-2.823 1.07-4" /></svg>
+                </div>
+                <h3 className="text-xl font-black text-slate-900 mb-2">Kostenlos registrieren, um Angebote zu erhalten</h3>
+                <p className="text-slate-500 font-medium text-sm mb-6 leading-relaxed">
+                  Legen Sie ein kostenloses Konto an, damit wir Ihre Anfrage an die ausgewählten {gewerk.labelPlural} senden
+                  und die Angebote sicher in Ihrem Postfach bündeln können. Ihre Auswahl bleibt dabei erhalten.
+                </p>
+                <button
+                  onClick={() => goToRegister('register')}
+                  className="w-full bg-indigo-600 text-white py-4 rounded-2xl font-black text-base hover:bg-indigo-700 transition-colors active:scale-95 shadow-xl shadow-indigo-200/50 mb-3"
+                >
+                  Kostenlos registrieren & Angebote anfragen
+                </button>
+                <button
+                  onClick={() => goToRegister('login')}
+                  className="w-full bg-white text-slate-700 py-3.5 rounded-2xl font-black text-sm border-2 border-slate-200 hover:border-indigo-300 hover:text-indigo-600 transition-all"
+                >
+                  Ich habe bereits ein Konto — einloggen
+                </button>
+                <p className="text-slate-400 text-xs mt-4">Kostenlos & unverbindlich. Ihre Auswahl wird zwischengespeichert.</p>
+              </div>
+            </div>
+          ) : done ? (
             <div className="text-center py-8">
               <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
                 <svg className="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -345,6 +401,9 @@ const SearchResults = () => {
   const [loading, setLoading] = useState(true);
   const [selectedKeys, setSelectedKeys] = useState<Set<string>>(new Set());
   const [showModal, setShowModal] = useState(false);
+  const { user } = useContext(AuthContext);
+  // Nach der Registrierung wiederhergestellte Auswahl (überlebt die Navigation).
+  const [resumeEntries, setResumeEntries] = useState<SelectableEntry[] | null>(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -359,6 +418,21 @@ const SearchResults = () => {
     };
     fetchData();
   }, [city, gewerk.key]);
+
+  // Rückkehr aus der Registrierung: gespeicherte Anfrage wiederherstellen und
+  // das Absende-Modal (jetzt eingeloggt) direkt wieder öffnen.
+  useEffect(() => {
+    if (!user || searchParams.get('resume') !== '1') return;
+    try {
+      const raw = sessionStorage.getItem(PENDING_INQUIRY_KEY);
+      if (!raw) return;
+      const pending = JSON.parse(raw) as { entries?: SelectableEntry[] };
+      if (Array.isArray(pending.entries) && pending.entries.length > 0) {
+        setResumeEntries(pending.entries);
+        setShowModal(true);
+      }
+    } catch { /* ignore */ }
+  }, [user, searchParams]);
 
   const toggle = (key: string) => setSelectedKeys(prev => {
     const next = new Set(prev);
@@ -519,10 +593,10 @@ const SearchResults = () => {
 
       {showModal && (
         <ExpressModal
-          selected={getSelectedEntries()}
+          selected={resumeEntries || getSelectedEntries()}
           city={city}
           gewerk={gewerk}
-          onClose={() => setShowModal(false)}
+          onClose={() => { setShowModal(false); setResumeEntries(null); }}
         />
       )}
     </div>
