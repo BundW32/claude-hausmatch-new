@@ -254,7 +254,7 @@ const ExpressModal = ({ selected, city, gewerk, onClose }: { selected: Selectabl
           </div>
           <div className="flex-1">
             <h2 className="text-white font-black text-xl">Express-Matching</h2>
-            <p className="text-indigo-200 text-sm font-medium">{selected.length} {gewerk.labelPlural} werden kontaktiert</p>
+            <p className="text-indigo-200 text-sm font-medium">{selected.length} {selected.length === 1 ? gewerk.label : gewerk.labelPlural} werden kontaktiert</p>
           </div>
           <button onClick={onClose} className="text-white/60 hover:text-white transition-colors">
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M6 18L18 6M6 6l12 12" /></svg>
@@ -309,7 +309,7 @@ const ExpressModal = ({ selected, city, gewerk, onClose }: { selected: Selectabl
               </div>
               <h3 className="text-2xl font-black text-slate-900 mb-3">Anfragen versendet!</h3>
               <p className="text-slate-500 font-medium mb-2">
-                Wir haben <span className="font-black text-indigo-600">{selected.length} {gewerk.labelPlural}</span> in {city} um ein Angebot gebeten.
+                Wir haben <span className="font-black text-indigo-600">{selected.length} {selected.length === 1 ? gewerk.label : gewerk.labelPlural}</span> in {city} um ein Angebot gebeten.
               </p>
               <p className="text-slate-400 text-sm mb-8">Die Angebote werden direkt an <span className="font-semibold">{ownerEmail}</span> gesendet.</p>
               <div className="bg-slate-50 rounded-2xl p-4 text-left mb-6">

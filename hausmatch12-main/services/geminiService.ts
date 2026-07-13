@@ -164,7 +164,7 @@ export const searchPropertyManagers = async (
 
     return {
       introText: companies.length > 0
-        ? `${companies.length} ${g.labelPlural} in ${city} gefunden – live durchsucht über Google Search.`
+        ? `${companies.length} ${companies.length === 1 ? g.label : g.labelPlural} in ${city} gefunden – live durchsucht über Google Search.`
         : `Es konnten keine ${g.labelPlural} in ${city} gefunden werden. Versuchen Sie es mit einer anderen Stadt oder Region.`,
       sources: [],
       companies
