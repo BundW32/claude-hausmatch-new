@@ -47,10 +47,17 @@ const Network = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
+    // Ohne Login werden keine Mitglieder geladen – die Seite zeigt stattdessen
+    // einen Registrierungs-Hinweis.
+    if (!user) {
+      setUsers([]);
+      setLoading(false);
+      return;
+    }
     const fetch = async () => {
       setLoading(true);
       const res = await searchUsers(searchTerm);
-      setUsers(user ? res.filter(u => u.id !== user.id) : res);
+      setUsers(res.filter(u => u.id !== user.id));
       setLoading(false);
     };
     const timer = setTimeout(fetch, 300);
@@ -58,8 +65,9 @@ const Network = () => {
   }, [searchTerm, user?.id]);
 
   // Solange keine echten Mitglieder da sind (und nicht aktiv gesucht wird),
-  // Muster-Firmen zeigen, damit das Netzwerk belebt wirkt.
-  const showDemoUsers = !loading && users.length === 0 && !searchTerm.trim();
+  // Muster-Firmen zeigen, damit das Netzwerk belebt wirkt – aber nur für
+  // eingeloggte Nutzer; Besucher sehen den Registrierungs-Hinweis.
+  const showDemoUsers = !!user && !loading && users.length === 0 && !searchTerm.trim();
   const sourceUsers = showDemoUsers ? DEMO_MANAGERS : users;
   const filteredUsers = sourceUsers.filter(u => matchesRegion(u, activeRegion));
 
@@ -129,18 +137,44 @@ const Network = () => {
             <h1 className="text-5xl font-black text-slate-900 tracking-tighter mb-2">Netzwerk</h1>
             <p className="text-slate-400 font-bold uppercase tracking-widest text-xs">Vernetzen Sie sich mit Immobilienprofis</p>
           </div>
-          <div className="w-full md:w-96 bg-white p-2 rounded-2xl shadow-xl border border-slate-100 flex items-center group focus-within:ring-2 focus-within:ring-indigo-600 transition-all">
-            <svg className="w-6 h-6 text-slate-300 ml-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
-            <input
-              type="text"
-              placeholder="Name oder Firma suchen..."
-              className="flex-1 px-4 py-3 bg-transparent border-none text-black font-bold focus:ring-0 placeholder-slate-300"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-            />
-          </div>
+          {user && (
+            <div className="w-full md:w-96 bg-white p-2 rounded-2xl shadow-xl border border-slate-100 flex items-center group focus-within:ring-2 focus-within:ring-indigo-600 transition-all">
+              <svg className="w-6 h-6 text-slate-300 ml-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+              <input
+                type="text"
+                placeholder="Name oder Firma suchen..."
+                className="flex-1 px-4 py-3 bg-transparent border-none text-black font-bold focus:ring-0 placeholder-slate-300"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
+            </div>
+          )}
         </div>
 
+        {/* Ohne Login: Registrierungs-Hinweis statt Mitgliederliste */}
+        {!user ? (
+          <div className="bg-white rounded-[3.5rem] border border-slate-100 shadow-sm py-24 px-8 text-center">
+            <div className="w-20 h-20 bg-indigo-50 rounded-3xl flex items-center justify-center mx-auto mb-8">
+              <svg className="w-10 h-10 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+              </svg>
+            </div>
+            <h2 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight mb-4">Das Netzwerk ist Mitgliedern vorbehalten</h2>
+            <p className="text-slate-500 font-medium max-w-xl mx-auto mb-10 leading-relaxed">
+              Um die Profile unserer Immobilienprofis und Eigentümer zu sehen und sich zu vernetzen,
+              registrieren Sie sich kostenlos oder melden Sie sich an.
+            </p>
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+              <Link to="/register" className="w-full sm:w-auto px-10 py-5 bg-indigo-600 text-white rounded-2xl font-black uppercase text-xs tracking-widest shadow-lg shadow-indigo-200 hover:bg-indigo-700 transition-all">
+                Kostenlos registrieren
+              </Link>
+              <Link to="/login" className="w-full sm:w-auto px-10 py-5 bg-white text-slate-700 border border-slate-200 rounded-2xl font-black uppercase text-xs tracking-widest hover:border-indigo-300 hover:text-indigo-600 transition-all">
+                Anmelden
+              </Link>
+            </div>
+          </div>
+        ) : (
+        <>
         {/* Region Filter */}
         <div className="flex gap-2 overflow-x-auto pb-2 mb-8" style={{ scrollbarWidth: 'none' }}>
           {REGIONS.map(region => (
@@ -239,6 +273,8 @@ const Network = () => {
             </div>
             <p className="text-slate-300 font-black uppercase tracking-[0.3em] text-sm">Keine Mitglieder in dieser Region gefunden</p>
           </div>
+        )}
+        </>
         )}
       </div>
 
