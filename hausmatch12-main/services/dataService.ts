@@ -43,11 +43,7 @@ export const getUserProfile = async (uid: string): Promise<User | null> => {
       return { id: userDoc.id, ...userDoc.data() } as User;
     }
   } catch (error: any) {
-    console.warn("Firestore getUserProfile error (using fallback):", error.message);
-    // Return a mock user if requested UID matches a mock
-    if (uid === 'm1') return { id: 'm1', name: 'Max Mustermann', email: 'max@hausverwaltung-berlin.de', role: 'manager', userType: 'hausverwaltung', bio: 'Experte für WEG-Verwaltung in Berlin.', friends: [] };
-    if (uid === 'm2') return { id: 'm2', name: 'Erika Musterfrau', email: 'erika@immobilien-muenchen.de', role: 'manager', userType: 'hausverwaltung', bio: 'Spezialistin für Mietverwaltung und Sanierung.', friends: [] };
-    if (uid === 's1') return { id: 's1', name: 'John Doe', email: 'john@owner.com', role: 'seeker', userType: 'owner', bio: 'Immobilienbesitzer mit Fokus auf Mehrfamilienhäuser.', friends: [] };
+    console.warn("Firestore getUserProfile error:", error.message);
   }
   return null;
 };
@@ -231,15 +227,9 @@ export const searchUsers = async (searchTerm: string): Promise<User[]> => {
     const querySnapshot = await getDocs(q);
     return querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as User));
   } catch (error: any) {
-    console.warn("Firestore searchUsers error (using fallback):", error.message);
-    // Fallback Mock Data for Networking
-    const mockUsers: User[] = [
-      { id: 'm1', name: 'Max Mustermann', email: 'max@hausverwaltung-berlin.de', role: 'manager', userType: 'hausverwaltung', bio: 'Experte für WEG-Verwaltung in Berlin.', friends: [] },
-      { id: 'm2', name: 'Erika Musterfrau', email: 'erika@immobilien-muenchen.de', role: 'manager', userType: 'hausverwaltung', bio: 'Spezialistin für Mietverwaltung und Sanierung.', friends: [] },
-      { id: 's1', name: 'John Doe', email: 'john@owner.com', role: 'seeker', userType: 'owner', bio: 'Immobilienbesitzer mit Fokus auf Mehrfamilienhäuser.', friends: [] }
-    ];
-    if (!searchTerm) return mockUsers;
-    return mockUsers.filter(u => u.name.toLowerCase().includes(searchTerm.toLowerCase()));
+    // Keine Muster-Profile mehr als Fallback – bei Fehlern bleibt die Liste leer.
+    console.warn("Firestore searchUsers error:", error.message);
+    return [];
   }
 };
 
