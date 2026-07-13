@@ -134,12 +134,15 @@ export const registerUser = async (email: string, password: string, name: string
 const INVITE_EMAIL_KEY = 'hm_invite_email';
 const INVITE_CITY_KEY = 'hm_invite_city';
 const INVITE_COMPANY_KEY = 'hm_invite_company';
+const INVITE_TYPE_KEY = 'hm_invite_type';
 
-// Schickt einem (noch nicht registrierten) Verwalter einen passwortlosen Login-Link.
+// Schickt einem (noch nicht registrierten) Profi einen passwortlosen Login-Link.
+// type ist das Gewerk (UserType, z. B. 'makler'); daraus wird bei der
+// Registrierung role/userType abgeleitet.
 // Voraussetzung in der Firebase Console:
 //   Authentication -> Sign-in method -> Email/Password -> "Email link (passwordless sign-in)" aktiviert
 //   Authentication -> Settings -> Authorized domains -> App-Domain eingetragen
-export const sendInviteSignInLink = async (email: string, city?: string, company?: string): Promise<void> => {
+export const sendInviteSignInLink = async (email: string, city?: string, company?: string, type?: string): Promise<void> => {
   const cleanEmail = email.trim().toLowerCase();
   const continueUrl = `${window.location.origin}/?finishInvite=1&inviteEmail=${encodeURIComponent(cleanEmail)}`;
   await sendSignInLinkToEmail(auth, cleanEmail, { url: continueUrl, handleCodeInApp: true });
@@ -147,6 +150,7 @@ export const sendInviteSignInLink = async (email: string, city?: string, company
     window.localStorage.setItem(INVITE_EMAIL_KEY, cleanEmail);
     if (city) window.localStorage.setItem(INVITE_CITY_KEY, city);
     if (company) window.localStorage.setItem(INVITE_COMPANY_KEY, company);
+    if (type) window.localStorage.setItem(INVITE_TYPE_KEY, type);
   } catch (_) { /* localStorage evtl. nicht verfügbar */ }
 };
 
@@ -170,17 +174,22 @@ export const completeInviteSignIn = async (): Promise<boolean> => {
 
   const existing = await getDoc(doc(db, 'users', uid));
   if (!existing.exists()) {
-    let city = ''; let company = '';
+    let city = ''; let company = ''; let inviteType = '';
     try {
       city = window.localStorage.getItem(INVITE_CITY_KEY) || '';
       company = window.localStorage.getItem(INVITE_COMPANY_KEY) || '';
+      inviteType = window.localStorage.getItem(INVITE_TYPE_KEY) || '';
     } catch (_) {}
+    // Gewerk -> role/userType: Hausverwaltung = manager, alle anderen = profi.
+    const isHausverwaltung = !inviteType || inviteType === 'hausverwaltung';
+    const role: UserRole = isHausverwaltung ? 'manager' : 'profi';
+    const userType = (isHausverwaltung ? 'hausverwaltung' : inviteType) as UserType;
     const newUser: User = {
       id: uid,
       email,
       name: company || email.split('@')[0],
-      role: 'manager',
-      userType: 'hausverwaltung',
+      role,
+      userType,
       avatar: '',
       bio: '',
       friends: [],
@@ -197,6 +206,7 @@ export const completeInviteSignIn = async (): Promise<boolean> => {
     window.localStorage.removeItem(INVITE_EMAIL_KEY);
     window.localStorage.removeItem(INVITE_CITY_KEY);
     window.localStorage.removeItem(INVITE_COMPANY_KEY);
+    window.localStorage.removeItem(INVITE_TYPE_KEY);
   } catch (_) {}
   return true;
 };
@@ -285,11 +295,18 @@ const haversineKm = (lat1: number, lon1: number, lat2: number, lon2: number): nu
   return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 };
 
-export const getManagersByCity = async (city: string): Promise<User[]> => {
+// Netzwerk-Partner einer Stadt für ein Gewerk. Für 'hausverwaltung' sind das
+// Nutzer mit role 'manager'; für alle anderen Gewerke Nutzer mit role 'profi'
+// und passendem userType. Ohne gewerkKey wird wie bisher nach Verwaltern gesucht.
+export const getManagersByCity = async (city: string, gewerkKey?: string): Promise<User[]> => {
   try {
-    const q = query(collection(db, "users"), where("role", "==", "manager"), limit(50));
+    const isHausverwaltung = !gewerkKey || gewerkKey === 'hausverwaltung';
+    const roleValue = isHausverwaltung ? 'manager' : 'profi';
+    const q = query(collection(db, "users"), where("role", "==", roleValue), limit(50));
     const snapshot = await getDocs(q);
-    const managers = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as User));
+    let managers = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as User));
+    // Bei Profi-Gewerken zusätzlich nach userType filtern.
+    if (!isHausverwaltung) managers = managers.filter(m => m.userType === gewerkKey);
     if (managers.length === 0) return [];
 
     // Geocode search city; fall back to string match if unavailable

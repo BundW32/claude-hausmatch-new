@@ -1,16 +1,18 @@
 import React, { useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { sendInviteSignInLink } from '../services/dataService';
+import { resolveGewerk } from '../services/gewerke';
 
-// Landing-Seite aus der Einladungs-Email für noch NICHT registrierte Verwalter.
-// Der Verwalter fordert hier einen passwortlosen Magic-Link an. Nach dem Klick auf
-// den Link wird er eingeloggt, sein Verwalter-Profil angelegt und der Lead erscheint
-// im Lead Center (Abschluss passiert zentral in App.tsx).
+// Landing-Seite aus der Einladungs-Email für noch NICHT registrierte Profis.
+// Der Profi fordert hier einen passwortlosen Magic-Link an. Nach dem Klick auf
+// den Link wird er eingeloggt, sein Profil (mit dem passenden Gewerk) angelegt und
+// der Lead erscheint im Lead Center (Abschluss passiert zentral in App.tsx).
 const Einladung: React.FC = () => {
   const [params] = useSearchParams();
   const email = (params.get('email') || '').trim();
   const city = (params.get('city') || '').trim();
   const company = (params.get('company') || '').trim();
+  const gewerk = resolveGewerk(params.get('type'));
 
   const [status, setStatus] = useState<'idle' | 'sending' | 'sent' | 'error'>('idle');
   const [error, setError] = useState('');
@@ -20,7 +22,7 @@ const Einladung: React.FC = () => {
     setStatus('sending');
     setError('');
     try {
-      await sendInviteSignInLink(email, city, company);
+      await sendInviteSignInLink(email, city, company, gewerk.key);
       setStatus('sent');
     } catch (err: any) {
       console.error('sendInviteSignInLink error:', err);
@@ -56,7 +58,7 @@ const Einladung: React.FC = () => {
                 Neue Anfrage für Sie
               </span>
               <h1 className="text-2xl font-black text-slate-900 mb-3 tracking-tight">
-                Ein Eigentümer{city ? ` in ${city}` : ''} sucht eine Hausverwaltung
+                Ein Eigentümer{city ? ` in ${city}` : ''} sucht {gewerk.akk}
               </h1>
               <p className="text-slate-500 leading-relaxed mb-6">
                 {company ? <><strong className="text-slate-700">{company}</strong>, über </> : 'Über '}

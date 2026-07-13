@@ -141,12 +141,18 @@ export const fetchLatestIndustryBlog = async (): Promise<BlogArticle[]> => {
   }
 };
 
-export const searchPropertyManagers = async (city: string): Promise<ManagerSearchResult> => {
+// Live-Suche nach Anbietern des jeweiligen Gewerks. gewerk steuert Suchbegriff
+// und Beschriftung; ohne Angabe wird Hausverwaltung gesucht (abwärtskompatibel).
+export const searchPropertyManagers = async (
+  city: string,
+  gewerk?: { searchTerm: string; label: string; labelPlural: string }
+): Promise<ManagerSearchResult> => {
+  const g = gewerk || { searchTerm: 'Hausverwaltung', label: 'Hausverwaltung', labelPlural: 'Hausverwaltungen' };
   try {
     const res = await fetch('/api/search', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ query: `Hausverwaltung ${city}` })
+      body: JSON.stringify({ query: `${g.searchTerm} ${city}`.trim(), serviceLabel: g.label })
     });
 
     if (!res.ok) {
@@ -158,8 +164,8 @@ export const searchPropertyManagers = async (city: string): Promise<ManagerSearc
 
     return {
       introText: companies.length > 0
-        ? `${companies.length} Hausverwaltungen in ${city} gefunden – live durchsucht über Google Search.`
-        : `Es konnten keine Hausverwaltungen in ${city} gefunden werden. Versuchen Sie es mit einer anderen Stadt oder Region.`,
+        ? `${companies.length} ${g.labelPlural} in ${city} gefunden – live durchsucht über Google Search.`
+        : `Es konnten keine ${g.labelPlural} in ${city} gefunden werden. Versuchen Sie es mit einer anderen Stadt oder Region.`,
       sources: [],
       companies
     };

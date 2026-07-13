@@ -218,7 +218,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     const registered = registeredEmails.has(manager.email);
     const ctaUrl = registered
       ? `${APP_URL}/#/login`
-      : `${APP_URL}/#/einladung?email=${encodeURIComponent(manager.email)}&city=${cityParam}&company=${encodeURIComponent(manager.name || '')}`;
+      : `${APP_URL}/#/einladung?email=${encodeURIComponent(manager.email)}&city=${cityParam}&company=${encodeURIComponent(manager.name || '')}&type=${encodeURIComponent(gewerk.key)}`;
     const ctaLabel = registered ? 'Im Lead Center ansehen →' : 'Jetzt registrieren & Anfrage ansehen →';
     await sendEmail(apiKey, {
       from: FROM_EMAIL,
