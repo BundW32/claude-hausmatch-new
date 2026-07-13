@@ -205,6 +205,7 @@ const ExpressModal = ({ selected, city, onClose }: { selected: SelectableEntry[]
           senderPhone: ownerPhone,
           message: description,
           city,
+          serviceType: 'hausverwaltung',
           companies: selected.map(s => ({ name: s.name, email: s.email, address: s.address, phone: s.phone })),
         }),
       });

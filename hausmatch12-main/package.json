@@ -7,7 +7,9 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "lint": "tsc --noEmit"
+    "lint": "tsc --noEmit",
+    "test:emails": "tsx scripts/test-send-emails.ts",
+    "preview:emails": "tsx scripts/test-send-emails.ts --preview"
   },
   "dependencies": {
     "@fontsource/inter": "^5.2.8",
@@ -29,6 +31,7 @@
     "autoprefixer": "^10.4.18",
     "postcss": "^8.4.35",
     "tailwindcss": "^4.2.1",
+    "tsx": "^4.23.1",
     "typescript": "^5.2.2",
     "vite": "^5.1.4"
   }

@@ -7,3 +7,4 @@ dist/
 # Interne Artefakte — gehören nicht ins Repo
 migrated_prompt_history/
 *.timestamp-*.mjs
+email-previews/
