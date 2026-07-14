@@ -47,10 +47,12 @@ const Network = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
+    // Gäste sehen das Netzwerk nicht (Mitglieder-Bereich) – nichts laden.
+    if (!user) { setLoading(false); return; }
     const fetch = async () => {
       setLoading(true);
       const res = await searchUsers(searchTerm);
-      setUsers(user ? res.filter(u => u.id !== user.id) : res);
+      setUsers(res.filter(u => u.id !== user.id));
       setLoading(false);
     };
     const timer = setTimeout(fetch, 300);
@@ -118,6 +120,56 @@ const Network = () => {
     setUploading(false);
     navigate('/messages');
   };
+
+  // ─── Gast-Ansicht: Netzwerk ist Mitgliedern vorbehalten ─────────────────────
+  if (!user) {
+    return (
+      <div className="bg-slate-50 min-h-[calc(100vh-4rem)] flex items-center justify-center px-4 py-16">
+        <div className="relative max-w-xl w-full bg-white rounded-[2.5rem] border border-slate-100 shadow-2xl overflow-hidden animate-fade-in-up">
+          <div className="absolute -top-24 left-1/2 -translate-x-1/2 w-[30rem] h-[15rem] bg-indigo-100/70 rounded-full blur-[80px] pointer-events-none" />
+          <div className="relative p-8 sm:p-12 text-center">
+            <div className="w-16 h-16 mx-auto mb-6 bg-gradient-to-br from-blue-600 to-indigo-700 rounded-2xl flex items-center justify-center shadow-lg shadow-indigo-200">
+              <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+              </svg>
+            </div>
+
+            <h1 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight mb-4">
+              Unser Netzwerk ist Mitgliedern vorbehalten
+            </h1>
+            <p className="text-slate-500 font-medium leading-relaxed mb-3">
+              Hier vernetzen sich Eigentümer, Hausverwaltungen und Immobilienprofis aus ganz
+              Deutschland — sie knüpfen Kontakte, tauschen Erfahrungen aus und finden
+              verlässliche Partner für ihre Projekte.
+            </p>
+            <p className="text-slate-500 font-medium leading-relaxed mb-8">
+              Zum Schutz der Profile unserer Mitglieder wird das Netzwerk erst nach einer
+              kostenlosen Registrierung sichtbar. In weniger als zwei Minuten sind Sie dabei.
+            </p>
+
+            <div className="flex flex-col sm:flex-row gap-3 justify-center mb-6">
+              <Link
+                to="/register"
+                className="px-8 py-4 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-2xl font-black uppercase text-xs tracking-widest hover:from-blue-700 hover:to-indigo-700 transition-all shadow-lg shadow-indigo-200 active:scale-95"
+              >
+                Jetzt kostenlos registrieren
+              </Link>
+              <Link
+                to="/login"
+                className="px-8 py-4 bg-white border border-slate-200 text-slate-700 rounded-2xl font-black uppercase text-xs tracking-widest hover:border-indigo-300 hover:text-indigo-700 transition-all"
+              >
+                Ich habe bereits ein Konto
+              </Link>
+            </div>
+
+            <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">
+              Kostenlos · Unverbindlich · DSGVO-konform
+            </p>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="bg-slate-50 min-h-screen py-12">
