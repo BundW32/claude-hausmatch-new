@@ -48,7 +48,7 @@ const Einladung: React.FC = () => {
               <p className="text-slate-500 leading-relaxed">
                 Wir haben einen passwortlosen Anmelde-Link an{' '}
                 <strong className="text-slate-700">{email}</strong> geschickt. Öffnen Sie die E-Mail
-                und klicken Sie auf den Link — danach liegt die Anfrage{city ? ` aus ${city}` : ''} direkt
+                und klicken Sie auf den Link. Danach liegt die Anfrage{city ? ` aus ${city}` : ''} direkt
                 in Ihrem Lead Center.
               </p>
             </>

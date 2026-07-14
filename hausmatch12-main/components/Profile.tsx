@@ -516,7 +516,7 @@ const Profile = () => {
         </div>
       </div>
 
-      {/* Konto löschen (DSGVO Art. 17) — nur im eigenen Profil */}
+      {/* Konto löschen (DSGVO Art. 17), nur im eigenen Profil */}
       {isOwnProfile && currentUser && (
         <div className="max-w-7xl mx-auto px-4 md:px-6 pb-16">
           <div className="bg-white rounded-[2rem] border border-red-100 p-8 md:p-10 flex flex-col md:flex-row md:items-center justify-between gap-6">

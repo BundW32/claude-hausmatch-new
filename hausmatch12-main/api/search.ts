@@ -17,7 +17,7 @@ async function scrapeWebsite(url: string): Promise<{ email?: string; phone?: str
     if (!resp.ok) return {};
     const html = await resp.text();
 
-    // E-Mail extrahieren — bevorzugt mailto:-Links
+    // E-Mail extrahieren, bevorzugt mailto:-Links
     const mailtoMatch = html.match(/mailto:([a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,})/i);
     const emailMatch = mailtoMatch
       ? mailtoMatch[1]
@@ -60,7 +60,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
 Nutze Google-Suchergebnisse um ECHTE Unternehmen/Kanzleien/Betriebe mit echten Kontaktdaten zu finden.
 Gib exakt 8 Anbieter zurück, sortiert nach Google-Bewertung (höchste zuerst).
-Verwende in allen Texten korrekte deutsche Umlaute (ä, ö, ü, ß) — z. B. "München", nicht "Muenchen".
+Verwende in allen Texten korrekte deutsche Umlaute (ä, ö, ü, ß), z. B. "München", nicht "Muenchen".
+Schreibe natürliche, menschliche Sätze und verwende keine Gedankenstriche ("–" oder "—"). Nutze stattdessen Kommas, Punkte oder Doppelpunkte.
 
 Antworte NUR mit einem JSON-Array (kein Markdown, kein erklärender Text), in diesem Format:
 [

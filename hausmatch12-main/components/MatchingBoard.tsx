@@ -51,7 +51,7 @@ const StarRating = ({ rating }: { rating: number }) => {
 const ContactModal = ({ company, onClose }: { company: Company; onClose: () => void }) => {
   const [copied, setCopied] = useState(false);
 
-  const emailSubject = `Anfrage Hausverwaltung über HausMatch – ${company.name}`;
+  const emailSubject = `Anfrage Hausverwaltung über HausMatch: ${company.name}`;
   const emailBody = `Sehr geehrte Damen und Herren,
 
 Über die Plattform HausMatch bin ich auf Ihr Unternehmen aufmerksam geworden und interessiere mich für Ihre Verwaltungsdienstleistungen.

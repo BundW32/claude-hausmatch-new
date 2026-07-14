@@ -47,7 +47,7 @@ const Network = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Ohne Login werden keine Mitglieder geladen – die Seite zeigt stattdessen
+    // Ohne Login werden keine Mitglieder geladen, die Seite zeigt stattdessen
     // einen Registrierungs-Hinweis.
     if (!user) {
       setUsers([]);
@@ -65,7 +65,7 @@ const Network = () => {
   }, [searchTerm, user?.id]);
 
   // Solange keine echten Mitglieder da sind (und nicht aktiv gesucht wird),
-  // Muster-Firmen zeigen, damit das Netzwerk belebt wirkt – aber nur für
+  // Muster-Firmen zeigen, damit das Netzwerk belebt wirkt, aber nur für
   // eingeloggte Nutzer; Besucher sehen den Registrierungs-Hinweis.
   const showDemoUsers = !!user && !loading && users.length === 0 && !searchTerm.trim();
   const sourceUsers = showDemoUsers ? DEMO_MANAGERS : users;
@@ -214,7 +214,7 @@ const Network = () => {
                 <div key={u.id} className="bg-white p-10 rounded-[3.5rem] border border-slate-100 shadow-sm hover:shadow-2xl transition-all group relative overflow-hidden flex flex-col">
                   <div className="absolute top-0 right-0 w-32 h-32 bg-slate-50 rounded-bl-[5rem] -mr-16 -mt-16 group-hover:bg-indigo-50 transition-colors"></div>
 
-                  {/* Logo oben, Name darunter – so wird der Name nie abgeschnitten */}
+                  {/* Logo oben, Name darunter, so wird der Name nie abgeschnitten */}
                   <Link to={`/profile/${u.id}`} className="flex flex-col items-start gap-4 mb-8 relative z-10 group/link">
                     <div className="w-24 h-24 rounded-[2rem] bg-slate-100 flex items-center justify-center overflow-hidden border-4 border-white shadow-lg group-hover/link:scale-105 transition-transform flex-shrink-0">
                       {u.avatar ? <img src={u.avatar} className="w-full h-full object-cover" alt="" /> : <span className="text-4xl font-black text-slate-300">{(u?.name || '?')[0]}</span>}

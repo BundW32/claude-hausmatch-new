@@ -48,7 +48,7 @@ const Wizard = () => {
         <div className="text-center mb-14">
           <h1 className="text-4xl font-black text-slate-900 tracking-tighter mb-4">Wen suchen Sie?</h1>
           <p className="text-slate-500 font-medium max-w-xl mx-auto">
-            Wählen Sie das passende Gewerk — danach stellen wir Ihnen die richtigen Fragen und finden
+            Wählen Sie das passende Gewerk. Danach stellen wir Ihnen die richtigen Fragen und finden
             passende Anbieter in Ihrer Region.
           </p>
         </div>

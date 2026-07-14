@@ -3,7 +3,7 @@ import { applyCors } from './_cors';
 
 // ─── Eddys News der Woche (Server-Recherche) ─────────────────────────────────
 // Zwei Ausgaben pro Woche: Montag & Donnerstag. Die Recherche läuft hier auf dem
-// Server, weil nur hier der GEMINI_API_KEY existiert — der Client ruft lediglich
+// Server, weil nur hier der GEMINI_API_KEY existiert, der Client ruft lediglich
 // diese Route ab. Die Antwort wird per CDN-Cache (s-maxage) gehalten, damit pro
 // Ausgabe nur wenige echte KI-Abrufe entstehen.
 
@@ -58,14 +58,15 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   const editionKey = `${edition.getFullYear()}-${String(edition.getMonth() + 1).padStart(2, '0')}-${String(edition.getDate()).padStart(2, '0')}`;
   const editionStr = edition.toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year: 'numeric' });
 
-  const prompt = `Du bist Eddy, der KI-Immobilienassistent von HausMatch. Erstelle "Eddys News der Woche" – Ausgabe vom ${editionStr}.
+  const prompt = `Du bist Eddy, der KI-Immobilienassistent von HausMatch. Erstelle "Eddys News der Woche", Ausgabe vom ${editionStr}.
 
 Recherchiere über die Google-Suche die 4 aktuellsten und wichtigsten Nachrichten der letzten 7 Tage für Immobilieneigentümer und Hausverwaltungen in Deutschland. Decke möglichst verschiedene Themenfelder ab: rechtliche Änderungen & Urteile, Markt & Mieten, Zinsen & Finanzierung, Energie & Technik. Schreibe auf Deutsch mit korrekten Umlauten (ä, ö, ü, ß).
 
 Jeder Artikel ist ein AUSFÜHRLICHER, vollständiger Fachbericht wie in einem professionellen Immobilien-Magazin:
 - "fullContent": 900–1300 Wörter, gegliedert mit Markdown: "## " für 4–6 Zwischenüberschriften, "- " für Aufzählungen, **fett** für zentrale Begriffe und Zahlen.
 - Aufbau: prägnanter Einstieg (worum geht es, warum jetzt wichtig) → "## Hintergrund" mit Kontext und Vorgeschichte → Details mit konkreten Zahlen, Daten, Fristen, Namen und wo verfügbar Zitaten oder Positionen aus den Suchergebnissen → falls relevant regionale Unterschiede oder Beispielrechnungen → Abschnitt "## Was heißt das für Eigentümer und Verwalter?" mit einer konkreten Handlungs-Checkliste als Aufzählung → letzter Absatz beginnt mit "Eddys Einordnung:" (ehrliche, praktische Einschätzung in Eddys Ton, 3–5 Sätze).
-- Schreibe in ganzen, gut lesbaren Absätzen (3–6 Sätze je Absatz) — keine Stichwort-Sammlung. Erkläre Fachbegriffe kurz beim ersten Auftreten.
+- Schreibe in ganzen, gut lesbaren Absätzen (3–6 Sätze je Absatz), keine Stichwort-Sammlung. Erkläre Fachbegriffe kurz beim ersten Auftreten.
+- Schreibe natürliche, menschliche Sätze und verwende keine Gedankenstriche ("–" oder "—"). Nutze stattdessen Kommas, Punkte oder Doppelpunkte.
 - "keyPoints": 4–6 prägnante Stichpunkte "Das Wichtigste in Kürze" (je max. 15 Wörter).
 - "summary": 1–2 Sätze Teaser ohne Wiederholung des Titels.
 - "sources": 2–4 ECHTE Quellen aus den Suchergebnissen mit vollständiger URL (z. B. Haufe, Immobilien Zeitung, Handelsblatt, Tagesschau, BGH/Gerichte, Ministerien). KEINE erfundenen URLs.

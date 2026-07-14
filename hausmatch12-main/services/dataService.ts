@@ -155,7 +155,7 @@ export const isInviteSignInLink = (): boolean => {
   try { return isSignInWithEmailLink(auth, window.location.href); } catch { return false; }
 };
 
-// Schließt den Magic-Link-Login ab und legt – falls nötig – das Verwalter-Profil an.
+// Schließt den Magic-Link-Login ab und legt, falls nötig, das Verwalter-Profil an.
 // Gibt true zurück, wenn ein Sign-in stattgefunden hat.
 export const completeInviteSignIn = async (): Promise<boolean> => {
   if (!isInviteSignInLink()) return false;
@@ -227,7 +227,7 @@ export const searchUsers = async (searchTerm: string): Promise<User[]> => {
     const querySnapshot = await getDocs(q);
     return querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as User));
   } catch (error: any) {
-    // Keine Muster-Profile mehr als Fallback – bei Fehlern bleibt die Liste leer.
+    // Keine Muster-Profile mehr als Fallback, bei Fehlern bleibt die Liste leer.
     console.warn("Firestore searchUsers error:", error.message);
     return [];
   }
@@ -287,7 +287,7 @@ const haversineKm = (lat1: number, lon1: number, lat2: number, lon2: number): nu
 
 // Netzwerk-Partner einer Stadt finden. Ohne Angabe (oder 'hausverwaltung'):
 // Hausverwaltungen (role 'manager', wie bisher). Sonst passende Profis des
-// Gewerks – entweder ein einzelner Gewerk-Key (Funnel) oder eine Liste von
+// Gewerks, entweder ein einzelner Gewerk-Key (Funnel) oder eine Liste von
 // userTypes (Multi-Profi-Suche der Startseite).
 export const getManagersByCity = async (city: string, gewerk?: string | string[]): Promise<User[]> => {
   try {

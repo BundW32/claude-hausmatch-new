@@ -55,7 +55,7 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => 
   };
 
   // Magic-Link aus der Einladungs-Email abschließen. Wegen HashRouter hängt Firebase
-  // seine Parameter an die normale Query (?...) an – daher zentral hier behandeln.
+  // seine Parameter an die normale Query (?...) an, daher zentral hier behandeln.
   useEffect(() => {
     if (!isInviteSignInLink()) return;
     (async () => {
@@ -143,7 +143,7 @@ const Navbar = () => {
           {/* Logo */}
           <Link to="/" className="flex items-center gap-2.5 group">
             <div className="w-9 h-9 rounded-xl overflow-hidden shadow-lg shadow-indigo-200/60 group-hover:shadow-indigo-300/80 group-hover:scale-105 transition-all">
-              <img src="/eddy-icon-256.png" alt="Eddy — HausMatch Logo" className="w-full h-full object-cover" />
+              <img src="/eddy-icon-256.png" alt="Eddy, das HausMatch Logo" className="w-full h-full object-cover" />
             </div>
             <div className="flex flex-col leading-none">
               <span className="text-xl font-black tracking-tighter text-slate-900">HausMatch</span>
@@ -159,7 +159,7 @@ const Navbar = () => {
               </Link>
             ))}
 
-            {/* Hilfsmittel — Dropdown (öffnet bei Hover) */}
+            {/* Hilfsmittel-Dropdown (öffnet bei Hover) */}
             <div className="relative group">
               <button
                 className={`flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-black uppercase tracking-widest transition-all ${
@@ -264,7 +264,7 @@ const Navbar = () => {
             ) : (
               <>
                 <Link to="/profile" className="block px-4 py-3 rounded-xl text-sm font-black text-slate-900 hover:bg-slate-50 transition-all">
-                  Profil — <span className="text-blue-600">{user.name}</span>
+                  Profil: <span className="text-blue-600">{user.name}</span>
                   <span className="block text-[10px] font-black text-blue-600 uppercase tracking-widest">
                     {user.userType ? USER_TYPE_LABELS[user.userType] : user.role === 'manager' ? 'Hausverwaltung' : 'Eigentümer'}
                   </span>
@@ -294,7 +294,7 @@ const Footer = () => {
           <div className="col-span-2 md:col-span-5 pr-0 md:pr-16">
             <div className="flex items-center gap-3 mb-5">
               <div className="w-10 h-10 rounded-xl overflow-hidden shadow-lg shadow-indigo-900/40">
-                <img src="/eddy-icon-256.png" alt="Eddy — HausMatch Logo" className="w-full h-full object-cover" />
+                <img src="/eddy-icon-256.png" alt="Eddy, das HausMatch Logo" className="w-full h-full object-cover" />
               </div>
               <div className="flex flex-col leading-none">
                 <span className="text-xl font-black tracking-tighter text-white">HausMatch</span>
@@ -302,7 +302,7 @@ const Footer = () => {
               </div>
             </div>
             <p className="text-sm font-medium leading-relaxed text-slate-400 max-w-sm mb-6">
-              Die Plattform für Immobilienprofis und Eigentümer in Deutschland —
+              Die Plattform für Immobilienprofis und Eigentümer in Deutschland:
               Verwaltung finden, vernetzen, Wissen teilen.
             </p>
             <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-slate-500">
@@ -365,7 +365,7 @@ const ProtectedRoute = ({ children, allowedRoles }: React.PropsWithChildren<{ al
   return <>{children}</>;
 };
 
-// Bei jedem Seitenwechsel wieder ganz oben anfangen — sonst behält die
+// Bei jedem Seitenwechsel wieder ganz oben anfangen, sonst behält die
 // SPA die Scroll-Position der vorherigen Unterseite bei.
 const ScrollToTop = () => {
   const { pathname } = useLocation();

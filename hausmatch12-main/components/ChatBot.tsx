@@ -79,7 +79,7 @@ const ChatBot = () => {
   const suggestions = [
     'Was kostet eine Hausverwaltung?',
     'Wie berechne ich die Rendite?',
-    'Mieterhöhung — was muss ich beachten?'
+    'Mieterhöhung: Was muss ich beachten?'
   ];
 
   const formatText = (text: string) => {
@@ -96,7 +96,7 @@ const ChatBot = () => {
     });
   };
 
-  // Im Postfach ausblenden – sonst überdeckt Eddys Button den Sende-Button.
+  // Im Postfach ausblenden, sonst überdeckt Eddys Button den Sende-Button.
   if (location.pathname === '/messages') return null;
 
   return (
@@ -104,7 +104,7 @@ const ChatBot = () => {
       <button
         onClick={() => setOpen(o => !o)}
         className="fixed bottom-6 right-6 z-50 w-16 h-16 bg-indigo-600 text-white rounded-full shadow-2xl shadow-indigo-300/60 hover:bg-indigo-700 transition-all hover:scale-110 active:scale-95 flex items-center justify-center overflow-hidden"
-        aria-label="Eddy — KI-Immobilienberater öffnen"
+        aria-label="Eddy, den KI-Immobilienberater, öffnen"
       >
         {open ? (
           <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -126,7 +126,7 @@ const ChatBot = () => {
           <div className="bg-indigo-600 px-4 py-3 flex items-center gap-3">
             <EddyAvatar size={40} />
             <div>
-              <div className="text-white font-black text-sm">Eddy — Immobilien-KI 🦉</div>
+              <div className="text-white font-black text-sm">Eddy, Ihre Immobilien-KI 🦉</div>
               <div className="text-indigo-200 text-xs font-medium flex items-center gap-1">
                 <span className="w-1.5 h-1.5 bg-green-400 rounded-full"></span>
                 Powered by Gemini · Nur allgemeine Info
@@ -144,7 +144,7 @@ const ChatBot = () => {
               <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
             </svg>
             <p className="text-[10px] text-amber-700 font-medium leading-snug">
-              KI-generierte Antworten — keine Rechtsberatung. Bei rechtlichen Fragen immer einen Fachanwalt konsultieren.
+              KI-generierte Antworten, keine Rechtsberatung. Bei rechtlichen Fragen immer einen Fachanwalt konsultieren.
             </p>
           </div>
 

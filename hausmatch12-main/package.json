@@ -12,7 +12,7 @@
     "preview:emails": "tsx scripts/test-send-emails.ts --preview"
   },
   "dependencies": {
-    "@fontsource/inter": "^5.2.8",
+    "@fontsource/nunito": "^5.2.7",
     "@google/genai": "^1.43.0",
     "@google/generative-ai": "^0.21.0",
     "@tailwindcss/vite": "^4.2.1",

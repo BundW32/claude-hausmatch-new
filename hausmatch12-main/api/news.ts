@@ -1,6 +1,6 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 
-// Eddys News der Woche – serverseitige Recherche über Gemini + Google-Suche.
+// Eddys News der Woche, serverseitige Recherche über Gemini + Google-Suche.
 // Der GEMINI_API_KEY bleibt auf dem Server (wie bei /api/chat und /api/search);
 // der Client ruft nur diesen Endpoint auf. Pro Ausgabe (?edition=YYYY-MM-DD)
 // wird die Antwort am Vercel-Edge gecacht, damit nicht jeder Besuch eine neue
@@ -38,9 +38,10 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   const [y, m, d] = editionISO.split('-');
   const editionStr = `${d}.${m}.${y}`;
 
-  const prompt = `Du bist Eddy, der KI-Immobilienassistent von HausMatch. Erstelle "Eddys News der Woche" – Ausgabe vom ${editionStr}.
+  const prompt = `Du bist Eddy, der KI-Immobilienassistent von HausMatch. Erstelle "Eddys News der Woche", Ausgabe vom ${editionStr}.
 
-Recherchiere über die Google-Suche die 4 aktuellsten und wichtigsten ECHTEN Nachrichten der letzten 7 Tage für Immobilieneigentümer und Hausverwaltungen in Deutschland (rechtliche Änderungen & Urteile, Markt & Mieten, Zinsen & Finanzierung, Energie & Technik). Nutze nur reale, aktuelle Meldungen aus seriösen Quellen – keine erfundenen Inhalte. Schreibe auf Deutsch.
+Recherchiere über die Google-Suche die 4 aktuellsten und wichtigsten ECHTEN Nachrichten der letzten 7 Tage für Immobilieneigentümer und Hausverwaltungen in Deutschland (rechtliche Änderungen & Urteile, Markt & Mieten, Zinsen & Finanzierung, Energie & Technik). Nutze nur reale, aktuelle Meldungen aus seriösen Quellen, keine erfundenen Inhalte. Schreibe auf Deutsch.
+Schreibe natürliche, menschliche Sätze und verwende keine Gedankenstriche ("–" oder "—"). Nutze stattdessen Kommas, Punkte oder Doppelpunkte.
 
 Jeder Artikel ist ein VOLLSTÄNDIGER Bericht wie in einem professionellen Immobilien-Blog:
 - fullContent: 400–600 Wörter, gegliedert mit Markdown: "## " für 2–4 Zwischenüberschriften, "- " für Aufzählungen, **fett** für zentrale Begriffe und Zahlen.

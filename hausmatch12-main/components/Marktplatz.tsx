@@ -15,7 +15,7 @@ import {
 import { DEMO_POSTS } from '../services/demoData';
 
 // Vereinheitlichter Marktplatz: EINE Liste, EIN Beitragstyp. Aufträge, Gesuche,
-// Angebote & Empfehlungen liegen zusammen — die Kategorie ("Auftrag", "Gesuch", …)
+// Angebote & Empfehlungen liegen zusammen, die Kategorie ("Auftrag", "Gesuch", …)
 // unterscheidet sie. Kein zweites Board, kein Umschalter, kein Bewerbungs-Workflow:
 // Kontakt läuft direkt über "Nachricht schicken".
 
@@ -120,7 +120,7 @@ const PostDetailModal: React.FC<PostDetailModalProps> = ({ post, currentUserId, 
   const [sent, setSent] = useState(false);
   const isDemoPost = post.authorId === 'muster';
 
-  // Schickt eine echte Nachricht an den Beitrags-Autor – landet im Postfach beider.
+  // Schickt eine echte Nachricht an den Beitrags-Autor, landet im Postfach beider.
   const handleSendMessage = async () => {
     if (!user || !msgText.trim() || sending) return;
     setSending(true);
@@ -199,7 +199,7 @@ const PostDetailModal: React.FC<PostDetailModalProps> = ({ post, currentUserId, 
           </div>
         ) : null}
 
-        {/* Nachricht an den Autor – erstellt eine echte Nachricht im Postfach */}
+        {/* Nachricht an den Autor, erstellt eine echte Nachricht im Postfach */}
         {currentUserId && currentUserId !== post.authorId && !isDemoPost && (
           sent ? (
             <div className="bg-green-50 border border-green-100 rounded-2xl p-4 mb-5 flex items-center justify-between gap-3">
@@ -239,7 +239,7 @@ const PostDetailModal: React.FC<PostDetailModalProps> = ({ post, currentUserId, 
 
         {isDemoPost && currentUserId && (
           <div className="bg-amber-50 border border-amber-200 rounded-2xl p-4 mb-5">
-            <p className="text-xs font-medium text-amber-800">Dies ist ein Muster-Beitrag zur Veranschaulichung — Nachrichten sind hier nicht möglich.</p>
+            <p className="text-xs font-medium text-amber-800">Dies ist ein Muster-Beitrag zur Veranschaulichung. Nachrichten sind hier nicht möglich.</p>
           </div>
         )}
 
@@ -341,7 +341,7 @@ const CreatePostModal: React.FC<CreatePostModalProps> = ({ onClose }) => {
                 ))}
               </div>
               <p className="text-[11px] text-slate-400 font-medium mt-2">
-                Egal ob Sie einen <span className="font-black text-slate-500">Auftrag</span> ausschreiben, etwas <span className="font-black text-slate-500">suchen</span> oder <span className="font-black text-slate-500">anbieten</span> — alles landet hier im selben Marktplatz.
+                Egal ob Sie einen <span className="font-black text-slate-500">Auftrag</span> ausschreiben, etwas <span className="font-black text-slate-500">suchen</span> oder <span className="font-black text-slate-500">anbieten</span>: Alles landet hier im selben Marktplatz.
               </p>
             </div>
 
@@ -464,7 +464,7 @@ const Marktplatz: React.FC = () => {
                 Marktplatz
               </h1>
               <p className="text-sm text-slate-500 font-medium mt-1">
-                Aufträge, Gesuche, Angebote & Empfehlungen — alles an einem Ort
+                Aufträge, Gesuche, Angebote & Empfehlungen, alles an einem Ort
               </p>
             </div>
             {user ? (

@@ -85,7 +85,7 @@ export const getCurrentEditionDate = (): Date => {
 };
 
 const EDITION_CACHE_BASE = 'hm_eddy_news_';
-// v4: ausführliche Berichte (900–1300 Wörter) aus /api/blog –
+// v4: ausführliche Berichte (900–1300 Wörter) aus /api/blog,
 // alte Cache-Versionen werden beim Schreiben mit aufgeräumt.
 const EDITION_CACHE_PREFIX = EDITION_CACHE_BASE + 'v4_';
 
@@ -131,8 +131,8 @@ export const fetchLatestIndustryBlog = async (): Promise<BlogArticle[]> => {
       {
         id: "err-1",
         title: "Eddys News sind gerade nicht erreichbar",
-        summary: "Die aktuelle Ausgabe konnte nicht geladen werden – bitte später erneut versuchen.",
-        fullContent: "Die News-Recherche ist momentan nicht erreichbar (Server-Endpoint /api/news antwortet nicht oder der GEMINI_API_KEY ist in Vercel nicht gesetzt).\n\n## Was heißt das für Eigentümer und Verwalter?\n- Einfach später erneut vorbeischauen – die Ausgabe wird automatisch nachgeladen.\n\nEddys Einordnung: Manchmal braucht auch eine Eule eine kurze Pause. 🦉",
+        summary: "Die aktuelle Ausgabe konnte nicht geladen werden, bitte später erneut versuchen.",
+        fullContent: "Die News-Recherche ist momentan nicht erreichbar (Server-Endpoint /api/news antwortet nicht oder der GEMINI_API_KEY ist in Vercel nicht gesetzt).\n\n## Was heißt das für Eigentümer und Verwalter?\n- Einfach später erneut vorbeischauen, die Ausgabe wird automatisch nachgeladen.\n\nEddys Einordnung: Manchmal braucht auch eine Eule eine kurze Pause. 🦉",
         keyPoints: ["News-Recherche derzeit nicht erreichbar", "Ausgabe wird beim nächsten Besuch nachgeladen"],
         category: "News",
         date: editionStr,
@@ -166,7 +166,7 @@ export const searchPropertyManagers = async (
 
     return {
       introText: companies.length > 0
-        ? `${companies.length} ${companies.length === 1 ? g.label : g.labelPlural} in ${city} gefunden – live durchsucht über Google Search.`
+        ? `${companies.length} ${companies.length === 1 ? g.label : g.labelPlural} in ${city} gefunden, live durchsucht über die Google-Suche.`
         : `Es konnten keine ${g.labelPlural} in ${city} gefunden werden. Versuchen Sie es mit einer anderen Stadt oder Region.`,
       sources: [],
       companies

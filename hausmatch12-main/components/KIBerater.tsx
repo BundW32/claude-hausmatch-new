@@ -90,7 +90,7 @@ const KIBerater: React.FC = () => {
             </div>
           </div>
           <h1 className="text-3xl font-black text-slate-900 mb-2">
-            Eddy — Ihr KI-Immobilienberater
+            Eddy, Ihr KI-Immobilienberater
           </h1>
           <p className="text-slate-500 font-medium">
             Fragen zu Hausverwaltung, Mietrecht, Finanzierung &amp; Investment
