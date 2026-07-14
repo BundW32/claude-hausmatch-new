@@ -218,7 +218,7 @@ const Login: React.FC<LoginProps> = ({ initialView = 'login' }) => {
         <div className="text-center mb-10">
           <span className="inline-block bg-purple-100 text-purple-700 text-[10px] font-black uppercase tracking-widest px-4 py-2 rounded-full mb-4">Immobilienprofi</span>
           <h2 className="text-4xl font-black text-slate-900 mb-3 tracking-tight">Was ist Ihr Fachgebiet?</h2>
-          <p className="text-slate-500 font-medium">Wählen Sie Ihren Beruf — Sie können ihn später im Profil ändern.</p>
+          <p className="text-slate-500 font-medium">Wählen Sie Ihren Beruf. Sie können ihn später im Profil ändern.</p>
         </div>
 
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 w-full max-w-3xl px-4 mb-10">

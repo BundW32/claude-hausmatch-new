@@ -63,7 +63,7 @@ const LandingHome = () => {
               HausMatch ist Ihre Community für Immobilienprofis und Eigentümer. Vernetzen Sie sich, tauschen Sie Erfahrungen aus und finden Sie geprüfte Experten in Ihrer Region.
             </p>
 
-            {/* Wen suchen Sie? – Gewerk-Auswahl für die Multi-Profi-Suche */}
+            {/* Wen suchen Sie? Gewerk-Auswahl für die Multi-Profi-Suche */}
             <div className="max-w-2xl mx-auto mb-5">
               <p className="text-[10px] font-black uppercase tracking-[0.25em] text-slate-400 mb-3">Wen suchen Sie?</p>
               <div className="flex flex-wrap justify-center gap-2">
@@ -147,7 +147,7 @@ const LandingHome = () => {
         </div>
       </section>
 
-      {/* Eddy — KI-Berater Banner */}
+      {/* Eddy KI-Berater Banner */}
       <section className="relative overflow-hidden bg-gradient-to-br from-indigo-700 via-indigo-600 to-blue-600 py-12 md:py-16">
         <div className="absolute top-0 right-0 w-80 h-80 bg-white/5 rounded-full -translate-y-1/2 translate-x-1/4 pointer-events-none" />
         <div className="absolute bottom-0 left-0 w-56 h-56 bg-white/5 rounded-full translate-y-1/2 -translate-x-1/4 pointer-events-none" />
@@ -165,7 +165,7 @@ const LandingHome = () => {
                 Hallo, ich bin Eddy!
               </h2>
               <p className="text-indigo-100 font-medium text-base mb-6 max-w-md leading-relaxed">
-                Ihr persönlicher KI-Immobilienberater von HausMatch. Ich beantworte Ihre Fragen zu Hausverwaltung, Mietrecht, Finanzierung und Investment — sofort und kostenlos.
+                Ihr persönlicher KI-Immobilienberater von HausMatch. Ich beantworte Ihre Fragen zu Hausverwaltung, Mietrecht, Finanzierung und Investment, sofort und kostenlos.
               </p>
               <div className="flex flex-col sm:flex-row gap-3 justify-center md:justify-start">
                 <Link
@@ -191,15 +191,15 @@ const LandingHome = () => {
           <div className="text-center mb-12">
             <span className="inline-block text-[10px] font-black uppercase tracking-[0.3em] text-indigo-600 bg-indigo-50 border border-indigo-100 px-4 py-1.5 rounded-full mb-4">Die Plattform</span>
             <h2 className="text-3xl md:text-4xl font-black text-slate-900 tracking-tighter mb-3">Alles an einem Ort</h2>
-            <p className="text-slate-500 font-medium max-w-xl mx-auto text-sm md:text-base">Von der Vernetzung bis zur Renditeanalyse — HausMatch ist Ihre zentrale Plattform.</p>
+            <p className="text-slate-500 font-medium max-w-xl mx-auto text-sm md:text-base">Von der Vernetzung bis zur Renditeanalyse: HausMatch ist Ihre zentrale Plattform.</p>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 hm-stagger">
             {[
-              { icon: <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" /></svg>, title: 'Marktplatz', desc: 'Aufträge, Gesuche, Angebote & Empfehlungen — alles an einem Ort.', link: '/marktplatz', linkText: 'Zum Marktplatz' },
+              { icon: <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" /></svg>, title: 'Marktplatz', desc: 'Aufträge, Gesuche, Angebote & Empfehlungen, alles an einem Ort.', link: '/marktplatz', linkText: 'Zum Marktplatz' },
               { icon: <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" /></svg>, title: 'Community', desc: 'Vernetzen Sie sich mit Eigentümern und Verwaltern in ganz Deutschland.', link: '/network', linkText: 'Zum Netzwerk' },
               { icon: <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" /></svg>, title: 'Forum & Austausch', desc: 'Stellen Sie Fragen, teilen Sie Erfahrungen und lernen Sie von der Community.', link: '/forum', linkText: 'Zum Forum' },
               { icon: <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" /></svg>, title: 'Kreditrechner', desc: 'Berechnen Sie Rendite, monatliche Rate und Nebenkosten für Ihr Projekt.', link: '/kreditrechner', linkText: 'Zum Rechner' },
-              { icon: <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" /></svg>, title: 'Ratgeber', desc: 'Expertenwissen zu Recht, Verwaltung und Investitionen — klar und praxisnah.', link: '/ratgeber', linkText: 'Zum Ratgeber' }
+              { icon: <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" /></svg>, title: 'Ratgeber', desc: 'Expertenwissen zu Recht, Verwaltung und Investitionen, klar und praxisnah.', link: '/ratgeber', linkText: 'Zum Ratgeber' }
             ].map((item, i) => (
               <div key={i} className="bg-white rounded-2xl p-6 border border-slate-100 shadow-sm hover:shadow-2xl hover:border-indigo-100 hover:-translate-y-1.5 transition-all duration-300 group">
                 <div className="w-12 h-12 bg-blue-50 text-blue-600 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">{item.icon}</div>

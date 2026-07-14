@@ -28,7 +28,7 @@ export interface GewerkDef {
   icon: string;
   /** Basis-Suchbegriff für die Google-Suche in /api/search */
   searchTerm: string;
-  /** Fragen des Funnels (ohne Stadt – die wird immer separat abgefragt) */
+  /** Fragen des Funnels (ohne Stadt, die wird immer separat abgefragt) */
   fields: FunnelField[];
 }
 

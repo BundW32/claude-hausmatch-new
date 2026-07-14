@@ -64,13 +64,13 @@ const CompanyCard = ({ company, selected, onToggle }: { company: SearchCompany; 
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 mb-1 flex-wrap">
               {company.isPartner && <span className="bg-indigo-600 text-white text-[9px] font-black px-2 py-0.5 rounded-full uppercase tracking-widest">Partner</span>}
-              <h3 className="text-xl font-black text-slate-900 break-words">{company.name}</h3>
+              <h3 className="text-lg sm:text-xl font-black text-slate-900 break-words leading-snug">{company.name}</h3>
             </div>
             <p className="text-slate-500 text-sm font-medium truncate">{company.address || company.city}</p>
           </div>
           {company.rating > 0 && (
             <div className="text-right flex-shrink-0">
-              <div className="text-2xl font-black text-slate-900">{company.rating.toFixed(1)}</div>
+              <div className="text-xl sm:text-2xl font-black text-slate-900 leading-none">{company.rating.toFixed(1)}</div>
               <StarRating rating={company.rating} />
               {company.reviews > 0 && <p className="text-slate-400 text-xs mt-0.5">{company.reviews} Bewertungen</p>}
             </div>
@@ -140,7 +140,7 @@ const NetworkManagerCard = ({ manager, selected, onToggle }: { manager: User; se
         <div className="flex items-start gap-3 mb-4">
           <Checkbox checked={selected} onToggle={onToggle} />
           <div className="min-w-0 flex-1">
-            <h3 className="text-xl font-black text-slate-900 pr-24 sm:pr-32 break-words">{displayName}</h3>
+            <h3 className="text-lg sm:text-xl font-black text-slate-900 pr-24 sm:pr-32 break-words leading-snug">{displayName}</h3>
             {location && <p className="text-slate-500 text-sm font-medium mt-0.5">{location}</p>}
           </div>
         </div>
@@ -249,7 +249,7 @@ const ExpressModal = ({ selected, city, gewerk, onClose }: { selected: Selectabl
       <div className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm" onClick={onClose} />
       <div className="relative w-full sm:max-w-lg bg-white rounded-t-[2rem] sm:rounded-[2rem] shadow-2xl overflow-hidden max-h-[90vh] flex flex-col">
 
-        <div className="bg-indigo-600 px-8 py-6 flex items-center gap-4 flex-shrink-0">
+        <div className="bg-indigo-600 px-5 py-5 sm:px-8 sm:py-6 flex items-center gap-4 flex-shrink-0">
           <div className="w-12 h-12 rounded-xl overflow-hidden flex-shrink-0" style={{ background: '#2563FF' }}>
             <img src={EDDY_URL} alt="Eddy" width={48} height={48} style={{ display: 'block', objectFit: 'cover' }} />
           </div>
@@ -296,7 +296,7 @@ const ExpressModal = ({ selected, city, gewerk, onClose }: { selected: Selectabl
                   onClick={() => goToRegister('login')}
                   className="w-full bg-white text-slate-700 py-3.5 rounded-2xl font-black text-sm border-2 border-slate-200 hover:border-indigo-300 hover:text-indigo-600 transition-all"
                 >
-                  Ich habe bereits ein Konto — einloggen
+                  Bereits ein Konto? Jetzt einloggen
                 </button>
                 <p className="text-slate-400 text-xs mt-4">Kostenlos & unverbindlich. Ihre Auswahl wird zwischengespeichert.</p>
               </div>
@@ -319,7 +319,7 @@ const ExpressModal = ({ selected, city, gewerk, onClose }: { selected: Selectabl
                   <div key={i} className="flex items-center gap-2 py-1.5 border-b border-slate-100 last:border-0">
                     <div className="w-2 h-2 bg-indigo-500 rounded-full flex-shrink-0" />
                     <span className="text-sm font-semibold text-slate-700">{s.name}</span>
-                    {!s.email && <span className="text-[10px] text-amber-600 bg-amber-50 px-2 py-0.5 rounded-full">keine Email – via HausMatch</span>}
+                    {!s.email && <span className="text-[10px] text-amber-600 bg-amber-50 px-2 py-0.5 rounded-full">keine E-Mail, via HausMatch</span>}
                   </div>
                 ))}
               </div>
@@ -466,18 +466,18 @@ const SearchResults = () => {
   };
 
   return (
-    <div className="bg-slate-50 min-h-screen pt-12 pb-32 font-sans">
+    <div className="bg-slate-50 min-h-screen pt-8 sm:pt-12 pb-32 font-sans">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex flex-wrap items-center gap-3 mb-6 md:mb-12">
           <span className="bg-indigo-600 text-white text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-widest shadow-lg shadow-indigo-100">Live Matching</span>
-          <h1 className="text-2xl sm:text-3xl md:text-4xl font-black text-slate-900 tracking-tight">Empfohlene {target.plural} in {city}</h1>
+          <h1 className="text-2xl sm:text-3xl md:text-4xl font-black text-slate-900 tracking-tight leading-tight">Empfohlene {target.plural} in {city}</h1>
         </div>
 
-        <div className="grid lg:grid-cols-3 gap-10">
+        <div className="grid lg:grid-cols-3 gap-6 lg:gap-10">
           <div className="lg:col-span-2 space-y-6">
 
             {loading ? (
-              <div className="bg-white p-16 rounded-[3rem] border border-slate-100 flex flex-col items-center text-center shadow-sm">
+              <div className="bg-white p-8 sm:p-16 rounded-[2rem] sm:rounded-[3rem] border border-slate-100 flex flex-col items-center text-center shadow-sm">
                 <div className="relative mb-8">
                   <div className="w-24 h-24 rounded-[1.5rem] overflow-hidden" style={{ background: '#2563FF' }}>
                     <img src={EDDY_URL} alt="Eddy" width={96} height={96} style={{ display: 'block', objectFit: 'cover' }} className="animate-pulse" />
@@ -492,7 +492,7 @@ const SearchResults = () => {
               </div>
             ) : result ? (
               <div className="space-y-6 animate-in fade-in slide-in-from-bottom-8 duration-700">
-                <div className="bg-white p-6 rounded-3xl shadow-sm border border-slate-100 flex items-center justify-between gap-4 flex-wrap">
+                <div className="bg-white p-4 sm:p-6 rounded-3xl shadow-sm border border-slate-100 flex items-center justify-between gap-3 sm:gap-4 flex-wrap">
                   <div className="flex items-center gap-3">
                     <div className="w-10 h-10 bg-indigo-50 text-indigo-600 rounded-xl flex items-center justify-center">
                       <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
@@ -518,7 +518,7 @@ const SearchResults = () => {
                   <div className="space-y-4">
                     <div className="flex items-center gap-2 px-1">
                       <div className="w-2 h-2 bg-indigo-500 rounded-full" />
-                      <span className="text-xs font-black text-indigo-600 uppercase tracking-widest">HausMatch Netzwerk — Verifizierte Partner</span>
+                      <span className="text-xs font-black text-indigo-600 uppercase tracking-widest">HausMatch Netzwerk: Verifizierte Partner</span>
                     </div>
                     {networkManagers.map((m) => (
                       <NetworkManagerCard key={m.id} manager={m} selected={selectedKeys.has(`net_${m.id}`)} onToggle={() => toggle(`net_${m.id}`)} />
@@ -560,7 +560,7 @@ const SearchResults = () => {
                 </div>
               </div>
               <p className="text-indigo-100 text-base mb-8 leading-relaxed font-semibold">
-                Wählen Sie {target.plural} aus der Liste aus und fordern Sie mit einem Klick Angebote an — diskret und kostenlos.
+                Wählen Sie {target.plural} aus der Liste aus und fordern Sie mit einem Klick Angebote an, diskret und kostenlos.
               </p>
               {selectedKeys.size > 0 ? (
                 <button onClick={() => setShowModal(true)} className="w-full bg-white text-indigo-700 py-5 rounded-2xl font-black text-lg hover:bg-indigo-50 transition-all shadow-xl active:scale-95">
@@ -580,7 +580,7 @@ const SearchResults = () => {
       {selectedKeys.size > 0 && !showModal && (
         <div className="fixed bottom-0 left-0 right-0 z-40 p-4 pointer-events-none">
           <div className="max-w-xl mx-auto pointer-events-auto">
-            <div className="bg-slate-900 rounded-3xl px-6 py-4 flex items-center gap-4 shadow-2xl shadow-slate-900/40">
+            <div className="bg-slate-900 rounded-3xl px-4 sm:px-6 py-4 flex items-center gap-3 sm:gap-4 shadow-2xl shadow-slate-900/40">
               <div className="w-9 h-9 bg-indigo-600 rounded-xl flex items-center justify-center flex-shrink-0">
                 <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M5 13l4 4L19 7" />

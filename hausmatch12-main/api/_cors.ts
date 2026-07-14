@@ -1,6 +1,6 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 
-// Nur die eigene Domain darf die API aus fremden Browser-Kontexten aufrufen —
+// Nur die eigene Domain darf die API aus fremden Browser-Kontexten aufrufen,
 // kein offenes CORS ('*'), damit Dritt-Seiten die Endpunkte nicht als
 // Spam-Relay missbrauchen können (DSGVO Art. 32: Datensicherheit).
 // Same-Origin-Aufrufe der App selbst benötigen keine CORS-Freigabe.

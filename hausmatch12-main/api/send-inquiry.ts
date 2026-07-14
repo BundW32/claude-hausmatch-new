@@ -36,7 +36,7 @@ async function saveToFirestore(data: {
   companies: { name: string; email?: string }[];
   managerEmails: string[];
 }): Promise<void> {
-  if (!FIREBASE_API_KEY) { console.error('FIREBASE_API_KEY fehlt — Inquiry wird nicht gespeichert.'); return; }
+  if (!FIREBASE_API_KEY) { console.error('FIREBASE_API_KEY fehlt, Inquiry wird nicht gespeichert.'); return; }
   const units = parseInt(data.message?.match(/\d+/)?.[0] || '0') || 0;
   const body = {
     fields: {
@@ -156,7 +156,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     from: FROM_EMAIL,
     to: [ADMIN_EMAIL],
     reply_to: senderEmail,
-    subject: `Neue Anfrage (${gewerk.labelSing}) – ${city || 'unbekannte Stadt'}`,
+    subject: `Neue Anfrage (${gewerk.labelSing}): ${city || 'unbekannte Stadt'}`,
     text: `Neue Express-Matching Anfrage\n\nGewerk: ${gewerk.labelSing}\nVon: ${senderName}\nE-Mail: ${senderEmail}\nTelefon: ${senderPhone || 'nicht angegeben'}\nStadt: ${city || 'nicht angegeben'}\n\nNachricht:\n${note || '(keine Nachricht)'}\n\nAngefragte ${gewerk.labelPlural}: ${companyNames}`,
   });
 
@@ -189,7 +189,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
   // ─── LAUNCH-SCHALTER (per Vercel-Umgebungsvariable) ──────────────────────────
   // Standard = false: E-Mails gehen NUR an @bundwimmobilien.de (sicherer
-  //   Vor-Launch-/Testbetrieb) — auch wenn die Variable fehlt.
+  //   Vor-Launch-/Testbetrieb), auch wenn die Variable fehlt.
   // ALLOW_EXTERNAL_EMAILS=true in Vercel setzen, damit an ALLE Empfänger
   //   (externe Eigentümer & Verwalter) gesendet wird. Voraussetzung: die
   //   Resend-Domain (z. B. haus-match.de) ist verifiziert UND RESEND_FROM_EMAIL
@@ -202,14 +202,14 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     await sendEmail(apiKey, {
       from: FROM_EMAIL,
       to: [senderEmail],
-      subject: `Ihre Angebotsanfrage in ${city || 'Ihrer Region'} – HausMatch`,
+      subject: `Ihre Angebotsanfrage in ${city || 'Ihrer Region'} bei HausMatch`,
       html: ownerHtml(gewerk, senderName, senderEmail, city || 'Ihrer Region', companyArr),
     });
   } else {
     console.log(`Bestätigungs-Mail an ${senderEmail} übersprungen (kein @bundwimmobilien.de)`);
   }
 
-  // E-Mail 3: Angebotsanfrage an Verwalter — grobe Daten + Lead-Center-Link.
+  // E-Mail 3: Angebotsanfrage an Verwalter, grobe Daten + Lead-Center-Link.
   const allowedManagers = allManagers.filter(m => isAllowed(m.email));
   console.log(`Manager-Mails: ${allManagers.length} gesamt, ${allowedManagers.length} erlaubt`);
 
@@ -224,8 +224,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       from: FROM_EMAIL,
       to: [manager.email],
       subject: registered
-        ? `Neue Anfrage in ${city || 'Ihrer Region'} – im Lead Center ansehen`
-        : `Neue Anfrage über HausMatch – ${city || 'Ihrer Region'}`,
+        ? `Neue Anfrage in ${city || 'Ihrer Region'}: jetzt im Lead Center ansehen`
+        : `Neue Anfrage über HausMatch aus ${city || 'Ihrer Region'}`,
       html: managerHtml(gewerk, city || 'nicht angegeben', einheiten, propertyType, ctaUrl, ctaLabel, registered),
     });
   }

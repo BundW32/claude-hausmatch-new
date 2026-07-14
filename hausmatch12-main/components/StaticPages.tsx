@@ -10,7 +10,7 @@ const SectionHeader = ({ title, subtitle }: { title: string; subtitle: string })
   </div>
 );
 
-// Eddy die Eule — lokal aus /public ausgeliefert (DSGVO: kein Drittanbieter-CDN,
+// Eddy die Eule, lokal aus /public ausgeliefert (DSGVO: kein Drittanbieter-CDN,
 // keine IP-Übertragung an jsdelivr/Fastly).
 const EDDY_URL = "/eddy-eule.png";
 
@@ -38,7 +38,7 @@ export const AboutPage: React.FC = () => (
       <div className="bg-gradient-to-br from-indigo-600 to-indigo-800 aspect-video rounded-3xl overflow-hidden shadow-2xl flex flex-col items-center justify-center gap-4">
         <EddyOwl size={120} />
         <div className="text-white text-center">
-          <p className="font-black text-lg tracking-tight">Eddy — Ihr KI-Assistent 🦉</p>
+          <p className="font-black text-lg tracking-tight">Eddy, Ihr KI-Assistent 🦉</p>
           <p className="text-indigo-200 text-sm font-medium">Rund um die Uhr für Sie da</p>
         </div>
       </div>
@@ -183,14 +183,14 @@ export const BlogPage: React.FC = () => {
         </div>
         <SectionHeader
           title="Eddys News der Woche"
-          subtitle="Die wichtigsten Immobilien-News aus Deutschland – 2× pro Woche recherchiert, zusammengefasst und eingeordnet von Eddy, der HausMatch-KI. 🦉"
+          subtitle="Die wichtigsten Immobilien-News aus Deutschland, 2× pro Woche recherchiert, zusammengefasst und eingeordnet von Eddy, der HausMatch-KI. 🦉"
         />
         <div className="-mt-10 flex flex-col items-center gap-2">
           <span className="text-xs font-black uppercase tracking-widest text-indigo-600 bg-indigo-50 border border-indigo-100 px-4 py-1.5 rounded-full">
             Ausgabe vom {editionStr}
           </span>
           <span className="text-[10px] font-medium text-slate-400">
-            KI-generierte Zusammenfassungen mit Quellenangaben — keine Rechtsberatung.
+            KI-generierte Zusammenfassungen mit Quellenangaben, keine Rechtsberatung.
           </span>
         </div>
       </div>
@@ -360,7 +360,7 @@ export const BlogPage: React.FC = () => {
                 ))}
               </div>
               <p className="text-[10px] font-medium text-slate-400 mt-8">
-                KI-generierter Bericht mit Quellenangaben — keine Rechts-, Steuer- oder Finanzberatung.
+                KI-generierter Bericht mit Quellenangaben, keine Rechts-, Steuer- oder Finanzberatung.
               </p>
             </div>
 
@@ -567,7 +567,7 @@ export const LegalPage: React.FC<{ type: 'impressum' | 'privacy' | 'agb' }> = ({
             <ul className="list-disc pl-6 mt-2 space-y-1">
               <li><strong>Registrierung:</strong> Name bzw. Firmenname, E-Mail-Adresse, Passwort (verschlüsselt), Stadt/Standort, Rollenangabe (Eigentümer/Verwalter/Profi); optional Profilbild, Kurzbeschreibung, Telefonnummer und Webseite. Rechtsgrundlage: Art. 6 Abs. 1 lit. b DSGVO (Vertragserfüllung).</li>
               <li><strong>Verwaltungs-Anfragen (Matching):</strong> Angaben zum Objekt (Stadt, Einheiten, Objekttyp, Beschreibung) sowie Ihre Kontaktdaten (Name, E-Mail, ggf. Telefon). Rechtsgrundlage: Art. 6 Abs. 1 lit. b DSGVO.</li>
-              <li><strong>Kontaktformular:</strong> Vor- und Nachname, E-Mail-Adresse und Ihre Nachricht — ausschließlich zur Bearbeitung Ihrer Anfrage. Rechtsgrundlage: Art. 6 Abs. 1 lit. b bzw. f DSGVO.</li>
+              <li><strong>Kontaktformular:</strong> Vor- und Nachname, E-Mail-Adresse und Ihre Nachricht, ausschließlich zur Bearbeitung Ihrer Anfrage. Rechtsgrundlage: Art. 6 Abs. 1 lit. b bzw. f DSGVO.</li>
             </ul>
             <p className="mt-2">Ihre Daten werden nicht an Dritte verkauft und nicht zu Werbezwecken an Dritte weitergegeben.</p>
           </section>
@@ -576,8 +576,8 @@ export const LegalPage: React.FC<{ type: 'impressum' | 'privacy' | 'agb' }> = ({
             <h3 className="text-xl font-bold text-slate-900 mb-4">3. Sichtbarkeit Ihrer Daten auf der Plattform</h3>
             <p>HausMatch ist eine Vermittlungs- und Community-Plattform. Dies bedeutet:</p>
             <ul className="list-disc pl-6 mt-2 space-y-1">
-              <li>Ihr <strong>Nutzerprofil</strong> (Name, Profilbild, Stadt, Kurzbeschreibung und von Ihnen freigegebene Kontaktdaten) ist für andere registrierte Nutzer der Plattform sichtbar — das ist Kern der Netzwerk-Funktion.</li>
-              <li>Stellen Sie eine <strong>Verwaltungs-Anfrage</strong>, werden Ihre Anfrage- und Kontaktdaten registrierten Hausverwaltungen zugänglich gemacht, damit diese Ihnen Angebote unterbreiten können — das ist der Zweck der Anfrage.</li>
+              <li>Ihr <strong>Nutzerprofil</strong> (Name, Profilbild, Stadt, Kurzbeschreibung und von Ihnen freigegebene Kontaktdaten) ist für andere registrierte Nutzer der Plattform sichtbar. Das ist der Kern der Netzwerk-Funktion.</li>
+              <li>Stellen Sie eine <strong>Verwaltungs-Anfrage</strong>, werden Ihre Anfrage- und Kontaktdaten registrierten Hausverwaltungen zugänglich gemacht, damit diese Ihnen Angebote unterbreiten können. Das ist der Zweck der Anfrage.</li>
               <li>Beiträge im <strong>Forum</strong> und auf dem <strong>Marktplatz</strong> sind öffentlich bzw. für registrierte Nutzer sichtbar. Bitte veröffentlichen Sie dort keine Daten, die Sie nicht teilen möchten.</li>
             </ul>
           </section>
@@ -647,8 +647,8 @@ export const LegalPage: React.FC<{ type: 'impressum' | 'privacy' | 'agb' }> = ({
 
           <section>
             <h3 className="text-xl font-bold text-slate-900 mb-4">§ 5 Haftungsbeschränkung</h3>
-            <p>Der Betreiber übernimmt keine Haftung für die Qualität, Zuverlässigkeit oder Bonität der auf der Plattform gelisteten Hausverwaltungsunternehmen. Angaben zu Bewertungen und Spezialisierungen basieren auf öffentlich verfügbaren Informationen und KI-Auswertungen — eine Garantie für deren Richtigkeit wird nicht gegeben.</p>
-            <p className="mt-2">Die Haftung des Betreibers für Schäden aus einfacher Fahrlässigkeit ist — außer bei Verletzung wesentlicher Vertragspflichten sowie bei Schäden aus der Verletzung von Leben, Körper oder Gesundheit — ausgeschlossen.</p>
+            <p>Der Betreiber übernimmt keine Haftung für die Qualität, Zuverlässigkeit oder Bonität der auf der Plattform gelisteten Hausverwaltungsunternehmen. Angaben zu Bewertungen und Spezialisierungen basieren auf öffentlich verfügbaren Informationen und KI-Auswertungen. Eine Garantie für deren Richtigkeit wird nicht gegeben.</p>
+            <p className="mt-2">Die Haftung des Betreibers für Schäden aus einfacher Fahrlässigkeit ist, außer bei Verletzung wesentlicher Vertragspflichten sowie bei Schäden aus der Verletzung von Leben, Körper oder Gesundheit, ausgeschlossen.</p>
           </section>
 
           <section>

@@ -23,7 +23,7 @@ export const DEMO_MANAGERS: User[] = [
     id: 'muster-hv-2', email: 'info@isar-immobilien.de', name: 'Isar Immobilienmanagement',
     role: 'manager', userType: 'hausverwaltung', companyName: 'Isar Immobilienmanagement',
     city: 'München', location: 'München', region: 'Bayern',
-    specialization: ['WEG-Verwaltung', 'Sondereigentum'], bio: 'Verwaltung im Großraum München – digitale Abrechnung und kurze Reaktionszeiten.', verified: true, friends: [],
+    specialization: ['WEG-Verwaltung', 'Sondereigentum'], bio: 'Verwaltung im Großraum München, digitale Abrechnung und kurze Reaktionszeiten.', verified: true, friends: [],
   },
   {
     id: 'muster-hv-3', email: 'team@spree-verwaltung.de', name: 'Spree Verwaltung Berlin',
@@ -73,7 +73,7 @@ export const DEMO_POSTS: SchwarztesBrettPost[] = [
   },
   {
     id: 'muster-post-4', title: 'Empfehlung: Energieberater für Sanierungsfahrplan',
-    content: 'Können die Energieberatung Mitte für iSFP und Energieausweise weiterempfehlen – gute Erfahrung bei zwei Objekten.',
+    content: 'Können die Energieberatung Mitte für iSFP und Energieausweise weiterempfehlen, gute Erfahrung bei zwei Objekten.',
     category: 'Empfehlung', authorId: 'muster', authorName: 'Elbe Hausverwaltung', authorType: 'hausverwaltung',
     city: 'Hamburg', createdAt: daysAgo(4),
   },
@@ -85,7 +85,7 @@ export const DEMO_POSTS: SchwarztesBrettPost[] = [
   },
   {
     id: 'muster-post-6', title: 'Info-Webinar zur WEG-Reform',
-    content: 'Kostenloses Online-Webinar zu den Neuerungen im WEG-Recht – für Eigentümer und Verwalter.',
+    content: 'Kostenloses Online-Webinar zu den Neuerungen im WEG-Recht, für Eigentümer und Verwalter.',
     category: 'Ankündigung', authorId: 'muster', authorName: 'Kanzlei Mietrecht Süd', authorType: 'anwalt',
     city: 'Stuttgart', createdAt: daysAgo(8),
   },
@@ -107,7 +107,7 @@ export const DEMO_THREADS: ForumThread[] = [
   },
   {
     id: 'muster-thread-3', title: 'Welche Verwalter-Software nutzt ihr?',
-    content: 'Suche Erfahrungswerte zu gängiger Verwalter-Software – Buchhaltung, Portal, App.',
+    content: 'Suche Erfahrungswerte zu gängiger Verwalter-Software: Buchhaltung, Portal, App.',
     author: 'Spree Verwaltung Berlin', authorId: 'muster', authorType: 'hausverwaltung',
     category: 'Software & Tech', replies: 11, views: 507, likes: 9, createdAt: daysAgo(5), date: '—',
   },

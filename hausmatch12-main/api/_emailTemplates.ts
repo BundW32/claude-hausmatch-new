@@ -131,7 +131,7 @@ export const ownerHtml = (
     <div class="list">
       ${companies.map(c => `<div class="row"><div class="dot"></div><div><div class="rname">${c.name}</div>${c.address || c.phone ? `<div class="rmeta">${[c.address, c.phone].filter(Boolean).join(' · ')}</div>` : ''}</div></div>`).join('')}
     </div>
-    <div class="box"><p>💡 <strong>Wie geht es weiter?</strong><br>Die ${gewerk.labelPlural} sehen zunächst nur die groben Eckdaten Ihres Anliegens. Erst wenn sie im Lead Center ein Angebot abgeben, werden Ihre Kontaktdaten benötigt — so bleiben Sie geschützt.</p></div>
+    <div class="box"><p>💡 <strong>Wie geht es weiter?</strong><br>Die ${gewerk.labelPlural} sehen zunächst nur die groben Eckdaten Ihres Anliegens. Erst wenn sie im Lead Center ein Angebot abgeben, werden Ihre Kontaktdaten benötigt. So bleiben Sie geschützt.</p></div>
   </div>
   <div class="ftr">
     <p class="fname">Ihr HausMatch-Team</p>
@@ -152,7 +152,7 @@ export const managerHtml = (
   <div class="body">
     <span class="badge">Neue Angebotsanfrage</span>
     <h1>Ein Eigentümer sucht ${gewerk.akk} in ${city}</h1>
-    <p class="intro">Über <strong>HausMatch</strong> ist eine neue Anfrage für Sie eingegangen. Hier die groben Eckdaten — die vollständigen Details und die Möglichkeit, ein Angebot abzugeben, finden Sie im Lead Center.</p>
+    <p class="intro">Über <strong>HausMatch</strong> ist eine neue Anfrage für Sie eingegangen. Hier die groben Eckdaten. Die vollständigen Details und die Möglichkeit, ein Angebot abzugeben, finden Sie im Lead Center.</p>
     <p class="lbl">Eckdaten der Anfrage</p>
     <div class="list">
       <div class="drow"><span class="dlbl">Region</span><span class="dval">${city}</span></div>
@@ -161,7 +161,7 @@ export const managerHtml = (
     </div>
     <div class="box"><p>${registered
       ? '🔒 <strong>Diskret & geschützt:</strong> Die Kontaktdaten des Eigentümers sehen Sie erst, wenn Sie im Lead Center ein Angebot abgeben.'
-      : '✨ <strong>Sie sind noch nicht registriert.</strong> Registrieren Sie sich kostenlos per Magic-Link — danach liegt diese Anfrage direkt in Ihrem Lead Center.'}</p></div>
+      : '✨ <strong>Sie sind noch nicht registriert.</strong> Registrieren Sie sich kostenlos per Magic-Link. Danach liegt diese Anfrage direkt in Ihrem Lead Center.'}</p></div>
     <a class="cta" href="${ctaUrl}">${ctaLabel}</a>
     <p style="font-size:13px;color:#94a3b8;text-align:center;margin:0">Angebote geben Sie ausschließlich über das HausMatch Lead Center ab.</p>
   </div>

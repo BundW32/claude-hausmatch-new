@@ -8,7 +8,7 @@ import { DEMO_THREADS } from '../services/demoData';
 
 const CATEGORIES = ['Recht & Urteile', 'Software & Tech', 'Best Practice', 'Handwerker & Services', 'Feedback', 'Off-Topic'];
 
-// Datum + Uhrzeit – bei vielen Antworten hilft die Uhrzeit, die Reihenfolge zu erkennen.
+// Datum + Uhrzeit, bei vielen Antworten hilft die Uhrzeit, die Reihenfolge zu erkennen.
 const formatDateTime = (ts?: { seconds: number; toDate?: () => Date }): string => {
   if (!ts) return '';
   const d = ts.toDate ? ts.toDate() : new Date(ts.seconds * 1000);
@@ -183,7 +183,7 @@ const Forum = () => {
         {/* Thread Detail Modal */}
         {selectedThread && (
           <div className="fixed inset-0 z-[100] bg-slate-50 flex flex-col animate-fade-in">
-             {/* Sticky Kopfzeile – bleibt beim Scrollen sichtbar */}
+             {/* Sticky Kopfzeile, bleibt beim Scrollen sichtbar */}
              <header className="flex-shrink-0 bg-white border-b border-slate-100">
                 <div className="max-w-3xl mx-auto w-full px-4 sm:px-6 py-3 flex items-center gap-3">
                    <button
@@ -212,7 +212,7 @@ const Forum = () => {
                 </div>
              </header>
 
-             {/* Scrollbarer Diskussionsbereich – Lesespalte zentriert für lesbare Zeilenlänge */}
+             {/* Scrollbarer Diskussionsbereich, Lesespalte zentriert für lesbare Zeilenlänge */}
              <div className="flex-1 overflow-y-auto custom-scrollbar">
                 <div className="max-w-3xl mx-auto w-full px-4 sm:px-6 py-6 space-y-6">
                    {/* Ursprungsbeitrag */}
@@ -253,7 +253,7 @@ const Forum = () => {
                       )}
                    </div>
 
-                   {/* Antworten – kompakt & gleichmäßig für gute Lesbarkeit bei vielen Nachrichten */}
+                   {/* Antworten, kompakt & gleichmäßig für gute Lesbarkeit bei vielen Nachrichten */}
                    {repliesLoading ? (
                      <div className="flex flex-col items-center py-12 gap-3">
                         <div className="w-9 h-9 border-4 border-indigo-100 border-t-indigo-600 rounded-full animate-spin"></div>

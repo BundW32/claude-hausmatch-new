@@ -7,7 +7,7 @@ const articles = [
     category: 'Kauf & Finanzierung',
     title: 'Wie viel Eigenkapital brauche ich beim Immobilienkauf?',
     summary: 'Eigenkapital ist der wichtigste Hebel für günstige Konditionen. Was zählt dazu, wie viel ist nötig, und was sollten Sie vor der Finanzierung klären?',
-    content: `**Die Faustformel — und warum sie alleine nicht reicht**
+    content: `**Die Faustformel und warum sie alleine nicht reicht**
 Banken empfehlen mindestens 20–30 % des Kaufpreises als Eigenkapital. Der Grund: Je höher Ihr Eigenkapitalanteil, desto niedriger der Beleihungsauslauf (LTV) und desto bessere Zinssätze bietet die Bank. Bei einem LTV unter 60 % erhalten Sie oft die besten Konditionen am Markt.
 
 **Was zählt als Eigenkapital?**
@@ -15,7 +15,7 @@ Banken empfehlen mindestens 20–30 % des Kaufpreises als Eigenkapital. Der Grun
 - Wertpapierdepots (je nach Bank zu 60–80 % anrechenbar, da Kursschwankungen möglich)
 - Bausparverträge (auch nicht-zuteilungsreife können anteilig zählen)
 - Rückkaufswerte aus Lebensversicherungen
-- Eigenleistungen beim Bau ("Muskelhypothek") — bewertbar mit ersparten Handwerkerkosten
+- Eigenleistungen beim Bau ("Muskelhypothek"), bewertbar mit ersparten Handwerkerkosten
 - Schenkungen und Erbschaften (Nachweise erforderlich)
 - Guthaben auf Riester-Konten (über Wohnriester nutzbar)
 
@@ -28,8 +28,8 @@ Die Kaufnebenkosten betragen typischerweise 10–15 % des Kaufpreises und sollte
 - Notar- und Grundbuchkosten: ca. 1,5–2 % des Kaufpreises
 - Maklercourtage (wenn anfallend): 0–3,57 % Käuferanteil, je nach Vereinbarung
 
-**Eigenkapital schonen — wann es Sinn macht**
-In bestimmten Situationen kann es sinnvoll sein, weniger Eigenkapital einzusetzen und liquide Mittel zu erhalten — etwa für geplante Modernisierungen oder als Sicherheitspuffer. Dies erhöht zwar den Zinssatz, kann aber die Gesamtflexibilität erhöhen.
+**Eigenkapital schonen: Wann es Sinn macht**
+In bestimmten Situationen kann es sinnvoll sein, weniger Eigenkapital einzusetzen und liquide Mittel zu erhalten, etwa für geplante Modernisierungen oder als Sicherheitspuffer. Dies erhöht zwar den Zinssatz, kann aber die Gesamtflexibilität erhöhen.
 
 **Bonität genauso wichtig wie Eigenkapital**
 Neben dem Eigenkapital prüfen Banken: SCHUFA-Score, Einkommensnachweise (meist letzten 3 Monate Lohnabrechnungen + 2 Steuerbescheide), Beschäftigungsverhältnis (unbefristet bevorzugt), bestehende Kreditverpflichtungen und Lebenshaltungskosten.
@@ -55,7 +55,7 @@ Kaufpreis 400.000 € in NRW:
 Das alte WEG stammte aus 1951 und war für heutige Anforderungen (Digitalisierung, Energiewende, E-Mobilität) nicht ausgelegt. Seit 1. Dezember 2020 gilt das modernisierte WEG.
 
 **Eigentümerversammlungen**
-Früher waren Versammlungen nur beschlussfähig, wenn mehr als 50 % der Miteigentumsanteile vertreten waren — das führte oft zu teueren Zweitversammlungen. Neu: Eigentümerversammlungen sind immer beschlussfähig, unabhängig von der Anzahl der Erschienenen. Zudem ist jetzt auch eine Online-Teilnahme (Zuschaltoption) gesetzlich vorgesehen, wenn die Gemeinschaft das beschließt.
+Früher waren Versammlungen nur beschlussfähig, wenn mehr als 50 % der Miteigentumsanteile vertreten waren. Das führte oft zu teueren Zweitversammlungen. Neu: Eigentümerversammlungen sind immer beschlussfähig, unabhängig von der Anzahl der Erschienenen. Zudem ist jetzt auch eine Online-Teilnahme (Zuschaltoption) gesetzlich vorgesehen, wenn die Gemeinschaft das beschließt.
 
 **Umlaufbeschlüsse digital**
 Früher mussten Umlaufbeschlüsse von allen Eigentümern schriftlich unterzeichnet werden. Neu: Eine Mehrheit von mehr als der Hälfte aller Stimmen genügt, und dies kann per E-Mail oder über ein Eigentümerportal erfolgen. Das beschleunigt Entscheidungen erheblich.
@@ -78,7 +78,7 @@ Einzelne Eigentümer können nun bestimmte Maßnahmen alleine beantragen und auf
 Die Gemeinschaft ist nun verpflichtet, eine "angemessene" Instandhaltungsrücklage zu bilden. Eine Pflicht zur Erstellung eines Vermögensberichts (statt nur Jahresabrechnung) tritt hinzu.
 
 **Sondereigentum erweitert**
-Terrassen, Gartenflächen und Stellplätze können nun leichter als Sondereigentum begründet werden — das vereinfacht Teilungserklärungen bei Neubauten.
+Terrassen, Gartenflächen und Stellplätze können nun leichter als Sondereigentum begründet werden. Das vereinfacht Teilungserklärungen bei Neubauten.
 
 **Was das für Sie bedeutet**
 Prüfen Sie: Entsprechen Ihre Teilungserklärung und Gemeinschaftsordnung noch dem neuen Recht? Ist Ihr Verwalter zertifiziert? Hat Ihre WEG ausreichende Rücklagen für die nächsten 10–15 Jahre gebildet?`,
@@ -91,7 +91,7 @@ Prüfen Sie: Entsprechen Ihre Teilungserklärung und Gemeinschaftsordnung noch d
     title: 'Den richtigen Hausverwalter finden: 8 entscheidende Kriterien',
     summary: 'Die Wahl des Verwalters entscheidet über Ihren Aufwand, Ihre Rendite und den Werterhalt Ihrer Immobilie. Diese Kriterien helfen Ihnen bei der Auswahl.',
     content: `**Warum die Verwalterauswahl so wichtig ist**
-Ein guter Verwalter spart Ihnen nicht nur Zeit — er verhindert kostspielige Fehler, sichert den Mietfluss und erhält den Wert Ihres Objekts. Ein schlechter Verwalter hingegen kann durch verschleppte Instandhaltung, Abrechnungsfehler oder schlechtes Mieterscreening erheblichen Schaden anrichten.
+Ein guter Verwalter spart Ihnen nicht nur Zeit, er verhindert kostspielige Fehler, sichert den Mietfluss und erhält den Wert Ihres Objekts. Ein schlechter Verwalter hingegen kann durch verschleppte Instandhaltung, Abrechnungsfehler oder schlechtes Mieterscreening erheblichen Schaden anrichten.
 
 **1. Lokale Expertise und Marktkenntnisse**
 Ein Verwalter, der den Mikrostandort kennt, hat bessere Handwerker-Kontakte, kennt lokale Mietpreisentwicklungen und kann Leerstände schneller beheben. Fragen Sie: Wie viele Objekte verwalten Sie in diesem Stadtbezirk? Welche Handwerker nutzen Sie?
@@ -148,7 +148,7 @@ Unterschätzen Sie nicht den "Bauchfaktor": Der Verwalter ist Ihr langfristiger 
     title: 'Immobilienrendite richtig berechnen: Brutto, Netto und Eigenkapitalrendite',
     summary: 'Welche Rendite wirft Ihre Immobilie wirklich ab? Lernen Sie den Unterschied zwischen Brutto-, Netto- und Eigenkapitalrendite und welche Kennzahlen wirklich zählen.',
     content: `**Warum die Bruttorendite alleine nicht aussagekräftig ist**
-Makler und Verkäufer nennen oft die Bruttorendite — sie klingt gut, lässt aber alle relevanten Kosten außen vor. Für eine fundierte Investitionsentscheidung brauchen Sie die Nettorendite.
+Makler und Verkäufer nennen oft die Bruttorendite. Sie klingt gut, lässt aber alle relevanten Kosten außen vor. Für eine fundierte Investitionsentscheidung brauchen Sie die Nettorendite.
 
 **Bruttorendite (Einstiegscheck)**
 Formel: Jahres-Kaltmiete ÷ Kaufpreis × 100
@@ -175,10 +175,10 @@ Beispiel weitergeführt:
 - Kaufpreis + Nebenkosten (10 %): 330.000 €
 - Nettorendite: 14.760 € ÷ 330.000 € × 100 = **4,47 %**
 
-Die Nettorendite liegt damit rund 1,5 % unter der Bruttorendite — ein realistischer Unterschied.
+Die Nettorendite liegt damit rund 1,5 % unter der Bruttorendite, ein realistischer Unterschied.
 
 **Eigenkapitalrendite und Leverage-Effekt**
-Wenn Sie mit Fremdkapital finanzieren, erhöht sich die Eigenkapitalrendite — sofern der Kreditzins unter der Nettorendite liegt (positiver Leverage-Effekt).
+Wenn Sie mit Fremdkapital finanzieren, erhöht sich die Eigenkapitalrendite, sofern der Kreditzins unter der Nettorendite liegt (positiver Leverage-Effekt).
 
 Beispiel:
 - Kaufpreis inkl. Nebenkosten: 330.000 €
@@ -196,8 +196,8 @@ Steigt der Zinssatz über die Nettorendite, kehrt sich der Effekt um (negativer 
 - Bruttorendite < 3 %: Nur mit starker Wertsteigerungserwartung oder als "Betongold" vertretbar
 
 **Wichtige Ergänzungskennzahlen**
-- **Vervielfältiger / Kaufpreisfaktor:** Kaufpreis ÷ Jahreskaltmiete — je niedriger, desto günstiger. Wert 20 entspricht 5 % Bruttorendite, Wert 33 entspricht ca. 3 %
-- **Cashflow:** Monatlicher Überschuss nach ALLEN Kosten und Kreditraten — zeigt, ob das Objekt sich selbst trägt
+- **Vervielfältiger / Kaufpreisfaktor:** Kaufpreis ÷ Jahreskaltmiete. Je niedriger, desto günstiger. Wert 20 entspricht 5 % Bruttorendite, Wert 33 entspricht ca. 3 %
+- **Cashflow:** Monatlicher Überschuss nach ALLEN Kosten und Kreditraten. Zeigt, ob das Objekt sich selbst trägt
 - **Tilgungsäquivalent:** Die Tilgung des Darlehens ist kein "Kosten"-Faktor, sondern Vermögensaufbau
 
 **Steuer nicht vergessen**
@@ -210,7 +210,7 @@ Mieteinnahmen sind einkommensteuerpflichtig. Gleichzeitig können Sie Zinskosten
     category: 'Mietrecht',
     title: 'Mieterhöhung rechtssicher durchführen: Der komplette Leitfaden',
     summary: 'Mieterhöhungen sind möglich, aber an strenge gesetzliche Voraussetzungen geknüpft. Formfehler machen das Schreiben unwirksam. So gehen Sie richtig vor.',
-    content: `**Grundvoraussetzungen — alle müssen erfüllt sein**
+    content: `**Grundvoraussetzungen: Alle müssen erfüllt sein**
 Eine Mieterhöhung zur ortsüblichen Vergleichsmiete ist nur zulässig, wenn:
 1. Die Miete mindestens 12 Monate unverändert geblieben ist (Wartejahr)
 2. Das Erhöhungsverlangen schriftlich erfolgt und ordnungsgemäß begründet ist
@@ -226,11 +226,11 @@ Eine Mieterhöhung zur ortsüblichen Vergleichsmiete ist nur zulässig, wenn:
 **Mietpreisbremse (Neuvermietung)**: Die Mietpreisbremse gilt bei Neuvermietung (nicht bei Mieterhöhungen im laufenden Mietverhältnis) und begrenzt die Miete auf 110 % der ortsüblichen Vergleichsmiete in ausgewiesenen Gebieten.
 
 **Begründung: Drei Wege**
-Option 1 — Mietspiegel: Wenn Ihre Gemeinde einen (qualifizierten) Mietspiegel hat, können Sie diesen direkt zitieren. Dies ist die einfachste und günstigste Methode.
+Option 1 (Mietspiegel): Wenn Ihre Gemeinde einen (qualifizierten) Mietspiegel hat, können Sie diesen direkt zitieren. Dies ist die einfachste und günstigste Methode.
 
-Option 2 — Vergleichswohnungen: Sie benennen mindestens 3 vergleichbare Wohnungen in der Gemeinde, die zu einer höheren Miete vermietet sind. Wohnungen, Lage, Ausstattung und Größe müssen vergleichbar sein.
+Option 2 (Vergleichswohnungen): Sie benennen mindestens 3 vergleichbare Wohnungen in der Gemeinde, die zu einer höheren Miete vermietet sind. Wohnungen, Lage, Ausstattung und Größe müssen vergleichbar sein.
 
-Option 3 — Sachverständigengutachten: Ein öffentlich bestellter Gutachter erstellt ein Gutachten zur ortsüblichen Vergleichsmiete. Teuer, aber rechtssicher.
+Option 3 (Sachverständigengutachten): Ein öffentlich bestellter Gutachter erstellt ein Gutachten zur ortsüblichen Vergleichsmiete. Teuer, aber rechtssicher.
 
 **Das richtige Formular**
 Das Mieterhöhungsschreiben muss enthalten:
@@ -247,7 +247,7 @@ Das Mieterhöhungsschreiben muss enthalten:
 - Das Erhöhungsschreiben muss dem Mieter spätestens am letzten Tag eines Kalendermonats zugehen
 - Der Mieter hat dann 2 volle Monate Zeit zur Überlegung
 - Die erhöhte Miete gilt ab dem übernächsten Monatsersten
-- Der Mieter kann widersprechen — dann müssen Sie auf Zustimmung klagen
+- Der Mieter kann widersprechen, dann müssen Sie auf Zustimmung klagen
 
 **Modernisierungsmieterhöhung**
 Nach einer Modernisierung (Heizungstausch, Dämmung, neues Bad) können 8 % der für die Wohnung aufgewandten Modernisierungskosten jährlich auf die Miete umgelegt werden. Achtung: Erhöhung auf max. 3 € je m² in 6 Jahren gedeckelt; bei Wohnungen unter 7 € Miete je m² auf max. 2 €. Ankündigungspflicht 3 Monate vor Beginn der Arbeiten.
@@ -267,7 +267,7 @@ Nach einer Modernisierung (Heizungstausch, Dämmung, neues Bad) können 8 % der 
     id: 6,
     category: 'Energie & Sanierung',
     title: 'Energetische Sanierung 2025/2026: Förderungen, Pflichten und Strategie',
-    summary: 'BEG, BAFA, steuerliche Absetzbarkeit — der Förderdschungel ist komplex. Dazu kommen neue gesetzliche Pflichten. Was Sie jetzt wissen und planen müssen.',
+    summary: 'BEG, BAFA, steuerliche Absetzbarkeit: Der Förderdschungel ist komplex. Dazu kommen neue gesetzliche Pflichten. Was Sie jetzt wissen und planen müssen.',
     content: `**Gesetzliche Pflichten zuerst: Was ist verpflichtend?**
 Seit dem GEG (Gebäudeenergiegesetz) gelten u.a. folgende Pflichten:
 - Neue Heizungsanlagen müssen seit 2024 zu mindestens 65 % erneuerbare Energien nutzen (mit langen Übergangsfristen für Bestandsbauten)
@@ -310,7 +310,7 @@ Für vermietete Immobilien:
 - Steuerberater hinzuziehen, da die Abgrenzung komplex ist
 
 **Reihenfolge ist entscheidend: Erst Förderung beantragen, dann beauftragen!**
-Das gilt für alle KfW- und BAFA-Förderungen. Der häufigste Fehler: Erst beauftragen, dann Förderung beantragen — dann ist sie weg. Ausnahme: Notfallmaßnahmen bei Heizungsausfall.
+Das gilt für alle KfW- und BAFA-Förderungen. Der häufigste Fehler: Erst beauftragen, dann Förderung beantragen, dann ist sie weg. Ausnahme: Notfallmaßnahmen bei Heizungsausfall.
 
 **Strategische Sanierungsreihenfolge**
 1. Luftdichtheit und Dämmung zuerst (reduziert Heizlast)
@@ -352,10 +352,10 @@ Nicht umlagefähig: Verwaltungskosten, Instandhaltung und Reparaturen, Leerstand
 - Wohneinheiten: Für bestimmte Positionen möglich
 
 **Die Heizkostenabrechnung: Sonderfall**
-Für Heizung und Warmwasser gilt die Heizkostenverordnung (HeizkostenV). Mindestens 50 % (empfohlen: 70 %) müssen nach tatsächlichem Verbrauch abgerechnet werden — Pflicht, auch wenn der Vermieter das nicht möchte. Fehlt ein Verbrauchserfassungsgerät, darf der Mieter 15 % der Heizkosten kürzen.
+Für Heizung und Warmwasser gilt die Heizkostenverordnung (HeizkostenV). Mindestens 50 % (empfohlen: 70 %) müssen nach tatsächlichem Verbrauch abgerechnet werden. Das ist Pflicht, auch wenn der Vermieter das nicht möchte. Fehlt ein Verbrauchserfassungsgerät, darf der Mieter 15 % der Heizkosten kürzen.
 
-**Belegkopien — Ihr Einsichtsrecht**
-Als Mieter haben Sie das Recht, Belege einzusehen (nicht immer Kopien zu verlangen). Praktisch: Sie können beim Vermieter oder Verwalter Einsicht nehmen oder — nach einem BGH-Urteil — Kopien verlangen, wenn der Aufwand zumutbar ist. Kosten für Kopien können dem Mieter auferlegt werden.
+**Belegkopien: Ihr Einsichtsrecht**
+Als Mieter haben Sie das Recht, Belege einzusehen (nicht immer Kopien zu verlangen). Praktisch: Sie können beim Vermieter oder Verwalter Einsicht nehmen oder, nach einem BGH-Urteil, Kopien verlangen, wenn der Aufwand zumutbar ist. Kosten für Kopien können dem Mieter auferlegt werden.
 
 **Einspruchsfrist: 12 Monate**
 Mieter können Einwände gegen die Abrechnung innerhalb von 12 Monaten nach Zugang erheben. Danach sind Einwände ausgeschlossen (außer bei arglistiger Täuschung).
@@ -368,7 +368,7 @@ Mieter können Einwände gegen die Abrechnung innerhalb von 12 Monaten nach Zuga
 - Heizkosten nicht nach Verbrauch abgerechnet
 
 **Praktischer Tipp für Vermieter**
-Bewahren Sie alle Belege (Rechnungen, Kontoauszüge) 12 Monate über das Abrechnungsjahr hinaus auf. Nutzen Sie eine Verwaltungssoftware — sie minimiert Abrechnungsfehler erheblich.`,
+Bewahren Sie alle Belege (Rechnungen, Kontoauszüge) 12 Monate über das Abrechnungsjahr hinaus auf. Nutzen Sie eine Verwaltungssoftware, sie minimiert Abrechnungsfehler erheblich.`,
     readTime: '7 min',
     icon: '🧾'
   },
@@ -378,7 +378,7 @@ Bewahren Sie alle Belege (Rechnungen, Kontoauszüge) 12 Monate über das Abrechn
     title: 'Notartermin und Kaufvertrag: Was Sie wissen müssen',
     summary: 'Der Notartermin ist der entscheidende Moment beim Immobilienkauf. Was steht im Kaufvertrag, auf was müssen Sie achten, und welche Rechte haben Sie?',
     content: `**Warum ist der Notar Pflicht?**
-Immobilienkaufverträge müssen in Deutschland notariell beurkundet werden (§ 311b BGB). Ohne Notar ist der Vertrag nichtig. Der Notar ist neutral — er ist weder Vertreter des Käufers noch des Verkäufers, sondern gesetzlicher Betreuer aller Beteiligten.
+Immobilienkaufverträge müssen in Deutschland notariell beurkundet werden (§ 311b BGB). Ohne Notar ist der Vertrag nichtig. Der Notar ist neutral: Er ist weder Vertreter des Käufers noch des Verkäufers, sondern gesetzlicher Betreuer aller Beteiligten.
 
 **Wer wählt den Notar?**
 Üblicherweise der Käufer, da er auch die Notarkosten trägt. Sie können jeden Notar in Deutschland beauftragen. Es lohnt sich, vorab einen Notar zu kontaktieren, der Erfahrung mit Immobilientransaktionen hat.
@@ -393,12 +393,12 @@ Immobilienkaufverträge müssen in Deutschland notariell beurkundet werden (§ 3
 7. Kaufpreiszahlung (nach Vorliegen aller Voraussetzungen)
 8. Eintragung des Eigentumsübergangs im Grundbuch
 
-**Was steht im Kaufvertrag — Checkliste**
+**Was steht im Kaufvertrag? Eine Checkliste**
 - Kaufpreis und Zahlungsmodalitäten
 - Beschreibung des Kaufgegenstands (Grundstück, Gebäude, Zubehör, Inventar)
 - Übergabetermin und -bedingungen
 - Gewährleistungsausschluss (meist "unter Ausschluss jeder Gewährleistung für Sachmängel")
-- Belastungen im Grundbuch (Grundschulden, Dienstbarkeiten) — werden sie übernommen oder abgelöst?
+- Belastungen im Grundbuch (Grundschulden, Dienstbarkeiten): Werden sie übernommen oder abgelöst?
 - Auflassungsvormerkung
 - Fälligkeitsvoraussetzungen für den Kaufpreis
 - Regelungen zu Mietverhältnissen (bei vermietetem Objekt: "Kauf bricht nicht Miete")
@@ -406,14 +406,14 @@ Immobilienkaufverträge müssen in Deutschland notariell beurkundet werden (§ 3
 **Auflassungsvormerkung: Ihr Schutz**
 Nach der Beurkundung trägt der Notar eine Auflassungsvormerkung ins Grundbuch ein. Diese schützt Sie als Käufer: Der Verkäufer kann die Immobilie nicht mehr an Dritte verkaufen oder weiter belasten. Sie zahlen erst, wenn die Vormerkung eingetragen ist.
 
-**Fälligkeitsmitteilung — wann Sie zahlen**
+**Fälligkeitsmitteilung: Wann Sie zahlen**
 Der Kaufpreis wird erst fällig, wenn der Notar bestätigt, dass:
 - Die Auflassungsvormerkung eingetragen ist
 - Alle Belastungen (die nicht übernommen werden) gelöscht oder zur Löschung bewilligt sind
 - Gemeindliche Vorkaufsrechte ausgeschlossen sind (Negativattest)
 - Bank zugestimmt hat (bei Finanzierung)
 
-**Risiken im Kaufvertrag — auf diese Punkte achten**
+**Risiken im Kaufvertrag: Auf diese Punkte achten**
 - Gewährleistungsausschluss: Standard, schützt aber nicht bei arglistig verschwiegenen Mängeln
 - Altlasten: Lassen Sie vor Vertragsschluss ein Grundbuchauszug und ggf. einen Altlastenkataster prüfen
 - Erbbaurecht: Prüfen Sie, ob das Grundstück auf Erbpacht steht
@@ -423,9 +423,9 @@ Der Kaufpreis wird erst fällig, wenn der Notar bestätigt, dass:
 **Kosten des Notartermins**
 Notarkosten und Grundbuchgebühren richten sich nach dem Kaufpreis (GNotKG):
 - Typisch bei 400.000 € Kaufpreis: Notar ca. 1.500–2.000 €, Grundbuch ca. 500–800 €
-- Hinzu kommt die Grunderwerbsteuer (3,5–6,5 %, je nach Bundesland) — separat ans Finanzamt
+- Hinzu kommt die Grunderwerbsteuer (3,5–6,5 %, je nach Bundesland), separat ans Finanzamt
 
-**Tipp:** Lesen Sie den Vertragsentwurf sorgfältig durch und klären Sie alle Unklarheiten VOR dem Termin mit dem Notar oder einem Anwalt. Am Beurkundungstermin selbst haben Sie noch das Recht, Änderungen zu verlangen — aber es ist besser, diese vorher zu klären.`,
+**Tipp:** Lesen Sie den Vertragsentwurf sorgfältig durch und klären Sie alle Unklarheiten VOR dem Termin mit dem Notar oder einem Anwalt. Am Beurkundungstermin selbst haben Sie noch das Recht, Änderungen zu verlangen, aber es ist besser, diese vorher zu klären.`,
     readTime: '9 min',
     icon: '📝'
   },
@@ -433,18 +433,18 @@ Notarkosten und Grundbuchgebühren richten sich nach dem Kaufpreis (GNotKG):
     id: 9,
     category: 'Investment',
     title: 'Steuern bei Immobilien: Was Vermieter und Käufer wissen müssen',
-    summary: 'Immobilien bieten steuerliche Vorteile — aber auch Pflichten. Ein Überblick über Abschreibung, Werbungskosten, Spekulationssteuer und was beim Kauf zu beachten ist.',
+    summary: 'Immobilien bieten steuerliche Vorteile, aber auch Pflichten. Ein Überblick über Abschreibung, Werbungskosten, Spekulationssteuer und was beim Kauf zu beachten ist.',
     content: `**Grunderwerbsteuer beim Kauf**
-Beim Erwerb einer Immobilie fällt einmalig Grunderwerbsteuer an — sie ist ein fester Prozentsatz des Kaufpreises und variiert je nach Bundesland:
+Beim Erwerb einer Immobilie fällt einmalig Grunderwerbsteuer an. Sie ist ein fester Prozentsatz des Kaufpreises und variiert je nach Bundesland:
 - 3,5 %: Bayern, Sachsen
 - 4,0 %: Hamburg
 - 5,0 %: Baden-Württemberg, Bremen, Mecklenburg-Vorpommern, Niedersachsen, Sachsen-Anhalt
 - 6,0 %: Berlin, Hessen
 - 6,5 %: Brandenburg, NRW, Saarland, Schleswig-Holstein, Thüringen
 
-Die Grunderwerbsteuer ist nicht abzugsfähig — weder als Werbungskosten noch als Sonderausgabe. Sie erhöht die Anschaffungskosten (damit die AfA-Basis).
+Die Grunderwerbsteuer ist nicht abzugsfähig, weder als Werbungskosten noch als Sonderausgabe. Sie erhöht die Anschaffungskosten (damit die AfA-Basis).
 
-**Abschreibung (AfA) — ein wichtiger Steuervorteil**
+**Abschreibung (AfA): Ein wichtiger Steuervorteil**
 Für vermietete Immobilien können Sie jährlich die Gebäudeabschreibung als Werbungskosten geltend machen:
 - Gebäude mit Baujahr ab 1925: 2 % p.a. des Gebäudewerts
 - Gebäude mit Baujahr vor 1925: 2,5 % p.a.
@@ -481,7 +481,7 @@ Höhe der Steuer: persönlicher Einkommensteuersatz auf den Gewinn (= Verkaufspr
 Grundsteuer fällt jährlich an und basiert auf dem Einheitswert bzw. ab 2025 auf neuen Bewertungsgrundlagen (Grundsteuerreform). Sie ist als Vermieter umlagefähig. Als Selbstnutzer ist sie nicht absetzbar.
 
 **Selbst genutzte Immobilie: weniger Steuervorteile**
-Bei der selbst genutzten Immobilie gibt es kaum Steuervorteile — Schuldzinsen, Grundsteuer und Instandhaltung sind grundsätzlich nicht absetzbar. Ausnahme: Arbeitszimmer (strenge Voraussetzungen), energetische Sanierung (§ 35c EStG).
+Bei der selbst genutzten Immobilie gibt es kaum Steuervorteile: Schuldzinsen, Grundsteuer und Instandhaltung sind grundsätzlich nicht absetzbar. Ausnahme: Arbeitszimmer (strenge Voraussetzungen), energetische Sanierung (§ 35c EStG).
 
 **Empfehlung**
 Immobiliensteuern sind komplex und individuell. Holen Sie sich vor dem Kauf und spätestens nach der ersten Vermietung einen Steuerberater mit Immobilienschwerpunkt. Die Kosten dafür sparen Sie oft mehrfach durch optimale Gestaltung.`,
@@ -503,9 +503,9 @@ Die Eigentümerversammlung (EV) ist das gesetzlich vorgeschriebene Beschlussgrem
 - Inhalt der Einladung: Ort, Zeit, Tagesordnung mit allen Beschlusspunkten
 
 **Beschlussfähigkeit seit 2020**
-Seit der WEG-Reform 2020 ist jede ordnungsgemäß einberufene Versammlung beschlussfähig — unabhängig von der Zahl der erschienenen Miteigentumsanteile. Früher war eine Mindestanwesenheit erforderlich.
+Seit der WEG-Reform 2020 ist jede ordnungsgemäß einberufene Versammlung beschlussfähig, unabhängig von der Zahl der erschienenen Miteigentumsanteile. Früher war eine Mindestanwesenheit erforderlich.
 
-**Abstimmungsmehrheiten — ein Überblick**
+**Abstimmungsmehrheiten im Überblick**
 - Einfache Mehrheit (mehr als die Hälfte der abgegebenen Stimmen): Standard für laufende Verwaltung, Jahresabrechnung, Wirtschaftsplan, Verwaltervertrag, kleinere Instandhaltungen
 - Doppelt qualifizierte Mehrheit (mehr als ⅔ der Stimmen UND mehr als ½ der Miteigentumsanteile): Grundlegende Änderungen der Gemeinschaftsordnung, bestimmte bauliche Veränderungen
 - Allstimmigkeit (alle Eigentümer zustimmen): Belastung des Gemeinschaftseigentums, Aufhebung der WEG
@@ -524,13 +524,13 @@ Standardmäßig: 1 Wohneinheit = 1 Stimme (Kopfprinzip). Aber in der Gemeinschaf
 Seit 2020 kann die Gemeinschaft per Beschluss die Online-Teilnahme (Video-Zuschaltung) ermöglichen. Die Beschlussfassung selbst muss aber von präsenten oder bevollmächtigten Mitgliedern vorgenommen werden.
 
 **Vertretung und Vollmacht**
-Wer nicht teilnehmen kann, kann eine schriftliche Vollmacht erteilen — an den Verwalter, Mitbewohner oder einen anderen Eigentümer. Die Gemeinschaftsordnung kann einschränken, wer als Bevollmächtigter auftreten darf.
+Wer nicht teilnehmen kann, kann eine schriftliche Vollmacht erteilen, etwa an den Verwalter, Mitbewohner oder einen anderen Eigentümer. Die Gemeinschaftsordnung kann einschränken, wer als Bevollmächtigter auftreten darf.
 
 **Protokoll: Das wichtige Dokument**
 Der Verwalter erstellt ein Protokoll aller Beschlüsse (Beschluss-Sammlung ist gesetzlich vorgeschrieben). Sie haben jederzeit Einsichtsrecht. Fehler im Protokoll sollten zeitnah gerügt werden.
 
 **Was tun bei rechtswidrigen Beschlüssen?**
-Beschlüsse, die gegen Gesetz oder Gemeinschaftsordnung verstoßen, sind nicht nichtig, sondern nur anfechtbar — und zwar innerhalb von 1 Monat nach der Beschlussfassung durch Klage beim zuständigen Amtsgericht. Danach werden sie bestandskräftig, auch wenn sie rechtswidrig waren. Handeln Sie also schnell, wenn Sie einen Beschluss für unzulässig halten.
+Beschlüsse, die gegen Gesetz oder Gemeinschaftsordnung verstoßen, sind nicht nichtig, sondern nur anfechtbar, und zwar innerhalb von 1 Monat nach der Beschlussfassung durch Klage beim zuständigen Amtsgericht. Danach werden sie bestandskräftig, auch wenn sie rechtswidrig waren. Handeln Sie also schnell, wenn Sie einen Beschluss für unzulässig halten.
 
 **Vorbereitung für Eigentümer**
 - Einladung und Tagesordnung genau lesen
@@ -560,7 +560,7 @@ const Ratgeber = () => {
           </div>
           <h1 className="text-4xl md:text-6xl font-black text-slate-900 tracking-tighter mb-4">Immobilien-Ratgeber</h1>
           <p className="text-slate-500 text-lg font-medium max-w-2xl">
-            Praxisnahe Guides zu Recht, Verwaltung, Investment und Förderungen — fundiert, verständlich und kostenlos.
+            Praxisnahe Guides zu Recht, Verwaltung, Investment und Förderungen. Fundiert, verständlich und kostenlos.
           </p>
           <div className="mt-4 flex flex-wrap gap-3 text-xs text-slate-400 font-medium">
             <span className="flex items-center gap-1">
@@ -669,11 +669,11 @@ const Ratgeber = () => {
             </div>
             <h3 className="text-2xl md:text-3xl font-black tracking-tighter mb-3">Haben Sie konkrete Fragen?</h3>
             <p className="text-blue-100 font-medium mb-6 text-sm md:text-base">
-              Eddy, unser KI-Immobilienberater, beantwortet Ihre persönlichen Fragen zu Recht, Verwaltung und Investment — rund um die Uhr und kostenlos. Für rechtliche und steuerliche Einzelfragen empfehlen wir zusätzlich einen Fachberater.
+              Eddy, unser KI-Immobilienberater, beantwortet Ihre persönlichen Fragen zu Recht, Verwaltung und Investment, rund um die Uhr und kostenlos. Für rechtliche und steuerliche Einzelfragen empfehlen wir zusätzlich einen Fachberater.
             </p>
             <div className="flex flex-col sm:flex-row gap-3 justify-center">
               <Link to="/ki-berater" className="px-6 py-3 bg-white text-indigo-700 rounded-xl font-black uppercase tracking-widest text-xs hover:bg-blue-50 transition-all shadow-lg active:scale-95">
-                Eddy — KI-Berater
+                Eddy, der KI-Berater
               </Link>
               <Link to="/network" className="px-6 py-3 bg-white/15 text-white rounded-xl font-black uppercase tracking-widest text-xs hover:bg-white/25 transition-all border border-white/30 active:scale-95">
                 Experten im Netzwerk

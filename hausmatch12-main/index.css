@@ -1,17 +1,22 @@
-/* Inter wird lokal gehostet statt von fonts.googleapis.com geladen —
-   verhindert die Übertragung der Nutzer-IP an Google (DSGVO / LG München I, 3 O 17493/20). */
-@import "@fontsource/inter/300.css";
-@import "@fontsource/inter/400.css";
-@import "@fontsource/inter/500.css";
-@import "@fontsource/inter/600.css";
-@import "@fontsource/inter/700.css";
-@import "@fontsource/inter/800.css";
-@import "@fontsource/inter/900.css";
+/* Nunito wird lokal gehostet statt von fonts.googleapis.com geladen.
+   Das verhindert die Übertragung der Nutzer-IP an Google (DSGVO / LG München I, 3 O 17493/20).
+   Nunito ist eine runde, humanistische Schrift und wirkt deutlich wärmer als Inter. */
+@import "@fontsource/nunito/300.css";
+@import "@fontsource/nunito/400.css";
+@import "@fontsource/nunito/500.css";
+@import "@fontsource/nunito/600.css";
+@import "@fontsource/nunito/700.css";
+@import "@fontsource/nunito/800.css";
+@import "@fontsource/nunito/900.css";
 @import "tailwindcss";
+
+@theme {
+  --font-sans: 'Nunito', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+}
 
 body {
   margin: 0;
-  font-family: 'Inter', sans-serif;
+  font-family: 'Nunito', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   /* Sicherheitsnetz: einzelne zu breite Elemente dürfen die Seite auf dem

@@ -167,7 +167,7 @@ const Dashboard = () => {
       <div className={`${!selectedId ? 'hidden md:flex' : 'flex'} flex-1 bg-white rounded-[2rem] md:rounded-[2.5rem] shadow-xl border border-slate-200 overflow-hidden flex-col`}>
         {selectedInquiry ? (
           <div className="flex-1 overflow-y-auto p-4 sm:p-6 md:p-12 custom-scrollbar">
-            {/* Zurück-Button – nur auf Mobile */}
+            {/* Zurück-Button, nur auf Mobile */}
             <button
               onClick={() => setSelectedId(null)}
               className="md:hidden flex items-center gap-2 mb-4 text-slate-500 font-black text-xs uppercase tracking-widest"

@@ -110,7 +110,7 @@ const Kreditrechner = () => {
           </div>
           <h1 className="text-3xl md:text-5xl font-black text-slate-900 tracking-tighter mb-3">Immobilien-Kalkulator</h1>
           <p className="text-slate-500 font-medium text-sm md:text-base max-w-2xl">
-            Kredit, Rendite und Tilgungsplan — alles in einem Rechner. Vollständige Kostenanalyse inkl. Nebenkosten.
+            Kredit, Rendite und Tilgungsplan: Alles in einem Rechner. Vollständige Kostenanalyse inkl. Nebenkosten.
           </p>
         </div>
       </div>
@@ -421,7 +421,7 @@ const Kreditrechner = () => {
                       </div>
                       <div className="text-xs text-slate-600 font-medium">
                         {ergebnis.bruttorendite >= 5
-                          ? 'Bruttorendite über 5 % — das Objekt hat gutes Renditepotenzial. Prüfen Sie Lage und Substanz sorgfältig.'
+                          ? 'Bruttorendite über 5 %: Das Objekt hat gutes Renditepotenzial. Prüfen Sie Lage und Substanz sorgfältig.'
                           : ergebnis.bruttorendite >= 3
                           ? 'Typisch für gute Lagen in Ballungszentren. Wertsteigerungspotenzial oft relevant.'
                           : 'Bruttorendite unter 3 %. Prüfen Sie ob Mietpotenzial oder Kaufpreis angepasst werden kann.'}
