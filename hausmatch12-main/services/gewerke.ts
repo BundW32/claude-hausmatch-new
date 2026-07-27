@@ -134,6 +134,20 @@ export const GEWERKE: GewerkDef[] = [
     ],
   },
   {
+    key: 'versicherungsmakler',
+    label: 'Versicherungsmakler', labelPlural: 'Versicherungsmakler', akk: 'einen Versicherungsmakler',
+    tagline: 'Gebäude-, Haftpflicht- & Mietausfallschutz',
+    icon: '🛡️',
+    searchTerm: 'Versicherungsmakler Gebäudeversicherung Immobilien',
+    fields: [
+      { kind: 'chips', key: 'insurances', label: 'Gewünschte Versicherungen', options: ['Wohngebäudeversicherung', 'Haus- & Grundbesitzerhaftpflicht', 'Mietausfallversicherung', 'Vermieter-Rechtsschutz', 'Elementarschaden', 'Glasversicherung', 'D&O / Verwalterhaftpflicht'] },
+      { kind: 'select', key: 'propertyType', label: 'Objektart', options: ['Eigentumswohnung', 'Einfamilienhaus', 'Mehrfamilienhaus', 'WEG-Objekt', 'Gewerbeimmobilie'], required: true },
+      { kind: 'number', key: 'units', label: 'Anzahl Einheiten', placeholder: 'z. B. 12' },
+      { kind: 'select', key: 'intent', label: 'Ihr Anliegen', options: ['Bestehende Policen prüfen / vergleichen', 'Neuabschluss', 'Nach Schadensfall wechseln', 'Unverbindliche Beratung'], required: true },
+      DESCRIPTION_FIELD('Beschreiben Sie das Objekt und Ihren Versicherungsbedarf …'),
+    ],
+  },
+  {
     key: 'sonstige_profi',
     label: 'Sonstiger Dienstleister', labelPlural: 'Dienstleister', akk: 'einen Dienstleister',
     tagline: 'Andere Immobilienprofis',

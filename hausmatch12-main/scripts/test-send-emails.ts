@@ -24,7 +24,7 @@ import { join } from 'node:path';
 
 const ALL_GEWERKE = [
   'hausverwaltung', 'makler', 'anwalt', 'architekt',
-  'gutachter', 'handwerker', 'energieberater', 'sonstige_profi',
+  'gutachter', 'handwerker', 'energieberater', 'versicherungsmakler', 'sonstige_profi',
 ];
 
 const TEST_TO = process.env.TEST_TO || 'info@bundwimmobilien.de';

@@ -12,6 +12,7 @@ export type UserType =
   | 'gutachter'      // Immobiliengutachter
   | 'handwerker'     // Handwerker / Facility
   | 'energieberater' // Energieberater
+  | 'versicherungsmakler' // Versicherungsmakler (Gebäude-, Haftpflicht-, Mietausfallversicherung)
   | 'sonstige_profi'; // Sonstige Immobilienprofis
 
 export const USER_TYPE_LABELS: Record<UserType, string> = {
@@ -24,6 +25,7 @@ export const USER_TYPE_LABELS: Record<UserType, string> = {
   gutachter: 'Gutachter',
   handwerker: 'Handwerker',
   energieberater: 'Energieberater',
+  versicherungsmakler: 'Versicherungsmakler',
   sonstige_profi: 'Sonstiger Profi',
 };
 

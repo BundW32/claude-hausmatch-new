@@ -48,6 +48,7 @@ export const PROFESSIONS: Profession[] = [
   { id: 'energieberater', label: 'Energieberater',   plural: 'Energieberater',    searchTerm: 'Energieberater Gebäude',                      userTypes: ['energieberater'] },
   { id: 'gutachter',      label: 'Gutachter',        plural: 'Gutachter',         searchTerm: 'Immobiliengutachter Sachverständiger',        userTypes: ['gutachter'] },
   { id: 'architekt',      label: 'Architekt',        plural: 'Architekten',       searchTerm: 'Architekturbüro',                             userTypes: ['architekt'] },
+  { id: 'versicherungsmakler', label: 'Versicherungsmakler', plural: 'Versicherungsmakler', searchTerm: 'Versicherungsmakler Gebäudeversicherung Immobilien', userTypes: ['versicherungsmakler'] },
 ];
 
 export const getProfession = (id?: string | null): Profession =>

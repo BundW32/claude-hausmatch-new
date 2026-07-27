@@ -69,6 +69,13 @@ const GEWERKE: Record<string, GewerkInfo> = {
     platformRole: 'Die Plattform für Energieberater',
     showObjektart: false,
   },
+  versicherungsmakler: {
+    key: 'versicherungsmakler',
+    labelSing: 'Versicherungsmakler', labelPlural: 'Versicherungsmakler', akk: 'einen Versicherungsmakler',
+    ownerPartner: 'Ihr Partner für den passenden Versicherungsschutz',
+    platformRole: 'Die Plattform für Versicherungsmakler rund um die Immobilie',
+    showObjektart: true,
+  },
   sonstige_profi: {
     key: 'sonstige_profi',
     labelSing: 'Dienstleister', labelPlural: 'Dienstleister', akk: 'einen Dienstleister',
