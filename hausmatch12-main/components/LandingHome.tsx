@@ -48,7 +48,7 @@ const LandingHome = () => {
               <div className="inline-flex items-center gap-2 mb-6 md:mb-8 bg-white/80 backdrop-blur px-4 py-2 rounded-full border border-slate-200/80 shadow-sm">
                 <span className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></span>
                 <span className="text-[10px] font-black text-blue-700 uppercase tracking-widest">
-                  Deutschlands Immobilien-Community
+                  Die Community für Immobilien
                 </span>
               </div>
               <h1 className="text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-black text-slate-900 leading-tight sm:leading-[0.95] mb-6 md:mb-10 tracking-tighter">
@@ -60,7 +60,7 @@ const LandingHome = () => {
             </header>
 
             <p className="text-lg md:text-xl text-slate-500 mb-6 md:mb-10 leading-relaxed font-medium max-w-2xl mx-auto px-4 md:px-0">
-              HausMatch ist Ihre Community für Immobilienprofis und Eigentümer. Vernetzen Sie sich, tauschen Sie Erfahrungen aus und finden Sie geprüfte Experten in Ihrer Region.
+              HausMatch ist Ihre Community für Immobilienprofis und Eigentümer. Vernetzen Sie sich, tauschen Sie Erfahrungen aus und finden Sie Experten in Ihrer Region.
             </p>
 
             {/* Wen suchen Sie? Gewerk-Auswahl für die Multi-Profi-Suche */}

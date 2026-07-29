@@ -518,7 +518,7 @@ const SearchResults = () => {
                   <div className="space-y-4">
                     <div className="flex items-center gap-2 px-1">
                       <div className="w-2 h-2 bg-indigo-500 rounded-full" />
-                      <span className="text-xs font-black text-indigo-600 uppercase tracking-widest">HausMatch Netzwerk: Verifizierte Partner</span>
+                      <span className="text-xs font-black text-indigo-600 uppercase tracking-widest">HausMatch Netzwerk: Registrierte Partner</span>
                     </div>
                     {networkManagers.map((m) => (
                       <NetworkManagerCard key={m.id} manager={m} selected={selectedKeys.has(`net_${m.id}`)} onToggle={() => toggle(`net_${m.id}`)} />

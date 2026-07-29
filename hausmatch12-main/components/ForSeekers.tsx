@@ -45,7 +45,7 @@ const ForSeekers = () => {
           </span>
           <h1 className="text-5xl md:text-7xl font-black mb-10 tracking-tight leading-[1.1]">Die Suche nach der <br/>perfekten Verwaltung.</h1>
           <p className="text-xl md:text-2xl text-slate-400 mb-14 max-w-3xl mx-auto font-medium leading-relaxed">
-            Nutzen Sie unseren Express-Matching Prozess: In weniger als 2 Minuten erhalten Sie Zugriff auf die Top-Verwaltungen Ihrer Region.
+            Beschreiben Sie Ihr Objekt im Matching-Assistenten und erhalten Sie unverbindliche Angebote von Hausverwaltungen aus Ihrer Region.
           </p>
           <div className="flex flex-wrap justify-center gap-5">
             <button onClick={() => navigate('/wizard')} className="bg-blue-600 text-white px-12 py-6 rounded-3xl font-black text-xl shadow-2xl shadow-blue-600/20 hover:bg-blue-700 transition-all transform hover:-translate-y-1 active:scale-95 flex items-center gap-3">

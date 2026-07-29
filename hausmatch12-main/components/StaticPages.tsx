@@ -29,7 +29,7 @@ export const AboutPage: React.FC = () => (
     <div className="grid md:grid-cols-2 gap-12 items-center mb-20">
       <div className="space-y-6 text-slate-600">
         <p>HausMatch ist die Antwort auf die wachsende Komplexität im Immobilienmanagement. Wir glauben, dass die richtige Verwaltung der Schlüssel zu wertbeständigen Immobilien und zufriedenen Hausgemeinschaften ist.</p>
-        <p>Unser Team kombiniert jahrzehntelange Erfahrung in der Immobilienwirtschaft mit modernster KI-Technologie, um den Matching-Prozess so effizient wie möglich zu gestalten.</p>
+        <p>Unser Team kombiniert Erfahrung aus der Immobilienwirtschaft mit moderner KI-Technologie, um den Matching-Prozess so effizient wie möglich zu gestalten.</p>
         <div className="bg-indigo-50 p-6 rounded-2xl border border-indigo-100">
           <h4 className="font-bold text-indigo-900 mb-2">Unsere Mission</h4>
           <p className="text-indigo-800">Transparenz und Vertrauen in den oft unübersichtlichen Markt der Hausverwaltungen bringen.</p>

@@ -18,14 +18,14 @@ const LandingPage = () => {
           <div className="animate-fade-in-up">
             <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-indigo-50 text-indigo-700 text-xs font-black uppercase tracking-widest mb-8 border border-indigo-100 shadow-sm">
               <span className="w-2 h-2 rounded-full bg-indigo-600 animate-pulse"></span>
-              PropTech Innovation 2026
+              Hausverwaltung finden
             </span>
             <h1 className="text-6xl lg:text-8xl font-black tracking-tighter text-slate-900 leading-[0.85] mb-8">
               Hausverwaltung <br/>
               <span className="text-indigo-600">neu definiert.</span>
             </h1>
             <p className="text-xl text-slate-600 font-light leading-relaxed mb-12 max-w-xl">
-              HausMatch verbindet deutsche Immobilieneigentümer mit verifizierten Verwaltern. KI-gestützte Bedarfsanalyse und direkter Match-Prozess.
+              HausMatch verbindet deutsche Immobilieneigentümer mit Hausverwaltungen. KI-gestützte Bedarfsanalyse und direkter Match-Prozess.
             </p>
 
             <form onSubmit={(e) => { e.preventDefault(); navigate(`/wizard?city=${city}`); }} className="relative max-w-lg group">

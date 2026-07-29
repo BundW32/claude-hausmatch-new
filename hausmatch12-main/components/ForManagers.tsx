@@ -23,7 +23,7 @@ const ForManagers = () => {
                 Gewinnen Sie wertvolle <span className="text-indigo-400">Verwaltungsmandate.</span>
               </h1>
               <p className="text-xl text-slate-400 mb-10 leading-relaxed">
-                Schluss mit Kaltakquise. Erhalten Sie Zugang zu geprüften Anfragen von Eigentümern, die aktiv eine professionelle Hausverwaltung suchen.
+                Schluss mit Kaltakquise. Erhalten Sie Zugang zu Anfragen von Eigentümern, die aktiv eine professionelle Hausverwaltung suchen.
               </p>
               <div className="flex flex-col sm:flex-row gap-4">
                 <button onClick={() => navigate('/login')} className="bg-indigo-600 text-white px-8 py-4 rounded-xl font-bold hover:bg-indigo-700 transition-all shadow-lg shadow-indigo-900/50">
@@ -54,12 +54,12 @@ const ForManagers = () => {
                     <div className="bg-indigo-600 px-3 py-1 rounded-lg text-xs font-bold">Details</div>
                   </div>
                   <div className="grid grid-cols-2 gap-4">
-                    <div className="h-24 bg-slate-700/50 rounded-2xl flex flex-col justify-center items-center">
-                      <p className="text-2xl font-bold">12</p>
+                    <div className="h-24 bg-slate-700/50 rounded-2xl flex flex-col justify-center items-center gap-2">
+                      <div className="h-3 w-10 bg-slate-600 rounded-full"></div>
                       <p className="text-[10px] text-slate-500 uppercase tracking-tighter">Aktive Leads</p>
                     </div>
-                    <div className="h-24 bg-slate-700/50 rounded-2xl flex flex-col justify-center items-center">
-                      <p className="text-2xl font-bold text-green-400">85%</p>
+                    <div className="h-24 bg-slate-700/50 rounded-2xl flex flex-col justify-center items-center gap-2">
+                      <div className="h-3 w-10 bg-slate-600 rounded-full"></div>
                       <p className="text-[10px] text-slate-500 uppercase tracking-tighter">Response Rate</p>
                     </div>
                   </div>
@@ -83,8 +83,8 @@ const ForManagers = () => {
               <div className="text-indigo-600 mb-6">
                 <svg className="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 11c0 3.517-1.009 6.799-2.753 9.571m-3.44-2.04l.054-.09A13.916 13.916 0 008 11a4 4 0 118 0c0 1.017-.07 2.019-.203 3m-2.118 6.844A21.88 21.88 0 0015.171 17m3.839 1.132c.645-2.266.99-4.659.99-7.132A8 8 0 008 4.07M3 15.364c.64-1.519 1.298-3.002 2.118-4.51" /></svg>
               </div>
-              <h3 className="text-xl font-bold mb-4">Verifizierte Leads</h3>
-              <p className="text-slate-600 text-sm leading-relaxed">Wir telefonieren mit jedem Interessenten vorab, um die Echtheit und Qualität der Anfrage sicherzustellen.</p>
+              <h3 className="text-xl font-bold mb-4">Qualifizierte Anfragen</h3>
+              <p className="text-slate-600 text-sm leading-relaxed">Eigentümer beschreiben ihr Objekt im Anfrage-Assistenten. Sie sehen Lage, Einheitenzahl und gewünschten Leistungsumfang, bevor Sie antworten.</p>
             </div>
             <div className="bg-white p-8 rounded-3xl border border-slate-200 shadow-sm">
               <div className="text-indigo-600 mb-6">
@@ -108,7 +108,7 @@ const ForManagers = () => {
       <section className="py-24 bg-white border-t border-slate-200">
         <div className="max-w-4xl mx-auto px-4 text-center">
           <h2 className="text-3xl font-bold mb-8 text-slate-900">Bereit für neue Aufträge?</h2>
-          <p className="text-xl text-slate-600 mb-10">Schließen Sie sich über 500 erfolgreichen Hausverwaltungen an.</p>
+          <p className="text-xl text-slate-600 mb-10">Legen Sie kostenlos ein Profil an und erhalten Sie passende Anfragen aus Ihrer Region.</p>
           <button onClick={() => navigate('/login')} className="bg-indigo-600 text-white px-10 py-5 rounded-2xl font-bold text-lg hover:bg-indigo-700 transition-all shadow-xl shadow-indigo-100">
             Kostenlos Partner werden
           </button>
