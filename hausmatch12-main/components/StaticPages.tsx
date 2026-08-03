@@ -189,8 +189,10 @@ export const BlogPage: React.FC = () => {
           <span className="text-xs font-black uppercase tracking-widest text-indigo-600 bg-indigo-50 border border-indigo-100 px-4 py-1.5 rounded-full">
             Ausgabe vom {editionStr}
           </span>
-          <span className="text-[10px] font-medium text-slate-400">
-            KI-generierte Zusammenfassungen mit Quellenangaben, keine Rechtsberatung.
+          <span className="text-[10px] font-medium text-slate-400 text-center max-w-md">
+            KI-generierte Inhalte: Diese Beiträge wurden von einem KI-System erstellt (Kennzeichnung nach Art. 50
+            Abs. 4 EU-KI-Verordnung), mit Quellenangaben versehen und stellen keine Rechtsberatung dar.{' '}
+            <Link to="/legal/ki" className="underline font-bold hover:text-indigo-600">KI-Transparenzhinweise</Link>
           </span>
         </div>
       </div>
@@ -360,7 +362,9 @@ export const BlogPage: React.FC = () => {
                 ))}
               </div>
               <p className="text-[10px] font-medium text-slate-400 mt-8">
-                KI-generierter Bericht mit Quellenangaben, keine Rechts-, Steuer- oder Finanzberatung.
+                KI-generierter Bericht: Dieser Text wurde von einem KI-System erstellt (Kennzeichnung nach Art. 50
+                Abs. 4 EU-KI-Verordnung). Quellenangaben siehe oben; keine Rechts-, Steuer- oder Finanzberatung.{' '}
+                <Link to="/legal/ki" className="underline font-bold hover:text-indigo-600">KI-Transparenzhinweise</Link>
               </p>
             </div>
 
@@ -479,11 +483,20 @@ export const ContactPage: React.FC = () => {
   );
 };
 
-export const LegalPage: React.FC<{ type: 'impressum' | 'privacy' | 'agb' }> = ({ type }) => (
+export const LegalPage: React.FC<{ type: 'impressum' | 'privacy' | 'agb' | 'ki' }> = ({ type }) => (
   <div className="max-w-4xl mx-auto px-4 py-20">
     <SectionHeader
-      title={type === 'impressum' ? 'Impressum' : type === 'privacy' ? 'Datenschutzerklärung' : 'Allgemeine Geschäftsbedingungen'}
-      subtitle="Rechtliche Informationen zur Nutzung von HausMatch."
+      title={
+        type === 'impressum' ? 'Impressum'
+        : type === 'privacy' ? 'Datenschutzerklärung'
+        : type === 'agb' ? 'Allgemeine Geschäftsbedingungen'
+        : 'KI-Transparenzhinweise'
+      }
+      subtitle={
+        type === 'ki'
+          ? 'Informationen zum Einsatz Künstlicher Intelligenz auf HausMatch gemäß Verordnung (EU) 2024/1689 (KI-Verordnung / EU AI Act).'
+          : 'Rechtliche Informationen zur Nutzung von HausMatch.'
+      }
     />
     <div className="prose prose-slate max-w-none text-slate-600 space-y-8">
       {type === 'impressum' && (
@@ -589,7 +602,9 @@ export const LegalPage: React.FC<{ type: 'impressum' | 'privacy' | 'agb' }> = ({
             <p>Wir nutzen Google Firebase (Google Ireland Ltd., Gordon House, Barrow Street, Dublin 4, Irland; Mutterkonzern: Google LLC, USA) für Nutzeranmeldung und Datenspeicherung. Daten können dabei auch auf Servern in den USA verarbeitet werden. Google LLC ist unter dem EU-US Data Privacy Framework zertifiziert (Angemessenheitsbeschluss der EU-Kommission gemäß Art. 45 DSGVO); ergänzend gelten Standardvertragsklauseln (Art. 46 DSGVO). Mit Google besteht ein Auftragsverarbeitungsvertrag (Art. 28 DSGVO). Datenschutzerklärung Google: <a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer" className="text-indigo-600 underline">policies.google.com/privacy</a></p>
 
             <h4 className="font-bold text-slate-800 mb-2 mt-4">4.2 Google Gemini KI</h4>
-            <p>Unser KI-Assistent „Eddy" und die KI-gestützte Suchfunktion nutzen Google Gemini (Google LLC). Anfragen, die Sie an Eddy stellen, werden zur Verarbeitung an die Google Gemini API übertragen. Bitte geben Sie keine sensiblen personenbezogenen Daten in Chat-Anfragen ein. Rechtsgrundlage: Art. 6 Abs. 1 lit. b DSGVO (Bereitstellung des von Ihnen aktiv genutzten Dienstes).</p>
+            <p>Unser KI-Assistent „Eddy" und die KI-gestützte Suchfunktion nutzen Google Gemini (Google LLC). Anfragen, die Sie an Eddy stellen, werden zur Verarbeitung an die Google Gemini API übertragen. Bitte geben Sie keine sensiblen personenbezogenen Daten in Chat-Anfragen ein. Rechtsgrundlage: Art. 6 Abs. 1 lit. b DSGVO (Bereitstellung des von Ihnen aktiv genutzten Dienstes). Ihre Eingaben werden nicht zum Training eigener KI-Modelle verwendet.</p>
+            <p className="mt-2">Sie kommunizieren dabei mit einem KI-System und nicht mit einer natürlichen Person (Art. 50 Abs. 1 der Verordnung (EU) 2024/1689 – KI-Verordnung). KI-Ausgaben sind Vorschläge und werden nicht zur ausschließlich automatisierten Entscheidungsfindung im Sinne des Art. 22 DSGVO verwendet; über Anfragen, Kontakte und Angebote entscheiden stets Menschen. Ein Profiling zu Bewertungs- oder Werbezwecken findet nicht statt. Welche KI-Funktionen wir einsetzen, wie wir KI-generierte Inhalte kennzeichnen und wie Sie einen Menschen erreichen, erläutern unsere{' '}
+              <Link to="/legal/ki" className="text-indigo-600 underline font-bold">KI-Transparenzhinweise</Link>.</p>
 
             <h4 className="font-bold text-slate-800 mb-2 mt-4">4.3 Resend (E-Mail-Versand)</h4>
             <p>Für den Versand von E-Mails (Anfragen, Kontaktformular) nutzen wir Resend (Resend Inc., USA). Dabei werden Name und E-Mail-Adresse der Absender an Resend übermittelt. Die Übermittlung in die USA erfolgt auf Grundlage des EU-US Data Privacy Framework bzw. von Standardvertragsklauseln. Datenschutzerklärung: <a href="https://resend.com/legal/privacy-policy" target="_blank" rel="noopener noreferrer" className="text-indigo-600 underline">resend.com/legal/privacy-policy</a></p>
@@ -618,7 +633,7 @@ export const LegalPage: React.FC<{ type: 'impressum' | 'privacy' | 'agb' }> = ({
             <p className="mt-2">Zudem haben Sie das Recht auf Beschwerde bei einer Datenschutzaufsichtsbehörde (Art. 77 DSGVO). Zuständig ist die Landesbeauftragte für Datenschutz und Informationsfreiheit Nordrhein-Westfalen (LDI NRW), Kavalleriestraße 2–4, 40213 Düsseldorf, <a href="https://www.ldi.nrw.de" target="_blank" rel="noopener noreferrer" className="text-indigo-600 underline">www.ldi.nrw.de</a>.</p>
           </section>
 
-          <p className="text-sm text-slate-400 italic mt-8">Stand: Juli 2026</p>
+          <p className="text-sm text-slate-400 italic mt-8">Stand: August 2026</p>
         </>
       )}
 
@@ -652,8 +667,11 @@ export const LegalPage: React.FC<{ type: 'impressum' | 'privacy' | 'agb' }> = ({
           </section>
 
           <section>
-            <h3 className="text-xl font-bold text-slate-900 mb-4">§ 6 KI-Assistent (Eddy)</h3>
-            <p>Der KI-Assistent Eddy stellt automatisch generierte Informationen bereit. Diese Informationen sind allgemeiner Natur und stellen keine Rechts-, Steuer- oder Finanzberatung dar. Für Entscheidungen, die auf Eddy-Antworten basieren, übernimmt der Betreiber keine Haftung. Nutzer werden ausdrücklich aufgefordert, bei rechtlichen oder finanziellen Fragen einen zugelassenen Fachberater hinzuzuziehen.</p>
+            <h3 className="text-xl font-bold text-slate-900 mb-4">§ 6 KI-Assistent (Eddy) und Einsatz Künstlicher Intelligenz</h3>
+            <p>Der KI-Assistent Eddy ist ein KI-System im Sinne der Verordnung (EU) 2024/1689 (KI-Verordnung) und keine natürliche Person. Nutzer werden hierauf gemäß Art. 50 Abs. 1 KI-VO vor der Nutzung hingewiesen. Eddy stellt automatisch generierte Informationen bereit. Diese Informationen sind allgemeiner Natur und stellen keine Rechts-, Steuer- oder Finanzberatung dar. Für Entscheidungen, die auf Eddy-Antworten basieren, übernimmt der Betreiber keine Haftung. Nutzer werden ausdrücklich aufgefordert, bei rechtlichen oder finanziellen Fragen einen zugelassenen Fachberater hinzuzuziehen.</p>
+            <p className="mt-2">KI-generierte Inhalte auf der Plattform – insbesondere Antworten von Eddy, „Eddys News der Woche", KI-Zusammenfassungen von Anfragen und KI-Textentwürfe – werden als solche gekennzeichnet (Art. 50 Abs. 4 KI-VO). KI-Ausgaben sind stets Vorschläge; sämtliche Entscheidungen über Anfragen, Kontakte und Angebote treffen Menschen. Eine ausschließlich automatisierte Entscheidungsfindung findet nicht statt.</p>
+            <p className="mt-2">Nutzer verpflichten sich, keine sensiblen personenbezogenen Daten Dritter in KI-Eingaben einzugeben und KI-generierte Inhalte der Plattform nicht ohne Kennzeichnung als menschlich erstellte Inhalte weiterzuverbreiten. Einzelheiten zum KI-Einsatz enthalten die{' '}
+              <Link to="/legal/ki" className="text-indigo-600 underline font-bold">KI-Transparenzhinweise</Link>, die Bestandteil dieser AGB sind.</p>
           </section>
 
           <section>
@@ -676,7 +694,164 @@ export const LegalPage: React.FC<{ type: 'impressum' | 'privacy' | 'agb' }> = ({
             <p>Sollten einzelne Bestimmungen dieser AGB unwirksam sein oder werden, bleibt die Wirksamkeit der übrigen Bestimmungen unberührt.</p>
           </section>
 
-          <p className="text-sm text-slate-400 italic mt-8">Stand: Juli 2026 | B &amp; W Immobilien Management UG (haftungsbeschränkt)</p>
+          <p className="text-sm text-slate-400 italic mt-8">Stand: August 2026 | B &amp; W Immobilien Management UG (haftungsbeschränkt)</p>
+        </>
+      )}
+
+      {type === 'ki' && (
+        <>
+          <section>
+            <div className="bg-indigo-50 border border-indigo-100 rounded-2xl p-6">
+              <p className="text-indigo-900 font-medium">
+                Auf HausMatch kommen KI-Systeme zum Einsatz. Wir informieren Sie hier – wie in Art. 50 der
+                Verordnung (EU) 2024/1689 (KI-Verordnung, „EU AI Act") vorgesehen – klar und verständlich darüber,
+                <strong> wo</strong> wir KI einsetzen, <strong>wofür</strong>, <strong>welche Grenzen</strong> sie hat
+                und <strong>wie Sie widersprechen</strong> oder einen Menschen erreichen können.
+              </p>
+            </div>
+          </section>
+
+          <section>
+            <h3 className="text-xl font-bold text-slate-900 mb-4">1. Anbieter und Betreiber</h3>
+            <p>
+              Betreiber der eingesetzten KI-Systeme im Sinne des Art. 3 Nr. 4 KI-VO ist:<br />
+              B &amp; W Immobilien Management UG (haftungsbeschränkt)<br />
+              Goethestraße 42, 45964 Gladbeck<br />
+              E-Mail: <a href="mailto:info@bundwimmobilien.de" className="text-indigo-600 underline">info@bundwimmobilien.de</a>
+            </p>
+            <p className="mt-2">
+              Wir entwickeln keine eigenen KI-Modelle. Als zugrundeliegendes KI-Modell mit allgemeinem Verwendungszweck
+              (GPAI) nutzen wir <strong>Google Gemini</strong> (Anbieter: Google). Anbieterpflichten für das Modell
+              treffen Google, Betreiberpflichten für den Einsatz auf dieser Plattform treffen uns.
+            </p>
+          </section>
+
+          <section>
+            <h3 className="text-xl font-bold text-slate-900 mb-4">2. Sie interagieren mit einem KI-System (Art. 50 Abs. 1 KI-VO)</h3>
+            <p>
+              Unser Assistent <strong>„Eddy"</strong> – sowohl das Chat-Fenster als auch die Seite „KI-Berater" – ist
+              keine natürliche Person, sondern ein KI-System. Jede Antwort von Eddy wird maschinell erzeugt. Das wird
+              Ihnen vor und während der Nutzung durch die Kennzeichnung „KI" bzw. „KI-generiert" angezeigt.
+            </p>
+            <p className="mt-2">
+              Wenn Sie lieber mit einem Menschen sprechen möchten, nutzen Sie unser{' '}
+              <Link to="/contact" className="text-indigo-600 underline font-bold">Kontaktformular</Link> oder schreiben
+              Sie an <a href="mailto:info@bundwimmobilien.de" className="text-indigo-600 underline">info@bundwimmobilien.de</a>.
+              Die Nutzung von Eddy ist freiwillig; alle Kernfunktionen der Plattform stehen Ihnen auch ohne KI zur Verfügung.
+            </p>
+          </section>
+
+          <section>
+            <h3 className="text-xl font-bold text-slate-900 mb-4">3. Wo wir KI einsetzen</h3>
+            <ul className="list-disc pl-6 mt-2 space-y-2">
+              <li>
+                <strong>Eddy, der KI-Assistent (Chat &amp; KI-Berater):</strong> beantwortet allgemeine Fragen zu
+                Hausverwaltung, Mietrecht, Finanzierung und Investment. Zweck: schnelle Erstinformation.
+              </li>
+              <li>
+                <strong>„Eddys News der Woche" (Blog):</strong> KI-generierte Zusammenfassungen und Einordnungen
+                öffentlich verfügbarer Immobilien-Nachrichten mit Quellenangabe. Diese Texte sind als KI-generiert
+                gekennzeichnet (Art. 50 Abs. 4 KI-VO).
+              </li>
+              <li>
+                <strong>Analyse von Verwaltungs-Anfragen:</strong> Aus den von Ihnen gemachten Objektangaben erstellt
+                die KI eine Kurzzusammenfassung, eine Aufwandseinschätzung und Stichworte, damit Hausverwaltungen
+                Anfragen schneller erfassen können.
+              </li>
+              <li>
+                <strong>KI-gestützte Suche und Matching-Vorschläge:</strong> Vorschläge, welche Hausverwaltungen zu
+                einem Objekt passen könnten, sowie Textentwürfe für Antworten an Interessenten.
+              </li>
+            </ul>
+          </section>
+
+          <section>
+            <h3 className="text-xl font-bold text-slate-900 mb-4">4. Kennzeichnung KI-generierter Inhalte (Art. 50 Abs. 4 KI-VO)</h3>
+            <p>
+              Von einer KI erzeugte oder wesentlich veränderte Texte kennzeichnen wir sichtbar mit dem Hinweis
+              „KI-generiert". Das betrifft insbesondere Eddys Antworten, „Eddys News der Woche", KI-Zusammenfassungen von
+              Anfragen und KI-Textentwürfe. Wir erzeugen und veröffentlichen keine Deepfakes, keine synthetischen Bild-,
+              Audio- oder Videoinhalte von realen Personen und keine KI-generierten Nutzerprofile oder Bewertungen.
+            </p>
+          </section>
+
+          <section>
+            <h3 className="text-xl font-bold text-slate-900 mb-4">5. Keine verbotenen Praktiken (Art. 5 KI-VO)</h3>
+            <p>Wir setzen ausdrücklich <strong>keine</strong> KI-Systeme ein für:</p>
+            <ul className="list-disc pl-6 mt-2 space-y-1">
+              <li>Social Scoring oder die Bewertung des allgemeinen Sozialverhaltens von Personen,</li>
+              <li>Emotionserkennung, biometrische Identifizierung oder biometrische Kategorisierung,</li>
+              <li>die Ausnutzung von Schutzbedürftigkeit oder unterschwellige Beeinflussung,</li>
+              <li>vorausschauende Bewertung der Wahrscheinlichkeit von Straftaten.</li>
+            </ul>
+          </section>
+
+          <section>
+            <h3 className="text-xl font-bold text-slate-900 mb-4">6. Risikoeinstufung: keine Hochrisiko-Anwendung</h3>
+            <p>
+              Nach unserer Bewertung fallen die eingesetzten Systeme nicht unter die Hochrisiko-Anwendungsfälle des
+              Anhangs III der KI-Verordnung. HausMatch vermittelt Geschäftskontakte zwischen Eigentümern und
+              Hausverwaltungen; die KI trifft dabei keine Entscheidungen über Zugang zu Beschäftigung, Bildung,
+              Kreditwürdigkeit, Sozialleistungen oder wesentlichen privaten Dienstleistungen. Der Kreditrechner ist ein
+              rein regelbasiertes Rechenwerkzeug ohne KI und nimmt keine Bonitätsbewertung vor. Wir prüfen diese
+              Einstufung regelmäßig und bei jeder wesentlichen Funktionsänderung erneut.
+            </p>
+          </section>
+
+          <section>
+            <h3 className="text-xl font-bold text-slate-900 mb-4">7. Menschliche Aufsicht und keine automatisierte Entscheidung</h3>
+            <p>
+              KI-Ausgaben auf HausMatch sind <strong>Vorschläge, keine Entscheidungen</strong>. Ob eine Anfrage
+              angenommen, ein Kontakt hergestellt oder ein Angebot abgegeben wird, entscheiden immer Menschen. Es findet
+              keine ausschließlich automatisierte Entscheidungsfindung mit rechtlicher Wirkung oder ähnlich erheblicher
+              Beeinträchtigung im Sinne des Art. 22 DSGVO statt. Auffällige oder fehlerhafte KI-Ausgaben können Sie uns
+              jederzeit melden; wir prüfen sie manuell und passen die Systeme bei Bedarf an oder schalten sie ab.
+            </p>
+          </section>
+
+          <section>
+            <h3 className="text-xl font-bold text-slate-900 mb-4">8. Grenzen der KI</h3>
+            <p>
+              KI-Systeme können Inhalte erzeugen, die unvollständig, veraltet oder sachlich falsch sind
+              („Halluzinationen"). Eddys Antworten sind allgemeine Informationen und ersetzen <strong>keine</strong>{' '}
+              Rechts-, Steuer- oder Finanzberatung. Bitte prüfen Sie rechtlich oder wirtschaftlich relevante Angaben
+              stets nach und ziehen Sie im Zweifel eine fachkundige Person hinzu.
+            </p>
+          </section>
+
+          <section>
+            <h3 className="text-xl font-bold text-slate-900 mb-4">9. Datenverarbeitung durch die KI</h3>
+            <p>
+              Ihre Eingaben an Eddy werden zur Beantwortung an die Google-Gemini-API übertragen. Bitte geben Sie keine
+              sensiblen personenbezogenen Daten in KI-Eingaben ein. Wir nutzen Ihre Chat-Eingaben nicht zum Training
+              eigener Modelle. Einzelheiten zu Rechtsgrundlagen, Empfängern und Speicherdauer finden Sie in unserer{' '}
+              <Link to="/legal/privacy" className="text-indigo-600 underline font-bold">Datenschutzerklärung</Link>.
+            </p>
+          </section>
+
+          <section>
+            <h3 className="text-xl font-bold text-slate-900 mb-4">10. KI-Kompetenz (Art. 4 KI-VO)</h3>
+            <p>
+              Mitarbeitende, die KI-Systeme in unserem Namen betreiben oder deren Ausgaben verwenden, werden zu
+              Funktionsweise, Grenzen und Risiken dieser Systeme sowie zur Kennzeichnungspflicht geschult. Diese Seite
+              dient zugleich der Information der Nutzerinnen und Nutzer.
+            </p>
+          </section>
+
+          <section>
+            <h3 className="text-xl font-bold text-slate-900 mb-4">11. Ihre Ansprechstelle und Beschwerden</h3>
+            <p>
+              Fragen, Widerspruch gegen KI-gestützte Verarbeitung oder Beschwerden über eine KI-Ausgabe richten Sie bitte
+              an <a href="mailto:info@bundwimmobilien.de" className="text-indigo-600 underline">info@bundwimmobilien.de</a>.
+              Wir antworten in der Regel innerhalb von 14 Tagen. Unabhängig davon können Sie sich an die zuständige
+              Marktüberwachungsbehörde nach der KI-Verordnung sowie – bei datenschutzrechtlichen Fragen – an die
+              Landesbeauftragte für Datenschutz und Informationsfreiheit Nordrhein-Westfalen (LDI NRW) wenden.
+            </p>
+          </section>
+
+          <p className="text-sm text-slate-400 italic mt-8">
+            Stand: August 2026 | B &amp; W Immobilien Management UG (haftungsbeschränkt)
+          </p>
         </>
       )}
     </div>

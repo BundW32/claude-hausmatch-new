@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 
 interface Message {
   role: 'user' | 'assistant';
@@ -35,7 +36,7 @@ const KIBerater: React.FC = () => {
     {
       role: 'assistant',
       content:
-        'Hallo! Ich bin Eddy 🦉, Ihr Immobilien-Assistent von HausMatch.\n\nIch helfe Ihnen bei Fragen zu Hausverwaltung, Mietrecht, Finanzierung und Immobilieninvestments. Was möchten Sie wissen?',
+        'Hallo! Ich bin Eddy 🦉, Ihr Immobilien-Assistent von HausMatch.\n\nSie schreiben mit einem KI-System, nicht mit einem Menschen (Art. 50 EU-KI-Verordnung). Meine Antworten sind KI-generiert und ersetzen keine Rechts-, Steuer- oder Finanzberatung.\n\nIch helfe Ihnen bei Fragen zu Hausverwaltung, Mietrecht, Finanzierung und Immobilieninvestments. Was möchten Sie wissen?',
     },
   ]);
   const [input, setInput] = useState('');
@@ -96,8 +97,14 @@ const KIBerater: React.FC = () => {
             Fragen zu Hausverwaltung, Mietrecht, Finanzierung &amp; Investment
           </p>
           <div className="mt-3 inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-amber-50 border border-amber-200 text-amber-700 text-xs font-bold">
-            ⚠️ KI-generierte Antworten · Kein Ersatz für Rechts- oder Steuerberatung
+            ⚠️ Sie kommunizieren mit einem KI-System · KI-generierte Antworten · Kein Ersatz für Rechts- oder Steuerberatung
           </div>
+          <p className="mt-2 text-[11px] text-slate-400 font-medium">
+            Mehr dazu in den{' '}
+            <Link to="/legal/ki" className="text-indigo-600 underline font-bold">KI-Transparenzhinweisen</Link>
+            {' '}(EU-KI-Verordnung). Lieber mit einem Menschen sprechen?{' '}
+            <Link to="/contact" className="text-indigo-600 underline font-bold">Kontakt aufnehmen</Link>.
+          </p>
         </div>
       </div>
 
@@ -189,7 +196,7 @@ const KIBerater: React.FC = () => {
             </button>
           </div>
           <p className="text-center text-[11px] text-slate-400 mt-2 font-medium">
-            Eddy ist eine KI · Antworten sind allgemeine Informationen · Kein Rechtsrat
+            Eddy ist ein KI-System · Antworten sind KI-generiert und allgemeine Informationen · Kein Rechtsrat
           </p>
         </div>
       </div>
