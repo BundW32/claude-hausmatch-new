@@ -211,7 +211,12 @@ const Dashboard = () => {
                        <div className="w-12 h-12 rounded-2xl bg-white/10 flex items-center justify-center text-indigo-400">
                          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
                        </div>
-                       <h2 className="text-2xl font-black tracking-tighter uppercase">Intelligente Objektdaten</h2>
+                       <div>
+                         <h2 className="text-2xl font-black tracking-tighter uppercase">Intelligente Objektdaten</h2>
+                         <span className="inline-flex items-center gap-1.5 mt-2 px-2.5 py-1 rounded-full bg-amber-400/15 border border-amber-400/30 text-amber-300 text-[10px] font-black uppercase tracking-widest">
+                           KI-generiert
+                         </span>
+                       </div>
                     </div>
 
                     <div className="grid md:grid-cols-2 gap-12 mb-10">
@@ -234,6 +239,12 @@ const Dashboard = () => {
                           </div>
                        </div>
                     </div>
+
+                    <p className="text-[11px] text-slate-400 font-medium leading-relaxed border-t border-white/10 pt-5">
+                      Diese Auswertung wurde automatisch von einem KI-System erzeugt (Kennzeichnung nach Art. 50 EU-KI-Verordnung).
+                      Sie ist ein unverbindlicher Vorschlag zur Vorsortierung, kann Fehler enthalten und ersetzt weder Ihre eigene
+                      Prüfung noch eine Rechtsberatung. Die Entscheidung über die Anfrage treffen ausschließlich Sie.
+                    </p>
                   </div>
                 </div>
               )}

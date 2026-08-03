@@ -337,6 +337,7 @@ const Footer = () => {
               <li><Link to="/legal/impressum" className="hover:text-white transition-colors">Impressum</Link></li>
               <li><Link to="/legal/privacy" className="hover:text-white transition-colors">Datenschutz</Link></li>
               <li><Link to="/legal/agb" className="hover:text-white transition-colors">AGB</Link></li>
+              <li><Link to="/legal/ki" className="hover:text-white transition-colors">KI-Transparenz</Link></li>
             </ul>
           </div>
         </div>
@@ -350,6 +351,7 @@ const Footer = () => {
             <Link to="/legal/impressum" className="hover:text-white transition-colors">Impressum</Link>
             <Link to="/legal/privacy" className="hover:text-white transition-colors">Datenschutz</Link>
             <Link to="/legal/agb" className="hover:text-white transition-colors">AGB</Link>
+            <Link to="/legal/ki" className="hover:text-white transition-colors">KI-Transparenz</Link>
           </div>
         </div>
       </div>
@@ -402,6 +404,7 @@ const AppRoutes = () => {
         <Route path="/legal/impressum" element={<LegalPage type="impressum" />} />
         <Route path="/legal/privacy" element={<LegalPage type="privacy" />} />
         <Route path="/legal/agb" element={<LegalPage type="agb" />} />
+        <Route path="/legal/ki" element={<LegalPage type="ki" />} />
 
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Login initialView="role_select" />} />

@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useContext } from 'react';
-import { useSearchParams, useNavigate } from 'react-router-dom';
+import { useSearchParams, useNavigate, Link } from 'react-router-dom';
 import { searchPropertyManagers } from '../services/geminiService';
 import { getManagersByCity } from '../services/dataService';
 import { resolveSearchTarget } from '../services/professions';
@@ -472,6 +472,14 @@ const SearchResults = () => {
           <span className="bg-indigo-600 text-white text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-widest shadow-lg shadow-indigo-100">Live Matching</span>
           <h1 className="text-2xl sm:text-3xl md:text-4xl font-black text-slate-900 tracking-tight leading-tight">Empfohlene {target.plural} in {city}</h1>
         </div>
+
+        <p className="text-xs text-slate-500 font-medium leading-relaxed bg-white border border-slate-200 rounded-2xl px-4 py-3 mb-6 md:mb-10">
+          <span className="font-black text-slate-700">KI-generierte Vorschläge:</span> Diese Liste wird von einem
+          KI-System aus öffentlich verfügbaren Informationen zusammengestellt (Kennzeichnung nach Art. 50
+          EU-KI-Verordnung). Sie ist unverbindlich, kann Fehler oder veraltete Angaben enthalten und stellt keine
+          Empfehlung oder Bewertung der Qualität dar. Wen Sie kontaktieren, entscheiden allein Sie.{' '}
+          <Link to="/legal/ki" className="text-indigo-600 underline font-bold">KI-Transparenzhinweise</Link>
+        </p>
 
         <div className="grid lg:grid-cols-3 gap-6 lg:gap-10">
           <div className="lg:col-span-2 space-y-6">

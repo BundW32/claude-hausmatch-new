@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, Link } from 'react-router-dom';
 
 interface Message {
   role: 'user' | 'assistant';
@@ -20,7 +20,7 @@ const ChatBot = () => {
   const [messages, setMessages] = useState<Message[]>([
     {
       role: 'assistant',
-      text: 'Hallo! Ich bin Eddy 🦉, Ihr Immobilien-Assistent von HausMatch.\n\nIch helfe Ihnen bei Fragen zu Hausverwaltung, Mietrecht, Finanzierung und Investment. Was möchten Sie wissen?\n\n⚠️ Hinweis: Ich bin eine KI. Meine Antworten sind allgemeine Informationen und kein Ersatz für rechtliche oder steuerliche Beratung.'
+      text: 'Hallo! Ich bin Eddy 🦉, Ihr Immobilien-Assistent von HausMatch.\n\nIch helfe Ihnen bei Fragen zu Hausverwaltung, Mietrecht, Finanzierung und Investment. Was möchten Sie wissen?\n\n⚠️ Sie chatten mit einem KI-System, nicht mit einem Menschen (Art. 50 EU-KI-Verordnung). Meine Antworten sind KI-generiert, allgemeine Informationen und kein Ersatz für rechtliche oder steuerliche Beratung.'
     }
   ]);
   const [input, setInput] = useState('');
@@ -144,7 +144,15 @@ const ChatBot = () => {
               <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
             </svg>
             <p className="text-[10px] text-amber-700 font-medium leading-snug">
-              KI-generierte Antworten, keine Rechtsberatung. Bei rechtlichen Fragen immer einen Fachanwalt konsultieren.
+              Sie kommunizieren mit einem KI-System, nicht mit einem Menschen. Antworten sind KI-generiert und keine
+              Rechtsberatung.{' '}
+              <Link to="/legal/ki" onClick={() => setOpen(false)} className="underline font-bold hover:text-amber-900">
+                KI-Transparenzhinweise
+              </Link>
+              {' · '}
+              <Link to="/contact" onClick={() => setOpen(false)} className="underline font-bold hover:text-amber-900">
+                Mensch kontaktieren
+              </Link>
             </p>
           </div>
 
