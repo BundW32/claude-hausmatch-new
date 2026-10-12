@@ -242,6 +242,26 @@ const LandingHome = () => {
         </div>
       </section>
 
+      {/* Partner: WEG-Selbstverwaltung (wegportal24) */}
+      <section className="py-12 md:py-16 bg-slate-50 border-t border-slate-100">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="bg-white border border-slate-200 rounded-3xl p-6 md:p-10 flex flex-col md:flex-row md:items-center gap-6 md:gap-10">
+            <div className="flex-1">
+              <span className="inline-block text-[10px] font-black uppercase tracking-[0.3em] text-blue-600 bg-blue-50 border border-blue-100 px-4 py-1.5 rounded-full mb-4">Partner</span>
+              <h2 className="text-2xl md:text-3xl font-black text-slate-900 tracking-tighter mb-3">Keine Hausverwaltung gefunden?</h2>
+              <p className="text-slate-500 font-medium text-sm md:text-base leading-relaxed">
+                Gerade kleine Eigentümergemeinschaften erhalten oft keine Angebote. Mit der{' '}
+                <a href="https://www.wegportal24.de/" className="text-blue-600 font-bold hover:text-blue-700">Software für die WEG-Selbstverwaltung von wegportal24</a>{' '}
+                erstellen Sie Wirtschaftsplan und Jahresabrechnung, verwalten das Hausgeld und organisieren die Eigentümerversammlung selbst.
+              </p>
+            </div>
+            <a href="/wegportal24.html" className="shrink-0 inline-flex items-center justify-center px-6 py-3 bg-slate-900 text-white rounded-2xl font-black uppercase tracking-widest text-xs hover:bg-slate-800 transition-all active:scale-95">
+              Mehr zur Selbstverwaltung
+            </a>
+          </div>
+        </div>
+      </section>
+
       {/* CTA */}
       <section className="relative py-16 md:py-24 bg-slate-900 overflow-hidden">
         <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-indigo-500/60 to-transparent" />

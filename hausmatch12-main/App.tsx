@@ -327,6 +327,7 @@ const Footer = () => {
               <li><Link to="/kreditrechner" className="hover:text-white transition-colors">Kreditrechner</Link></li>
               <li><Link to="/ratgeber" className="hover:text-white transition-colors">Ratgeber</Link></li>
               <li><Link to="/blog" className="hover:text-white transition-colors">Eddys News</Link></li>
+              <li><a href="/wegportal24.html" className="hover:text-white transition-colors">WEG-Selbstverwaltung</a></li>
             </ul>
           </div>
           <div className="md:col-span-3">
