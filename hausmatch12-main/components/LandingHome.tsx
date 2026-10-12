@@ -242,6 +242,34 @@ const LandingHome = () => {
         </div>
       </section>
 
+      {/* Partner: WEG-Selbstverwaltung (wegportal24) */}
+      <section className="py-12 md:py-16 bg-slate-50 border-t border-slate-100">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="bg-gradient-to-br from-orange-50/60 to-white border border-orange-100 rounded-3xl p-6 md:p-10 flex flex-col md:flex-row md:items-center gap-6 md:gap-10">
+            <div className="flex-1">
+              <div className="flex items-center gap-3 mb-4">
+                <img src="/wegportal24-logo.png" alt="wegportal24 Logo" width={176} height={36} className="h-8 md:h-9 w-auto" loading="lazy" />
+                <span className="text-[10px] font-black uppercase tracking-[0.3em] text-orange-600 bg-orange-50 border border-orange-100 px-3 py-1 rounded-full">Partner</span>
+              </div>
+              <h2 className="text-2xl md:text-3xl font-black text-slate-900 tracking-tighter mb-3">Keine Hausverwaltung gefunden?</h2>
+              <p className="text-slate-500 font-medium text-sm md:text-base leading-relaxed">
+                Gerade kleine Eigentümergemeinschaften erhalten oft keine Angebote. Mit der{' '}
+                <a href="https://www.wegportal24.de/" className="text-blue-600 font-bold hover:text-blue-700">Software für die WEG-Selbstverwaltung von wegportal24</a>{' '}
+                erstellen Sie Wirtschaftsplan und Jahresabrechnung, verwalten das Hausgeld und organisieren die Eigentümerversammlung selbst.
+              </p>
+            </div>
+            <div className="shrink-0 flex flex-col gap-3">
+              <a href="https://www.wegportal24.de/" className="inline-flex items-center justify-center px-6 py-3 bg-[#f69018] text-[#00241f] rounded-2xl font-black uppercase tracking-widest text-xs hover:bg-[#ffa338] transition-all active:scale-95">
+                Kostenlos testen
+              </a>
+              <a href="/wegportal24.html" className="inline-flex items-center justify-center px-6 py-3 bg-[#00241f] text-white rounded-2xl font-black uppercase tracking-widest text-xs hover:bg-[#0a3a33] transition-all active:scale-95">
+                Mehr zur Selbstverwaltung
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* CTA */}
       <section className="relative py-16 md:py-24 bg-slate-900 overflow-hidden">
         <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-indigo-500/60 to-transparent" />

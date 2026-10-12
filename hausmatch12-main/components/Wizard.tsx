@@ -38,7 +38,9 @@ const Wizard = () => {
 
     const message = buildInquiryMessage(gewerk, city.trim(), answers);
     try { sessionStorage.setItem(FUNNEL_MESSAGE_KEY, message); } catch { /* ignore */ }
-    navigate(`/search-results?city=${encodeURIComponent(city.trim())}&gewerk=${encodeURIComponent(gewerk.key)}`);
+    const units = parseInt(String(answers.units ?? ''), 10);
+    const unitsParam = units > 0 ? `&units=${units}` : '';
+    navigate(`/search-results?city=${encodeURIComponent(city.trim())}&gewerk=${encodeURIComponent(gewerk.key)}${unitsParam}`);
   };
 
   // ─── Schritt 0: Gewerk-Auswahl ────────────────────────────────────────────
