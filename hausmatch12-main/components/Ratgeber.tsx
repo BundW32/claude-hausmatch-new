@@ -96,6 +96,13 @@ const Ratgeber = () => {
                       if (line.trim() === '') return null;
                       return <p key={i} className="text-slate-600 text-sm font-medium leading-relaxed">{line}</p>;
                     })}
+                    <p className="font-black text-slate-900 mt-5 mb-1 text-sm">Häufige Fragen</p>
+                    {article.faq.map((f, i) => (
+                      <div key={`faq-${i}`} className="mb-2">
+                        <p className="text-slate-800 text-sm font-bold">{f.q}</p>
+                        <p className="text-slate-600 text-sm font-medium leading-relaxed">{f.a}</p>
+                      </div>
+                    ))}
                   </div>
                   <div className="mt-5 pt-4 border-t border-slate-200 flex flex-wrap gap-3">
                     <Link to="/ki-berater" className="text-xs font-black text-indigo-600 uppercase tracking-widest hover:text-indigo-700 flex items-center gap-1">

@@ -14,6 +14,8 @@ export interface RatgeberArticle {
   navLabel: string;
   /** Einleitungssatz der statischen Seite (greift die Wörter der H1 auf) */
   intro: string;
+  /** Häufige Fragen, auf der statischen Seite inkl. FAQPage-Schema */
+  faq: { q: string; a: string }[];
   category: string;
   title: string;
   summary: string;
@@ -30,6 +32,13 @@ export const articles: RatgeberArticle[] = [
     metaDescription: 'Wie viel Eigenkapital brauchen Sie beim Immobilienkauf? Faustformel, Kaufnebenkosten und eine Beispielrechnung für die Finanzierung.',
     navLabel: 'Eigenkapital beim Immobilienkauf',
     intro: 'Wie viel Eigenkapital Sie beim Immobilienkauf brauchen, hängt von Kaufpreis, Kaufnebenkosten und Ihrer Bonität ab.',
+    faq: [
+      { q: 'Kann ich eine Immobilie ganz ohne Eigenkapital kaufen?', a: 'Eine Vollfinanzierung ist möglich, wenn Einkommen und Bonität sehr gut sind. Banken verlangen dafür aber deutliche Zinsaufschläge, die monatliche Rate steigt und das Risiko bei der Anschlussfinanzierung wächst. Die meisten Institute erwarten, dass zumindest die Kaufnebenkosten aus eigenen Mitteln bezahlt werden.' },
+      { q: 'Wie stark beeinflusst das Eigenkapital den Zinssatz?', a: 'Banken staffeln ihre Konditionen nach dem Beleihungsauslauf, typische Stufen liegen bei 60, 80, 90 und 100 Prozent. Jede Stufe kann einen Zinsaufschlag bedeuten. Schon wenige Zehntelprozentpunkte summieren sich über eine Zinsbindung von zehn oder fünfzehn Jahren auf mehrere tausend Euro.' },
+      { q: 'Sollte ich mein gesamtes Erspartes in den Kauf stecken?', a: 'Nein. Behalten Sie eine Liquiditätsreserve von mindestens drei bis sechs Monatsausgaben. Hinzu kommen Rücklagen für Umzug, Einrichtung und erste Reparaturen. Wer alles einsetzt, gerät bei einer kaputten Heizung oder einem Jobwechsel schnell in Bedrängnis.' },
+      { q: 'Zählt eine Schenkung der Eltern als Eigenkapital?', a: 'Ja, Banken erkennen Schenkungen an, wenn sie sauber dokumentiert sind, idealerweise mit einem schriftlichen Schenkungsvertrag und dem Kontonachweis. Steuerlich gilt für Kinder ein Freibetrag von 400.000 Euro je Elternteil innerhalb von zehn Jahren.' },
+      { q: 'Welche Unterlagen brauche ich für das Bankgespräch?', a: 'Halten Sie Personalausweis, die letzten drei Gehaltsabrechnungen, die Einkommensteuerbescheide der letzten zwei Jahre, Nachweise über Ihr Eigenkapital sowie das Exposé mit Grundriss, Wohnflächenberechnung und Grundbuchauszug bereit. Selbstständige benötigen zusätzlich Bilanzen oder Einnahmen-Überschuss-Rechnungen. Vollständige Unterlagen beschleunigen die Zusage spürbar.' },
+    ],
     category: 'Kauf & Finanzierung',
     title: 'Wie viel Eigenkapital brauche ich beim Immobilienkauf?',
     summary: 'Eigenkapital ist der wichtigste Hebel für günstige Konditionen. Was zählt dazu, wie viel ist nötig, und was sollten Sie vor der Finanzierung klären?',
@@ -79,6 +88,13 @@ Kaufpreis 400.000 € in NRW:
     metaDescription: 'Die WEG-Reform 2020 kompakt: Versammlung, Umlaufbeschlüsse, bauliche Veränderungen, Verwalterpflichten und Rücklagen.',
     navLabel: 'WEG-Reform 2020',
     intro: 'Was Eigentümer heute über die WEG-Reform wissen müssen: die wichtigsten Änderungen seit Dezember 2020 im Überblick.',
+    faq: [
+      { q: 'Gilt die WEG-Reform auch für ältere Gemeinschaftsordnungen?', a: 'Ja, das modernisierte Wohnungseigentumsgesetz gilt seit dem 1. Dezember 2020 für alle Gemeinschaften. Ältere Vereinbarungen bleiben wirksam, im Zweifel geht aber das neue Recht vor. Es lohnt sich deshalb, Teilungserklärung und Gemeinschaftsordnung einmal von Verwaltung oder Fachanwalt prüfen zu lassen.' },
+      { q: 'Wer ist seit der Reform für die Verwaltung zuständig?', a: 'Träger der Verwaltung ist die Gemeinschaft der Wohnungseigentümer als rechtsfähiger Verband. Der Verwalter ist ihr Organ und vertritt sie nach außen. Für einzelne Eigentümer bedeutet das: Ansprüche wegen des Gemeinschaftseigentums richten sich in der Regel gegen die Gemeinschaft, nicht gegen den Verwalter persönlich.' },
+      { q: 'Kann ich als Eigentümer eine Wallbox durchsetzen?', a: 'Ja, jeder Eigentümer hat einen Anspruch darauf, dass ihm der Einbau einer Ladestation gestattet wird. Über die konkrete Ausführung, etwa Leitungsweg und Anschluss, entscheidet die Gemeinschaft per Beschluss. Die Kosten trägt grundsätzlich der Eigentümer, der die Maßnahme verlangt.' },
+      { q: 'Welche Rolle hat der Verwaltungsbeirat heute?', a: 'Der Beirat unterstützt und überwacht den Verwalter, etwa bei der Prüfung von Wirtschaftsplan und Jahresabrechnung. Die Zahl der Mitglieder ist seit der Reform flexibel, die Gemeinschaft kann sie per Beschluss festlegen.' },
+      { q: 'Wie hoch sollte die Erhaltungsrücklage sein?', a: 'Das Gesetz nennt keine feste Zahl, die Rücklage muss aber angemessen sein. In der Praxis orientieren sich viele Gemeinschaften an Alter, Zustand und Ausstattung des Gebäudes. Ein Instandhaltungsplan des Verwalters zeigt, welche größeren Maßnahmen in den nächsten Jahren anstehen und welche Zuführung dafür nötig ist.' },
+    ],
     category: 'WEG & Recht',
     title: 'WEG-Reform 2020: Was Eigentümer heute wissen müssen',
     summary: 'Die umfassendste WEG-Reform seit 1951 hat das Wohnungseigentumsrecht grundlegend modernisiert. Die wichtigsten Änderungen und ihre praktischen Auswirkungen.',
@@ -123,6 +139,13 @@ Prüfen Sie: Entsprechen Ihre Teilungserklärung und Gemeinschaftsordnung noch d
     metaDescription: 'Woran erkennen Sie einen guten Hausverwalter? 8 Kriterien von Qualifikation bis Vertrag, plus Checkliste für das Erstgespräch.',
     navLabel: 'Hausverwalter auswählen',
     intro: 'Den richtigen Hausverwalter zu finden fällt leichter, wenn Sie wissen, worauf es ankommt. Diese 8 entscheidenden Kriterien geben Ihnen Orientierung.',
+    faq: [
+      { q: 'Was kostet ein guter Hausverwalter?', a: 'Für die WEG-Verwaltung sind je nach Region und Objektgröße etwa 20 bis 40 Euro pro Einheit und Monat üblich, kleine Gemeinschaften zahlen oft mehr. Mietverwaltungen rechnen häufig mit einem Festpreis pro Einheit oder einem Prozentsatz der Nettokaltmiete. Entscheidend ist, welche Leistungen die Grundvergütung abdeckt und was extra kostet.' },
+      { q: 'Was unterscheidet WEG-Verwaltung und Mietverwaltung?', a: 'Die WEG-Verwaltung kümmert sich um das Gemeinschaftseigentum einer Eigentümergemeinschaft, also Versammlung, Wirtschaftsplan, Rücklage und Instandhaltung. Die Mietverwaltung betreut dagegen das Verhältnis zu den Mietern einer einzelnen Wohnung oder eines Hauses, etwa Mieteingang, Nebenkostenabrechnung und Mieterwechsel. Viele Anbieter übernehmen beides.' },
+      { q: 'Wie viele Angebote sollte ich einholen?', a: 'Mindestens drei. Erst im Vergleich sehen Sie, ob Preis und Leistungsumfang marktüblich sind. Achten Sie darauf, dass alle Angebote auf denselben Objektdaten beruhen, damit sie wirklich vergleichbar sind.' },
+      { q: 'Woran erkenne ich Warnsignale schon im Erstgespräch?', a: 'Vorsicht ist geboten, wenn ein Verwalter keine Referenzen nennen kann, die Frage nach Zertifizierung und Versicherungen ausweicht oder Leistungen nur mündlich zusagt. Auch fehlende Erreichbarkeit vor Vertragsschluss ist selten ein gutes Zeichen für die Zeit danach.' },
+      { q: 'Wie lange läuft ein Verwaltervertrag?', a: 'In der WEG ist die erste Bestellung eines Verwalters auf höchstens drei Jahre begrenzt, danach sind bis zu fünf Jahre möglich. Seit der Reform kann die Gemeinschaft den Verwalter jederzeit abberufen, der Vertrag endet dann spätestens sechs Monate später. In der Mietverwaltung sind ein bis drei Jahre üblich.' },
+    ],
     category: 'Verwaltung',
     title: 'Den richtigen Hausverwalter finden: 8 entscheidende Kriterien',
     summary: 'Die Wahl des Verwalters entscheidet über Ihren Aufwand, Ihre Rendite und den Werterhalt Ihrer Immobilie. Diese Kriterien helfen Ihnen bei der Auswahl.',
@@ -185,6 +208,13 @@ Unterschätzen Sie nicht den "Bauchfaktor": Der Verwalter ist Ihr langfristiger 
     metaDescription: 'Brutto-, Netto- und Eigenkapitalrendite einer Immobilie berechnen: Formeln, Beispielrechnung und Orientierungswerte.',
     navLabel: 'Immobilienrendite berechnen',
     intro: 'So berechnen Sie die Rendite Ihrer Immobilie richtig: von der Brutto- über die Netto- bis zur Eigenkapitalrendite.',
+    faq: [
+      { q: 'Was ist eine gute Mietrendite?', a: 'Das hängt stark von der Lage ab. In begehrten Großstädten liegen Bruttorenditen oft nur bei drei bis vier Prozent, dafür sind Leerstandsrisiko und Wertstabilität meist günstiger. In kleineren Städten sind höhere Renditen möglich, allerdings oft mit höherem Vermietungsrisiko.' },
+      { q: 'Zählt die Tilgung zu den Kosten einer Immobilie?', a: 'Nein, die Tilgung ist Vermögensaufbau und mindert die Rendite nicht. Sie belastet aber die Liquidität. Deshalb gehört neben der Rendite immer auch der monatliche Cashflow in die Rechnung, also was nach Zins, Tilgung und allen Kosten übrig bleibt.' },
+      { q: 'Sollte ich eine Wertsteigerung einrechnen?', a: 'Nur vorsichtig. Die Gesamtrendite setzt sich aus laufendem Ertrag und Wertänderung zusammen, doch künftige Preissteigerungen sind unsicher. Ein Investment sollte sich auch dann tragen, wenn der Wert über Jahre stagniert.' },
+      { q: 'Welche Kosten werden bei der Renditeberechnung oft vergessen?', a: 'Häufig fehlen Rücklagen für größere Instandhaltungen wie Dach, Fenster oder Heizung, Kosten für Mieterwechsel und Renovierung sowie Phasen ohne Mieteinnahmen. Wer diese Posten realistisch ansetzt, vermeidet böse Überraschungen.' },
+      { q: 'Welche Rolle spielt die Abschreibung für die Rendite?', a: 'Die Abschreibung mindert die zu versteuernden Mieteinnahmen, ohne dass Geld abfließt. Dadurch kann die Rendite nach Steuern spürbar höher ausfallen als die reine Nettorendite. Wie stark der Effekt ist, hängt vom persönlichen Steuersatz und vom Gebäudeanteil am Kaufpreis ab.' },
+    ],
     category: 'Investment',
     title: 'Immobilienrendite richtig berechnen: Brutto, Netto und Eigenkapitalrendite',
     summary: 'Welche Rendite wirft Ihre Immobilie wirklich ab? Lernen Sie den Unterschied zwischen Brutto-, Netto- und Eigenkapitalrendite und welche Kennzahlen wirklich zählen.',
@@ -253,6 +283,13 @@ Mieteinnahmen sind einkommensteuerpflichtig. Gleichzeitig können Sie Zinskosten
     metaDescription: 'Mieterhöhung rechtssicher: Kappungsgrenze, Fristen, Begründung per Mietspiegel und typische Fehler im Erhöhungsschreiben.',
     navLabel: 'Mieterhöhung durchführen',
     intro: 'Dieser komplette Leitfaden zeigt Schritt für Schritt, wie Vermieter eine Mieterhöhung rechtssicher durchführen.',
+    faq: [
+      { q: 'Darf ich eine Mieterhöhung per E-Mail verschicken?', a: 'Für das Mieterhöhungsverlangen zur Vergleichsmiete genügt die Textform, also auch eine E-Mail. Wichtig ist, dass Sie den Zugang beim Mieter nachweisen können. Viele Vermieter wählen deshalb weiterhin den Brief per Einwurf-Einschreiben oder Boten.' },
+      { q: 'Was gilt bei Staffelmiete oder Indexmiete?', a: 'Bei einer Staffelmiete steigt die Miete zu den vereinbarten Zeitpunkten automatisch. Bei der Indexmiete richtet sie sich nach dem Verbraucherpreisindex. In beiden Fällen ist eine zusätzliche Erhöhung auf die ortsübliche Vergleichsmiete während der Laufzeit grundsätzlich ausgeschlossen.' },
+      { q: 'Was passiert, wenn der Mieter nicht zustimmt?', a: 'Stimmt der Mieter bis zum Ende der Überlegungsfrist nicht zu, können Sie innerhalb von drei weiteren Monaten auf Zustimmung klagen. Das Gericht prüft dann, ob das Verlangen formell korrekt und inhaltlich begründet ist.' },
+      { q: 'Gilt die Kappungsgrenze auch nach einer Modernisierung?', a: 'Nein, für die Modernisierungsmieterhöhung gelten eigene Grenzen: höchstens drei Euro je Quadratmeter innerhalb von sechs Jahren, bei niedrigen Mieten zwei Euro. Beide Erhöhungsarten lassen sich aber kombinieren, wenn jeweils die Voraussetzungen erfüllt sind.' },
+      { q: 'Wie oft darf ich die Miete erhöhen?', a: 'Zwischen zwei Erhöhungen auf die ortsübliche Vergleichsmiete muss die Miete mindestens zwölf Monate unverändert geblieben sein, und das Verlangen darf frühestens ein Jahr nach der letzten Erhöhung gestellt werden. Zusätzlich gilt die Kappungsgrenze für den Zeitraum von drei Jahren.' },
+    ],
     category: 'Mietrecht',
     title: 'Mieterhöhung rechtssicher durchführen: Der komplette Leitfaden',
     summary: 'Mieterhöhungen sind möglich, aber an strenge gesetzliche Voraussetzungen geknüpft. Formfehler machen das Schreiben unwirksam. So gehen Sie richtig vor.',
@@ -316,6 +353,13 @@ Nach einer Modernisierung (Heizungstausch, Dämmung, neues Bad) können 8 % der 
     metaDescription: 'Energetische Sanierung: KfW- und BAFA-Förderung, Steuerbonus, GEG-Pflichten und die sinnvolle Reihenfolge der Maßnahmen.',
     navLabel: 'Energetische Sanierung',
     intro: 'Wer 2025 oder 2026 energetisch saniert, braucht eine klare Strategie: Welche Förderungen gibt es, welche Pflichten gelten und in welcher Reihenfolge lohnt sich die Sanierung?',
+    faq: [
+      { q: 'Muss ich meine funktionierende Heizung austauschen?', a: 'In der Regel nein. Bestehende, funktionierende Heizungen dürfen grundsätzlich weiter betrieben und repariert werden. Eine Austauschpflicht betrifft vor allem sehr alte Konstanttemperaturkessel, und auch dort gibt es Ausnahmen, etwa für Eigentümer, die ihr Haus schon lange selbst bewohnen.' },
+      { q: 'Was ist ein individueller Sanierungsfahrplan?', a: 'Der iSFP wird von einem Energieberater erstellt und zeigt, welche Maßnahmen in welcher Reihenfolge für Ihr Gebäude sinnvoll sind. Die Beratung wird staatlich gefördert, und wer die Maßnahmen später umsetzt, erhält bei vielen Einzelmaßnahmen einen zusätzlichen Förderbonus.' },
+      { q: 'Lohnt sich die Sanierung bei vermieteten Wohnungen?', a: 'Oft ja. Vermieter können einen Teil der Modernisierungskosten auf die Miete umlegen, Erhaltungsaufwand sofort steuerlich absetzen und den Wert der Immobilie steigern. Gleichzeitig sinken die Nebenkosten der Mieter, was die Vermietbarkeit verbessert.' },
+      { q: 'Wo finde ich die aktuellen Förderbedingungen?', a: 'Förderprogramme und Fördersätze ändern sich regelmäßig. Prüfen Sie vor jeder Planung die aktuellen Bedingungen direkt bei KfW und BAFA oder lassen Sie sich von einem zugelassenen Energieberater beraten, bevor Sie Aufträge vergeben.' },
+      { q: 'Welche Maßnahme bringt am meisten?', a: 'Das hängt vom Gebäude ab. Bei unsanierten Altbauten senken Dämmung von oberster Geschossdecke und Kellerdecke den Verbrauch oft mit vergleichsweise geringem Aufwand. Ein Energieberater berechnet, welche Maßnahmen sich in Ihrem Fall am schnellsten amortisieren und wie sie zusammenspielen.' },
+    ],
     category: 'Energie & Sanierung',
     title: 'Energetische Sanierung 2025/2026: Förderungen, Pflichten und Strategie',
     summary: 'BEG, BAFA, steuerliche Absetzbarkeit: Der Förderdschungel ist komplex. Dazu kommen neue gesetzliche Pflichten. Was Sie jetzt wissen und planen müssen.',
@@ -380,6 +424,13 @@ Für KfW-Förderung ab bestimmten Beträgen ist ein zugelassener Energieeffizien
     metaDescription: 'Nebenkostenabrechnung erklärt: Abrechnungsfrist, umlagefähige Kosten, Verteilerschlüssel, Belegeinsicht und häufige Fehler.',
     navLabel: 'Nebenkostenabrechnung',
     intro: 'Mieter und Vermieter haben bei der Nebenkostenabrechnung klare Rechte und Pflichten. Hier finden Sie die wichtigsten Fristen und Fehlerquellen.',
+    faq: [
+      { q: 'Wann muss ich eine Nachzahlung leisten?', a: 'Die Nachzahlung wird fällig, sobald Ihnen eine formell ordnungsgemäße Abrechnung zugegangen ist. Mieter haben dabei ein angemessenes Prüfungsrecht, in der Praxis sind etwa 30 Tage üblich. Bis dahin können Sie die Abrechnung prüfen und Belege einsehen.' },
+      { q: 'Darf der Vermieter die Vorauszahlungen erhöhen?', a: 'Ja, nach einer Abrechnung können Vermieter und Mieter die Vorauszahlungen per Erklärung in Textform auf eine angemessene Höhe anpassen. Maßstab ist das Ergebnis der letzten Abrechnung, gegebenenfalls ergänzt um absehbare Kostensteigerungen.' },
+      { q: 'Was ist der Unterschied zwischen Nebenkosten und Hausgeld?', a: 'Das Hausgeld zahlen Wohnungseigentümer an ihre Gemeinschaft. Es enthält neben den Betriebskosten auch Verwaltungskosten und die Zuführung zur Erhaltungsrücklage. Vermieter dürfen davon nur die umlagefähigen Betriebskosten an ihre Mieter weitergeben.' },
+      { q: 'Wie gehe ich als Mieter gegen eine fehlerhafte Abrechnung vor?', a: 'Erheben Sie Ihre Einwände schriftlich und konkret innerhalb von zwölf Monaten nach Zugang. Bitten Sie um Belegeinsicht und halten Sie fest, welche Positionen Sie beanstanden. Bei Streit helfen Mietervereine oder ein Fachanwalt für Mietrecht.' },
+      { q: 'Muss der Vermieter jedes Jahr abrechnen?', a: 'Ja, über Vorauszahlungen auf Betriebskosten muss jährlich abgerechnet werden. Der Abrechnungszeitraum darf zwölf Monate nicht überschreiten. Wird gar nicht abgerechnet, können Mieter laufende Vorauszahlungen zurückhalten, bis die Abrechnung vorliegt.' },
+    ],
     category: 'WEG & Recht',
     title: 'Nebenkostenabrechnung: Rechte, Fristen und häufige Fehler',
     summary: 'Die Nebenkostenabrechnung ist ein häufiger Streitpunkt. Was muss drin sein, welche Fristen gelten, und welche Fehler machen Abrechnungen unwirksam?',
@@ -435,6 +486,13 @@ Bewahren Sie alle Belege (Rechnungen, Kontoauszüge) 12 Monate über das Abrechn
     metaDescription: 'Notartermin beim Immobilienkauf: Ablauf, Inhalte des Kaufvertrags, Auflassungsvormerkung, Fälligkeit und Notarkosten.',
     navLabel: 'Notartermin und Kaufvertrag',
     intro: 'Was Sie vor dem Notartermin über Ablauf, Kaufvertrag und Kosten wissen müssen, lesen Sie in diesem Überblick.',
+    faq: [
+      { q: 'Wie lange dauert es vom Notartermin bis zur Eintragung als Eigentümer?', a: 'Die Auflassungsvormerkung wird meist innerhalb weniger Wochen eingetragen. Die eigentliche Umschreibung im Grundbuch folgt erst, wenn der Kaufpreis gezahlt ist und das Finanzamt nach Zahlung der Grunderwerbsteuer die Unbedenklichkeitsbescheinigung erteilt hat. Insgesamt dauert das oft einige Wochen bis mehrere Monate.' },
+      { q: 'Wie viel Zeit muss ich für die Prüfung des Vertragsentwurfs bekommen?', a: 'Bei Verträgen zwischen Unternehmer und Verbraucher soll der Entwurf dem Verbraucher in der Regel zwei Wochen vor der Beurkundung vorliegen. Nutzen Sie diese Zeit, um offene Fragen mit dem Notar oder einem Anwalt zu klären.' },
+      { q: 'Kann ich nach der Beurkundung noch zurücktreten?', a: 'Nach der Beurkundung ist der Vertrag grundsätzlich bindend. Ein Rücktritt ist nur möglich, wenn der Vertrag ein Rücktrittsrecht vorsieht oder gesetzliche Gründe vorliegen, etwa wenn der Verkäufer einen Mangel arglistig verschwiegen hat.' },
+      { q: 'Wer zahlt welche Kosten beim Immobilienkauf?', a: 'In der Praxis trägt der Käufer Notar- und Grundbuchkosten für den Erwerb sowie die Grunderwerbsteuer. Der Verkäufer zahlt üblicherweise die Löschung seiner eigenen Grundschulden. Abweichende Vereinbarungen sind möglich und gehören in den Kaufvertrag.' },
+      { q: 'Brauche ich zusätzlich einen Anwalt?', a: 'Für einfache Käufe reicht der Notar meist aus, er belehrt beide Seiten neutral. Bei komplexen Objekten, Erbbaurechten, umfangreichen Mängeln oder vermieteten Mehrfamilienhäusern kann ein eigener Anwalt sinnvoll sein, der ausschließlich Ihre Interessen vertritt.' },
+    ],
     category: 'Kauf & Finanzierung',
     title: 'Notartermin und Kaufvertrag: Was Sie wissen müssen',
     summary: 'Der Notartermin ist der entscheidende Moment beim Immobilienkauf. Was steht im Kaufvertrag, auf was müssen Sie achten, und welche Rechte haben Sie?',
@@ -497,6 +555,13 @@ Notarkosten und Grundbuchgebühren richten sich nach dem Kaufpreis (GNotKG):
     metaDescription: 'Steuern bei Immobilien: Grunderwerbsteuer, Abschreibung, Werbungskosten, Spekulationssteuer und Grundsteuer im Überblick.',
     navLabel: 'Steuern bei Immobilien',
     intro: 'Was Vermieter und Käufer über Steuern bei Immobilien wissen müssen, von der Grunderwerbsteuer bis zur Spekulationsfrist.',
+    faq: [
+      { q: 'Wo gebe ich Mieteinnahmen in der Steuererklärung an?', a: 'Einnahmen und Werbungskosten aus Vermietung gehören in die Anlage V der Einkommensteuererklärung, und zwar für jedes Objekt gesondert. Bewahren Sie Belege für alle Ausgaben auf, damit Sie diese bei Nachfragen des Finanzamts nachweisen können.' },
+      { q: 'Was gilt bei günstiger Vermietung an Angehörige?', a: 'Beträgt die Miete mindestens 66 Prozent der ortsüblichen Miete, können Sie die Werbungskosten in voller Höhe abziehen. Liegt sie deutlich darunter, werden die Kosten anteilig gekürzt. Der Mietvertrag sollte wie unter Fremden geschlossen und tatsächlich gelebt werden.' },
+      { q: 'Wann beginnt die Spekulationsfrist bei einer geerbten Immobilie?', a: 'Bei einer Erbschaft übernimmt der Erbe die Frist des Erblassers. Maßgeblich ist also der Zeitpunkt, zu dem der Verstorbene die Immobilie angeschafft hat. Ist dieser Kauf mehr als zehn Jahre her, bleibt ein Verkauf steuerfrei.' },
+      { q: 'Lohnt sich ein Steuerberater für Vermieter?', a: 'In vielen Fällen ja. Gerade die Aufteilung von Boden- und Gebäudewert, die Abgrenzung von Erhaltungs- und Herstellungsaufwand und die anschaffungsnahen Kosten bieten Gestaltungsspielraum, aber auch Fehlerquellen. Die Beratungskosten sind selbst als Werbungskosten absetzbar.' },
+      { q: 'Kann ich eine Immobilie steuerfrei verkaufen?', a: 'Ja, wenn zwischen Kauf und Verkauf mehr als zehn Jahre liegen oder wenn Sie die Immobilie im Verkaufsjahr und in den beiden Jahren davor selbst bewohnt haben. In allen anderen Fällen ist der Gewinn mit dem persönlichen Steuersatz zu versteuern.' },
+    ],
     category: 'Investment',
     title: 'Steuern bei Immobilien: Was Vermieter und Käufer wissen müssen',
     summary: 'Immobilien bieten steuerliche Vorteile, aber auch Pflichten. Ein Überblick über Abschreibung, Werbungskosten, Spekulationssteuer und was beim Kauf zu beachten ist.',
@@ -561,6 +626,13 @@ Immobiliensteuern sind komplex und individuell. Holen Sie sich vor dem Kauf und 
     metaDescription: 'Eigentümerversammlung der WEG: Einberufung, Fristen, Mehrheiten, Vollmacht und was bei rechtswidrigen Beschlüssen zu tun ist.',
     navLabel: 'Eigentümerversammlung',
     intro: 'Dieser Leitfaden erklärt Vorbereitung, Ablauf und Beschlussfassung der Eigentümerversammlung Schritt für Schritt.',
+    faq: [
+      { q: 'Wer leitet die Eigentümerversammlung?', a: 'In der Regel der Verwalter, sofern die Gemeinschaft nichts anderes beschließt. Er sorgt für einen geordneten Ablauf, stellt die Beschlussfähigkeit fest, leitet die Abstimmungen und verkündet die Ergebnisse.' },
+      { q: 'Wie bringe ich ein eigenes Thema auf die Tagesordnung?', a: 'Senden Sie Ihren Antrag rechtzeitig vor der Einladung schriftlich an den Verwalter und formulieren Sie einen konkreten Beschlussvorschlag. Verlangt mehr als ein Viertel der Eigentümer eine Versammlung, muss der Verwalter sie einberufen.' },
+      { q: 'Gegen wen richtet sich eine Anfechtungsklage?', a: 'Seit der Reform richtet sich die Klage gegen die Gemeinschaft der Wohnungseigentümer, nicht mehr gegen die übrigen Eigentümer. Die Klage muss innerhalb eines Monats nach der Beschlussfassung erhoben und innerhalb von zwei Monaten begründet werden.' },
+      { q: 'Was gehört in das Protokoll der Versammlung?', a: 'Mindestens der Wortlaut aller Beschlüsse und die Abstimmungsergebnisse, dazu Ort und Datum. Die Beschlüsse müssen außerdem unverzüglich in die Beschluss-Sammlung eingetragen werden, in die jeder Eigentümer Einsicht nehmen kann.' },
+      { q: 'Kann eine Versammlung auch online stattfinden?', a: 'Die Gemeinschaft kann beschließen, dass Eigentümer online teilnehmen und abstimmen dürfen. Seit Oktober 2024 können die Eigentümer mit drei Vierteln der abgegebenen Stimmen auch reine Online-Versammlungen beschließen. Bis Ende 2028 muss dann aber weiterhin mindestens einmal jährlich eine Präsenzversammlung stattfinden.' },
+    ],
     category: 'Verwaltung',
     title: 'Eigentümerversammlung: Vorbereitung, Ablauf und Beschlussfassung',
     summary: 'Die Eigentümerversammlung ist das zentrale Entscheidungsgremium in der WEG. Was muss eingeladen werden, wie wird abgestimmt, und was tun, wenn Beschlüsse rechtswidrig sind?',

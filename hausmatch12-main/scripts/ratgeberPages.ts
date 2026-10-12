@@ -157,12 +157,17 @@ function articlePage(a: RatgeberArticle): string {
       <h1>${escapeHtml(a.title)}</h1>
       <p class="lead">${escapeHtml(a.intro)} ${escapeHtml(a.summary)}</p>
       ${contentToHtml(a.content)}
+      <h2>Häufige Fragen: ${escapeHtml(a.navLabel)}</h2>
+${a.faq.map(f => `      <h3>${escapeHtml(f.q)}</h3>
+      <p>${escapeHtml(f.a)}</p>`).join('\n')}
     </article>
     <div class="box">
       <h2>Passende Hausverwaltung gesucht?</h2>
       <p>
         Über die <a href="/#/vermittlung">kostenlose Vermittlung von HausMatch</a> erhalten Sie
-        unverbindliche Angebote geprüfter Verwaltungen aus Ihrer Region.
+        unverbindliche Angebote geprüfter Verwaltungen aus Ihrer Region. Sie beschreiben Ihr
+        Objekt einmal, vergleichen die Angebote in Ruhe und entscheiden selbst, mit wem Sie
+        zusammenarbeiten.
       </p>
     </div>
     <h2>Weitere Artikel im Ratgeber</h2>
@@ -192,6 +197,15 @@ ${others.map(o => `      <li><a href="${articlePath(o)}">${escapeHtml(o.navLabel
         { name: 'Ratgeber', path: '/ratgeber.html' },
         { name: a.navLabel, path: articlePath(a) },
       ]),
+      {
+        '@context': 'https://schema.org',
+        '@type': 'FAQPage',
+        mainEntity: a.faq.map(f => ({
+          '@type': 'Question',
+          name: f.q,
+          acceptedAnswer: { '@type': 'Answer', text: f.a },
+        })),
+      },
     ],
     body,
   });
@@ -220,13 +234,43 @@ ${items
       finden Sie fundiertes Wissen zu Kauf und Finanzierung, WEG und Recht, Verwaltung, Investment,
       Mietrecht sowie energetischer Sanierung. Verständlich erklärt und kostenlos.
     </p>
+    <h2>Für wen ist der Ratgeber gedacht?</h2>
+    <p>
+      Die Artikel richten sich an alle, die mit Immobilien zu tun haben, ohne selbst Profi zu sein:
+      Käufer, die ihre erste Wohnung finanzieren, Wohnungseigentümer, die sich in Eigentümerversammlung
+      und WEG-Recht zurechtfinden wollen, und private Vermieter, die Mieterhöhung,
+      Nebenkostenabrechnung und Steuern rechtssicher erledigen möchten. Auch Verwaltungsbeiräte finden
+      hier kompakte Antworten auf typische Fragen aus dem Alltag einer Gemeinschaft.
+    </p>
+    <h2>So sind die Artikel aufgebaut</h2>
+    <p>
+      Jeder Beitrag erklärt zunächst die Grundlagen, geht dann Schritt für Schritt durch die wichtigsten
+      Regeln, Fristen und Zahlen und endet mit konkreten Tipps sowie häufigen Fragen aus der Praxis.
+      Beispielrechnungen zeigen, wie sich Eigenkapital, Rendite oder Steuern im Einzelfall auswirken.
+      Gesetzliche Regelungen und Förderprogramme ändern sich regelmäßig, deshalb überarbeiten wir die
+      Inhalte laufend. Für rechtliche und steuerliche Einzelfälle ersetzt der Ratgeber keine
+      persönliche Beratung durch Anwalt, Steuerberater oder Energieberater.
+    </p>
+    <h2>Die häufigsten Fragen aus der Praxis</h2>
+    <p>
+      Viele Anfragen, die uns erreichen, drehen sich um dieselben Themen: Wie viel Eigenkapital ist für
+      den Kauf einer Wohnung realistisch, und welche Kaufnebenkosten fallen an? Was hat sich durch die
+      WEG-Reform für Eigentümer und Verwalter geändert? Wann ist eine Mieterhöhung zulässig, und wie
+      muss sie begründet werden? Welche Fristen gelten für die Nebenkostenabrechnung? Und welche
+      Förderung gibt es für eine neue Heizung oder die Dämmung des Hauses? Zu jeder dieser Fragen
+      finden Sie unten einen ausführlichen Beitrag. Wenn Sie anschließend Unterstützung im Alltag
+      suchen, etwa weil Ihre Gemeinschaft eine neue Verwaltung braucht, hilft Ihnen HausMatch bei der
+      Suche nach passenden Ansprechpartnern in Ihrer Region.
+    </p>
 ${sections}
     <div class="box">
       <h2>Verwaltung für Ihre Immobilie finden</h2>
       <p>
         Sie suchen eine neue Verwaltung für Ihre Eigentümergemeinschaft oder Ihr Mietshaus? Über die
         <a href="/#/vermittlung">kostenlose Vermittlung von HausMatch</a> vergleichen Sie Angebote
-        geprüfter Verwaltungen aus Ihrer Region.
+        geprüfter Verwaltungen aus Ihrer Region. Die Anfrage ist für Eigentümer kostenlos und
+        unverbindlich: Sie geben Lage, Anzahl der Einheiten und Ihre Wünsche an, erhalten passende
+        Angebote und entscheiden danach in Ruhe, welche Verwaltung am besten zu Ihrer Immobilie passt.
       </p>
     </div>`;
   return layout({
