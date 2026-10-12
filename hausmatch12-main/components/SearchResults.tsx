@@ -13,6 +13,37 @@ const PENDING_INQUIRY_KEY = 'hm_pending_inquiry';
 
 const EDDY_URL = "/eddy-eule.png";
 
+// Unter 9 Einheiten finden WEGs oft keine Verwaltung (und dürfen sich ohne
+// zertifizierten Verwalter selbst verwalten). Dann zusätzlich zur normalen
+// Suche auf unseren Partner wegportal24 hinweisen.
+const SMALL_WEG_MAX_UNITS = 8;
+
+const WegportalHint = ({ units }: { units: number }) => (
+  <div className="bg-white border border-orange-200 rounded-3xl p-5 sm:p-6 shadow-sm flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-6">
+    <img src="/wegportal24-logo.png" alt="wegportal24" width={160} height={33} className="h-7 w-auto self-start sm:self-center flex-shrink-0" />
+    <div className="flex-1">
+      <p className="text-sm font-black text-slate-900 mb-1">
+        Tipp für kleine Gemeinschaften mit {units} {units === 1 ? 'Einheit' : 'Einheiten'}
+      </p>
+      <p className="text-sm text-slate-500 font-medium leading-relaxed">
+        Viele Verwaltungen übernehmen erst ab ca. 9 Einheiten. Fragen Sie die Verwaltungen unten trotzdem an.
+        Als Alternative kann sich Ihre WEG mit unserem Partner{' '}
+        <a href="https://www.wegportal24.de/" target="_blank" rel="noopener" className="text-orange-600 font-bold hover:underline">wegportal24</a>{' '}
+        auch selbst verwalten: Wirtschaftsplan, Hausgeld, Jahresabrechnung und Versammlung in einer Software.{' '}
+        <a href="/wegportal24.html" className="text-indigo-600 font-bold hover:underline">Mehr erfahren</a>
+      </p>
+    </div>
+    <a
+      href="https://www.wegportal24.de/"
+      target="_blank"
+      rel="noopener"
+      className="flex-shrink-0 inline-flex items-center justify-center px-5 py-3 rounded-2xl text-xs font-black uppercase tracking-widest text-[#00241f] bg-[#f69018] hover:bg-[#ffa338] transition-colors"
+    >
+      Kostenlos testen
+    </a>
+  </div>
+);
+
 interface SelectableEntry {
   key: string;
   name: string;
@@ -192,6 +223,7 @@ const NetworkManagerCard = ({ manager, selected, onToggle }: { manager: User; se
 const ExpressModal = ({ selected, city, gewerk, onClose }: { selected: SelectableEntry[]; city: string; gewerk: GewerkDef; onClose: () => void }) => {
   const { user } = useContext(AuthContext);
   const navigate = useNavigate();
+  const [modalParams] = useSearchParams();
   const [ownerName, setOwnerName] = useState(user?.name || '');
   const [ownerEmail, setOwnerEmail] = useState(user?.email || '');
   const [ownerPhone, setOwnerPhone] = useState('');
@@ -240,7 +272,8 @@ const ExpressModal = ({ selected, city, gewerk, onClose }: { selected: Selectabl
     try {
       sessionStorage.setItem(PENDING_INQUIRY_KEY, JSON.stringify({ city, gewerkKey: gewerk.key, entries: selected }));
     } catch { /* ignore */ }
-    const ret = `/search-results?city=${encodeURIComponent(city)}&gewerk=${encodeURIComponent(gewerk.key)}&resume=1`;
+    const unitsParam = modalParams.get('units') ? `&units=${encodeURIComponent(modalParams.get('units')!)}` : '';
+    const ret = `/search-results?city=${encodeURIComponent(city)}&gewerk=${encodeURIComponent(gewerk.key)}${unitsParam}&resume=1`;
     navigate(`/${mode}?redirect=${encodeURIComponent(ret)}`);
   };
 
@@ -405,6 +438,8 @@ const SearchResults = () => {
   const tradeId = beruf ? gewerkParam : null;
   const gewerk = resolveGewerk(professionId); // Funnel-Definition (serviceType, Resume-Link)
   const target = resolveSearchTarget(professionId, tradeId); // Label/Plural/Suchbegriff/userTypes
+  const units = parseInt(searchParams.get('units') || '', 10);
+  const showWegportalHint = professionId === 'hausverwaltung' && units > 0 && units <= SMALL_WEG_MAX_UNITS;
   const [result, setResult] = useState<ManagerSearchResult | null>(null);
   const [networkManagers, setNetworkManagers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
@@ -483,6 +518,8 @@ const SearchResults = () => {
 
         <div className="grid lg:grid-cols-3 gap-6 lg:gap-10">
           <div className="lg:col-span-2 space-y-6">
+
+            {showWegportalHint && <WegportalHint units={units} />}
 
             {loading ? (
               <div className="bg-white p-8 sm:p-16 rounded-[2rem] sm:rounded-[3rem] border border-slate-100 flex flex-col items-center text-center shadow-sm">
