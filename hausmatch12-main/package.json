@@ -15,24 +15,24 @@
     "@fontsource/nunito": "^5.2.7",
     "@google/genai": "^1.43.0",
     "@google/generative-ai": "^0.21.0",
-    "@tailwindcss/vite": "^4.2.1",
+    "@tailwindcss/vite": "^4.3.3",
     "@types/dompurify": "^3.0.5",
-    "dompurify": "^3.3.3",
-    "firebase": "^10.9.0",
+    "dompurify": "^3.4.17",
+    "firebase": "^13.1.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-router-dom": "^6.22.0"
+    "react-router-dom": "^7.18.4"
   },
   "devDependencies": {
     "@types/react": "^18.2.0",
     "@types/react-dom": "^18.2.0",
-    "@vercel/node": "^3.0.0",
-    "@vitejs/plugin-react": "^4.2.1",
-    "autoprefixer": "^10.4.18",
-    "postcss": "^8.4.35",
-    "tailwindcss": "^4.2.1",
-    "tsx": "^4.23.1",
-    "typescript": "^5.2.2",
-    "vite": "^5.1.4"
+    "@vercel/node": "^27.0.1",
+    "@vitejs/plugin-react": "^6.1.2",
+    "autoprefixer": "^10.6.1",
+    "postcss": "^8.5.31",
+    "tailwindcss": "^4.3.3",
+    "tsx": "^4.23.15",
+    "typescript": "^5.9.3",
+    "vite": "^8.3.5"
   }
 }
