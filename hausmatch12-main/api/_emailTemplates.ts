@@ -84,6 +84,18 @@ export function resolveGewerk(serviceType?: string): GewerkInfo {
   return GEWERKE[key] || GEWERKE.hausverwaltung;
 }
 
+// HTML-Entschärfung für alles, was aus dem Request in eine Mail gelangt
+// (Name, Stadt, Firmenname, Adresse, Telefon, Link). Ohne sie konnte ein
+// Aufrufer eigene Links und Texte in eine echt aussehende HausMatch-Mail
+// legen (Sicherheitsbericht 23.10.2026, H-09).
+export const esc = (v: unknown): string =>
+  String(v ?? '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+
 export const css = `
   body{margin:0;padding:0;background:#f1f5f9;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif}
   .wrap{max-width:600px;margin:40px auto;background:#fff;border-radius:24px;overflow:hidden;box-shadow:0 4px 24px rgba(0,0,0,.07)}
@@ -125,11 +137,11 @@ export const ownerHtml = (
   <div class="hdr"><div class="logo">Haus<span>Match</span></div></div>
   <div class="body">
     <span class="badge">Express-Matching</span>
-    <h1>Ihre Anfrage ist eingegangen, ${name.split(' ')[0]}!</h1>
-    <p class="intro">Wir haben <strong>${companies.length} ${companies.length === 1 ? gewerk.labelSing : gewerk.labelPlural}</strong> in <strong>${city}</strong> diskret um ein Angebot gebeten. Sobald ${companies.length === 1 ? 'dieser' : 'einer'} Ihr Projekt im HausMatch Lead Center annimmt, erhalten Sie das Angebot direkt über HausMatch an <strong>${email}</strong>.</p>
+    <h1>Ihre Anfrage ist eingegangen, ${esc(name.split(' ')[0])}!</h1>
+    <p class="intro">Wir haben <strong>${companies.length} ${companies.length === 1 ? gewerk.labelSing : gewerk.labelPlural}</strong> in <strong>${esc(city)}</strong> diskret um ein Angebot gebeten. Sobald ${companies.length === 1 ? 'dieser' : 'einer'} Ihr Projekt im HausMatch Lead Center annimmt, erhalten Sie das Angebot direkt über HausMatch an <strong>${esc(email)}</strong>.</p>
     <p class="lbl">Kontaktierte ${gewerk.labelPlural}</p>
     <div class="list">
-      ${companies.map(c => `<div class="row"><div class="dot"></div><div><div class="rname">${c.name}</div>${c.address || c.phone ? `<div class="rmeta">${[c.address, c.phone].filter(Boolean).join(' · ')}</div>` : ''}</div></div>`).join('')}
+      ${companies.map(c => `<div class="row"><div class="dot"></div><div><div class="rname">${esc(c.name)}</div>${c.address || c.phone ? `<div class="rmeta">${esc([c.address, c.phone].filter(Boolean).join(' · '))}</div>` : ''}</div></div>`).join('')}
     </div>
     <div class="box"><p>💡 <strong>Wie geht es weiter?</strong><br>Die ${gewerk.labelPlural} sehen zunächst nur die groben Eckdaten Ihres Anliegens. Erst wenn sie im Lead Center ein Angebot abgeben, werden Ihre Kontaktdaten benötigt. So bleiben Sie geschützt.</p></div>
   </div>
@@ -151,18 +163,18 @@ export const managerHtml = (
   <div class="hdr"><div class="logo">Haus<span>Match</span></div></div>
   <div class="body">
     <span class="badge">Neue Angebotsanfrage</span>
-    <h1>Ein Eigentümer sucht ${gewerk.akk} in ${city}</h1>
+    <h1>Ein Eigentümer sucht ${gewerk.akk} in ${esc(city)}</h1>
     <p class="intro">Über <strong>HausMatch</strong> ist eine neue Anfrage für Sie eingegangen. Hier die groben Eckdaten. Die vollständigen Details und die Möglichkeit, ein Angebot abzugeben, finden Sie im Lead Center.</p>
     <p class="lbl">Eckdaten der Anfrage</p>
     <div class="list">
-      <div class="drow"><span class="dlbl">Region</span><span class="dval">${city}</span></div>
-      <div class="drow"><span class="dlbl">Einheiten</span><span class="dval">${einheiten}</span></div>
-      ${gewerk.showObjektart ? `<div class="drow"><span class="dlbl">Objektart</span><span class="dval">${propertyType}</span></div>` : ''}
+      <div class="drow"><span class="dlbl">Region</span><span class="dval">${esc(city)}</span></div>
+      <div class="drow"><span class="dlbl">Einheiten</span><span class="dval">${esc(einheiten)}</span></div>
+      ${gewerk.showObjektart ? `<div class="drow"><span class="dlbl">Objektart</span><span class="dval">${esc(propertyType)}</span></div>` : ''}
     </div>
     <div class="box"><p>${registered
       ? '🔒 <strong>Diskret & geschützt:</strong> Die Kontaktdaten des Eigentümers sehen Sie erst, wenn Sie im Lead Center ein Angebot abgeben.'
       : '✨ <strong>Sie sind noch nicht registriert.</strong> Registrieren Sie sich kostenlos per Magic-Link. Danach liegt diese Anfrage direkt in Ihrem Lead Center.'}</p></div>
-    <a class="cta" href="${ctaUrl}">${ctaLabel}</a>
+    <a class="cta" href="${esc(ctaUrl)}">${esc(ctaLabel)}</a>
     <p style="font-size:13px;color:#94a3b8;text-align:center;margin:0">Angebote geben Sie ausschließlich über das HausMatch Lead Center ab.</p>
   </div>
   <div class="ftr">

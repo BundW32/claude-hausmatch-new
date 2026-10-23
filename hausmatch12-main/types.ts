@@ -347,6 +347,8 @@ export interface SearchCompany {
   reviews: number;
   specialization: string;
   isPartner?: boolean;
+  /** Signatur von /api/search für die E-Mail-Adresse; Pflicht für den Versand über /api/send-inquiry. */
+  token?: string;
 }
 
 export interface ManagerSearchResult {

@@ -50,6 +50,8 @@ interface SelectableEntry {
   email?: string;
   address?: string;
   phone?: string;
+  /** Signatur aus /api/search; ohne sie schreibt der Server eine Such-Adresse nicht an. */
+  token?: string;
 }
 
 // ─── Checkbox ──────────────────────────────────────────────────────────────────
@@ -250,7 +252,7 @@ const ExpressModal = ({ selected, city, gewerk, onClose }: { selected: Selectabl
           message: description,
           city,
           serviceType: gewerk.key,
-          companies: selected.map(s => ({ name: s.name, email: s.email, address: s.address, phone: s.phone })),
+          companies: selected.map(s => ({ name: s.name, email: s.email, address: s.address, phone: s.phone, token: s.token })),
         }),
       });
       if (!res.ok) {
@@ -494,7 +496,7 @@ const SearchResults = () => {
     });
     result?.companies.forEach((c, i) => {
       if (selectedKeys.has(`comp_${i}`)) {
-        entries.push({ key: `comp_${i}`, name: c.name, email: c.email, phone: c.phone, address: c.address });
+        entries.push({ key: `comp_${i}`, name: c.name, email: c.email, phone: c.phone, address: c.address, token: c.token });
       }
     });
     return entries;

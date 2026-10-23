@@ -1,6 +1,8 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { applyCors } from './_cors';
 import { resolveGewerk, ownerHtml, managerHtml } from './_emailTemplates';
+import { inquiryTokenConfigured, normalizeEmail, verifyCompanyEmail } from './_inquiryToken';
+import { allowRequest, clientIp, todayKey } from './_ratelimit';
 
 const ADMIN_EMAIL = process.env.ADMIN_EMAIL || 'barth@bundwimmobilien.de';
 const FROM_EMAIL = process.env.RESEND_FROM_EMAIL || 'HausMatch <onboarding@resend.dev>';
@@ -10,6 +12,25 @@ const FIREBASE_API_KEY = process.env.FIREBASE_API_KEY || '';
 // Basis-URL der App (HashRouter -> Routen mit /#/...). haus-match.de ist die offizielle Domain.
 // Per Env (APP_URL) überschreibbar.
 const APP_URL = (process.env.APP_URL || 'https://haus-match.de').replace(/\/$/, '');
+
+// ─── Grenzen (Sicherheitsbericht 23.10.2026, H-09) ─────────────────────────────
+// Der Endpunkt steht ohne Anmeldung offen und löst Mails mit HausMatch-Absender
+// aus. Deshalb: wenige Anfragen je IP, ein Tageskontingent, höchstens zehn
+// Empfänger je Anfrage, und jede Empfängeradresse muss nachweislich aus der
+// eigenen Suche oder aus der eigenen Nutzerdatenbank stammen.
+const IP_LIMIT_PER_HOUR = Number(process.env.INQUIRY_IP_LIMIT_PER_HOUR) || 5;
+const DAILY_LIMIT = Number(process.env.INQUIRY_DAILY_LIMIT) || 300;
+const MAX_COMPANIES = 10;
+const EMAIL_RE = /^[^\s@<>"',;]{1,64}@[^\s@<>"',;]{1,255}\.[a-zA-Z]{2,}$/;
+
+/** Freitext ohne Steuerzeichen und auf eine Länge gekappt. */
+function cleanText(v: unknown, max: number): string {
+  return String(v ?? '').replace(/[\u0000-\u0008\u000b\u000c\u000e-\u001f\u007f]/g, '').trim().slice(0, max);
+}
+
+function isEmail(v: string): boolean {
+  return v.length <= 254 && EMAIL_RE.test(v);
+}
 
 async function sendEmail(apiKey: string, payload: object): Promise<{ ok: boolean; error?: string }> {
   // In Resend test mode, RESEND_TEST_EMAIL overrides all TO addresses
@@ -121,6 +142,28 @@ function managersInCity(users: UserRow[], city: string): { name: string; email: 
     .map(m => ({ name: m.name, email: m.email }));
 }
 
+type CompanyInput = { name: string; address?: string; phone?: string; email?: string; token?: string };
+
+/** Firmenliste aus dem Request bereinigen: feste Längen, höchstens MAX_COMPANIES. */
+function cleanCompanies(raw: unknown): CompanyInput[] {
+  if (!Array.isArray(raw)) return [];
+  const out: CompanyInput[] = [];
+  for (const c of raw.slice(0, MAX_COMPANIES)) {
+    if (!c || typeof c !== 'object') continue;
+    const name = cleanText((c as any).name, 120);
+    if (!name) continue;
+    const email = normalizeEmail((c as any).email);
+    out.push({
+      name,
+      address: cleanText((c as any).address, 200) || undefined,
+      phone: cleanText((c as any).phone, 50) || undefined,
+      email: email && isEmail(email) ? email : undefined,
+      token: typeof (c as any).token === 'string' ? (c as any).token : undefined,
+    });
+  }
+  return out;
+}
+
 // ─── Handler ───────────────────────────────────────────────────────────────────
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
@@ -135,18 +178,36 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     return res.status(500).json({ error: 'E-Mail-Dienst nicht konfiguriert.' });
   }
 
-  const { senderName, senderEmail, senderPhone, message, city, companies, serviceType } = req.body || {};
+  // Grenze je IP, bevor irgendetwas gelesen oder verschickt wird.
+  const ip = clientIp(req);
+  if (!(await allowRequest('inquiry_ip', ip, IP_LIMIT_PER_HOUR, 3600))) {
+    return res.status(429).json({ error: 'Zu viele Anfragen. Bitte versuchen Sie es in einer Stunde erneut.' });
+  }
+
+  const body = (req.body && typeof req.body === 'object' ? req.body : {}) as Record<string, unknown>;
+  const senderName = cleanText(body.senderName, 120);
+  const senderEmail = normalizeEmail(body.senderEmail);
+  const senderPhone = cleanText(body.senderPhone, 50);
+  const note = cleanText(body.message, 3000);
+  const city = cleanText(body.city, 100);
 
   if (!senderName || !senderEmail) {
     return res.status(400).json({ error: 'Name und E-Mail sind erforderlich.' });
   }
+  if (!isEmail(senderEmail)) {
+    return res.status(400).json({ error: 'Bitte geben Sie eine gültige E-Mail-Adresse an.' });
+  }
+
+  // Tageskontingent: schützt Resend-Guthaben und Ruf der Absenderdomain.
+  if (!(await allowRequest('inquiry_day', todayKey(), DAILY_LIMIT, 86400))) {
+    console.error('Tageskontingent für Express-Matching erschöpft.');
+    return res.status(429).json({ error: 'Das Tageskontingent ist erschöpft. Bitte versuchen Sie es morgen erneut.' });
+  }
 
   // Gewerk bestimmen (z. B. hausverwaltung, makler, anwalt …); Fallback Hausverwaltung.
-  const gewerk = resolveGewerk(serviceType);
+  const gewerk = resolveGewerk(cleanText(body.serviceType, 40));
 
-  const companyArr: { name: string; address?: string; phone?: string; email?: string }[] =
-    Array.isArray(companies) ? companies : [];
-  const note = message?.trim() || '';
+  const companyArr = cleanCompanies(body.companies);
   const einheiten = note.match(/\d+/)?.[0] ? note.match(/\d+/)![0] + ' Einheiten' : 'eine WEG';
   const propertyType = 'WEG';
   const companyNames = companyArr.length > 0 ? companyArr.map(c => c.name).join(', ') : `Keine ${gewerk.labelPlural} ausgewählt`;
@@ -157,20 +218,39 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     to: [ADMIN_EMAIL],
     reply_to: senderEmail,
     subject: `Neue Anfrage (${gewerk.labelSing}): ${city || 'unbekannte Stadt'}`,
-    text: `Neue Express-Matching Anfrage\n\nGewerk: ${gewerk.labelSing}\nVon: ${senderName}\nE-Mail: ${senderEmail}\nTelefon: ${senderPhone || 'nicht angegeben'}\nStadt: ${city || 'nicht angegeben'}\n\nNachricht:\n${note || '(keine Nachricht)'}\n\nAngefragte ${gewerk.labelPlural}: ${companyNames}`,
+    text: `Neue Express-Matching Anfrage\n\nGewerk: ${gewerk.labelSing}\nVon: ${senderName}\nE-Mail: ${senderEmail}\nTelefon: ${senderPhone || 'nicht angegeben'}\nStadt: ${city || 'nicht angegeben'}\nIP: ${ip}\n\nNachricht:\n${note || '(keine Nachricht)'}\n\nAngefragte ${gewerk.labelPlural}: ${companyNames}`,
   });
 
   if (!adminResult.ok) {
     return res.status(500).json({ error: 'Anfrage konnte nicht gesendet werden. Bitte versuchen Sie es erneut.' });
   }
 
-  // Empfänger bestimmen: registrierte Verwalter der Stadt + im Formular gewählte Firmen mit Email.
+  // Empfänger bestimmen. Drei Quellen, und nur diese:
+  //   1. registrierte Verwalter der Stadt (aus der eigenen Nutzerdatenbank),
+  //   2. im Formular gewählte Netzwerk-Partner — ihre Adresse muss zu einem
+  //      registrierten Nutzer gehören,
+  //   3. im Formular gewählte Firmen aus der Live-Suche — ihre Adresse muss das
+  //      Token tragen, das /api/search dafür ausgestellt hat.
+  // Alles andere wird verworfen und protokolliert. Vorher reichte jede
+  // beliebige Adresse im Request, um eine Mail auszulösen (H-09).
   const users = await listUsers();
   const registeredEmails = new Set(users.filter(u => u.email).map(u => u.email));
-  const registeredManagers = managersInCity(users, city || '');
-  const formCompaniesWithEmail = companyArr
-    .filter(c => !!c.email)
-    .map(c => ({ name: c.name || '', email: (c.email as string).toLowerCase().trim() }));
+  const registeredManagers = managersInCity(users, city);
+  const tokenAktiv = inquiryTokenConfigured();
+  if (!tokenAktiv) {
+    console.error('INQUIRY_SIGNING_SECRET fehlt oder ist zu kurz: Firmen aus der Live-Suche werden nicht angeschrieben.');
+  }
+  let verworfen = 0;
+  const formCompaniesWithEmail: { name: string; email: string }[] = [];
+  for (const c of companyArr) {
+    if (!c.email) continue;
+    const erlaubt = registeredEmails.has(c.email) || (tokenAktiv && verifyCompanyEmail(c.email, c.token));
+    if (erlaubt) formCompaniesWithEmail.push({ name: c.name, email: c.email });
+    else verworfen += 1;
+  }
+  if (verworfen > 0) {
+    console.warn(`Express-Matching: ${verworfen} Empfängeradresse(n) ohne gültiges Token verworfen (IP ${ip}).`);
+  }
 
   const seenEmails = new Set<string>();
   const allManagers: { name: string; email: string }[] = [];
@@ -183,7 +263,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
   // Firestore: Anfrage speichern inkl. angeschriebener Verwalter-Emails (non-blocking)
   saveToFirestore({
-    city, senderName, senderEmail, senderPhone: senderPhone || '', message: note,
+    city, senderName, senderEmail, senderPhone, message: note,
     companies: companyArr, managerEmails: allManagers.map(m => m.email),
   }).catch(err => console.error('Firestore save failed:', err));
 
@@ -197,8 +277,10 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   const ALLOW_EXTERNAL_EMAILS = process.env.ALLOW_EXTERNAL_EMAILS === 'true';
   const isAllowed = (email: string) => ALLOW_EXTERNAL_EMAILS || email.toLowerCase().endsWith('@bundwimmobilien.de');
 
-  // E-Mail 2: Bestätigung an Eigentümer (nur wenn @bundwimmobilien.de in Test)
-  if (isAllowed(senderEmail)) {
+  // E-Mail 2: Bestätigung an Eigentümer (nur wenn @bundwimmobilien.de in Test).
+  // Je Absenderadresse höchstens drei Bestätigungen pro Stunde — sonst wäre
+  // dieser Weg ein Versandwerkzeug für fremde Postfächer.
+  if (isAllowed(senderEmail) && (await allowRequest('inquiry_sender', senderEmail, 3, 3600))) {
     await sendEmail(apiKey, {
       from: FROM_EMAIL,
       to: [senderEmail],
@@ -206,7 +288,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       html: ownerHtml(gewerk, senderName, senderEmail, city || 'Ihrer Region', companyArr),
     });
   } else {
-    console.log(`Bestätigungs-Mail an ${senderEmail} übersprungen (kein @bundwimmobilien.de)`);
+    console.log(`Bestätigungs-Mail an ${senderEmail} übersprungen (Testbetrieb oder Limit).`);
   }
 
   // E-Mail 3: Angebotsanfrage an Verwalter, grobe Daten + Lead-Center-Link.
