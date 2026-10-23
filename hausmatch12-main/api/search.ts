@@ -1,5 +1,6 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { applyCors } from './_cors';
+import { signCompanyEmail } from './_inquiryToken';
 
 // Kontaktdaten von Unternehmens-Website scrapen
 async function scrapeWebsite(url: string): Promise<{ email?: string; phone?: string }> {
@@ -153,10 +154,14 @@ Felder die unbekannt sind als leeren String "" angeben, rating als 0 wenn unbeka
     companies = companies.map((c, i) => {
       const result = scrapeResults[i];
       const scraped: { email?: string; phone?: string } = result.status === 'fulfilled' ? result.value : {};
+      const email = String(c.email || scraped.email || '');
       return {
         ...c,
-        email: c.email || scraped.email || '',
-        phone: c.phone || scraped.phone || ''
+        email,
+        phone: c.phone || scraped.phone || '',
+        // Nachweis für /api/send-inquiry, dass diese Adresse aus der Suche
+        // stammt und nicht frei erfunden wurde (api/_inquiryToken.ts).
+        token: email ? signCompanyEmail(email) ?? undefined : undefined
       };
     });
 
